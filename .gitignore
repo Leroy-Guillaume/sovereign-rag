@@ -1,0 +1,20 @@
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Environment
+.env
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
