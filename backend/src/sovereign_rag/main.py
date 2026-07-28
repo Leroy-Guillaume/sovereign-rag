@@ -29,6 +29,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from psycopg_pool import AsyncConnectionPool
 
 from .auth import ApiKeyAuth
+from .chat.service import ChatService
 from .config import Settings
 from .db import apply_migrations, create_pool
 from .embeddings import get_embedding_client
@@ -36,6 +37,7 @@ from .embeddings.base import EmbeddingClient
 from .ingestion.service import IngestionService
 from .llm import get_llm_client
 from .llm.base import LLMClient
+from .routes.chat import router as chat_router
 from .routes.documents import router as documents_router
 from .store import get_vector_store
 from .store.base import VectorStore
@@ -75,6 +77,13 @@ def create_app(
             store=active_store,
             settings=app_settings,
         )
+        started_app.state.chat = ChatService(
+            pool=active_pool,
+            llm=active_llm,
+            embedder=active_embedder,
+            store=active_store,
+            settings=app_settings,
+        )
         try:
             yield
         finally:
@@ -109,6 +118,7 @@ def create_app(
         return response
 
     application.include_router(documents_router)
+    application.include_router(chat_router)
 
     return application
 

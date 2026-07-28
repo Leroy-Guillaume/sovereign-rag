@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class DocumentOut(BaseModel):
@@ -52,3 +52,10 @@ class ConversationDetail(BaseModel):
     title: str
     created_at: datetime
     messages: list[MessageOut]
+
+
+class ChatRequest(BaseModel):
+    """POST /api/chat request body."""
+
+    conversation_id: UUID | None = None
+    message: str = Field(min_length=1)
