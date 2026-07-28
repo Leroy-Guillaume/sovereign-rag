@@ -39,6 +39,7 @@ from .llm import get_llm_client
 from .llm.base import LLMClient
 from .routes.chat import router as chat_router
 from .routes.documents import router as documents_router
+from .routes.health import router as health_router
 from .store import get_vector_store
 from .store.base import VectorStore
 
@@ -119,6 +120,7 @@ def create_app(
 
     application.include_router(documents_router)
     application.include_router(chat_router)
+    application.include_router(health_router)
 
     return application
 
