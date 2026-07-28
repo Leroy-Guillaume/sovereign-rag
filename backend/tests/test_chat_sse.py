@@ -329,7 +329,14 @@ async def test_client_disconnect_persists_partial_answer_and_reraises(
 
     consumer = asyncio.create_task(consume())
     await asyncio.wait_for(llm.streaming.wait(), timeout=5)
-    consumer.cancel()
+    # anyio cancel scopes are level-triggered: cancellation is re-delivered at
+    # every await until the task actually ends. Re-cancelling on every loop
+    # tick reproduces that, so an unshielded INSERT in the persistence finally
+    # would itself be cancelled and the audit row lost - this loop is what
+    # makes the test discriminate the shielded fix from the pre-fix code.
+    while not consumer.done():
+        consumer.cancel()
+        await asyncio.sleep(0)
     with pytest.raises(asyncio.CancelledError):
         await consumer
 
