@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* The app is intentionally dark-only: a neutral, professional demo palette. */
+:root {
+  color-scheme: dark;
+}
