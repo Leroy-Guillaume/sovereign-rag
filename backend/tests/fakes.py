@@ -9,7 +9,8 @@ import hashlib
 import math
 import random
 import re
-from collections.abc import AsyncIterator, Sequence
+from collections.abc import AsyncGenerator, AsyncIterator, Sequence
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Any
 from uuid import UUID, uuid4
@@ -238,3 +239,54 @@ class InMemoryVectorStore:
 
     async def healthcheck(self) -> None:
         return None
+
+
+class FakeCursor:
+    """Cursor stand-in: serves the canned rows given to FakePool."""
+
+    def __init__(self, rows: list[tuple[object, ...]]) -> None:
+        self._rows = rows
+
+    async def fetchone(self) -> tuple[object, ...] | None:
+        return self._rows[0] if self._rows else None
+
+    async def fetchall(self) -> list[tuple[object, ...]]:
+        return list(self._rows)
+
+
+class FakeConnection:
+    """Connection stand-in: records executed SQL, answers with a FakeCursor."""
+
+    def __init__(self, rows: list[tuple[object, ...]], executed: list[str]) -> None:
+        self._rows = rows
+        self._executed = executed
+
+    async def execute(self, query: str, params: object = None) -> FakeCursor:
+        self._executed.append(query)
+        return FakeCursor(self._rows)
+
+
+class FakePool:
+    """Minimal AsyncConnectionPool stand-in for pure-unit boot tests.
+
+    Deliberately NOT an AsyncConnectionPool instance: the lifespan in main.py
+    detects that and skips every boot-time database step (migrations,
+    embedding guard, sweep, demo seed), so tests can boot the full app without
+    Postgres. Runtime queries (e.g. the /readyz ``SELECT 1``) succeed and
+    return the canned ``rows``. Inject it into create_app with
+    ``cast(AsyncConnectionPool, FakePool())``.
+    """
+
+    def __init__(self, rows: Sequence[tuple[object, ...]] = ()) -> None:
+        self._rows = list(rows)
+        self.executed: list[str] = []
+
+    @asynccontextmanager
+    async def connection(self) -> AsyncGenerator[FakeConnection]:
+        yield FakeConnection(self._rows, self.executed)
+
+    async def open(self, wait: bool = True, timeout: float = 30.0) -> None:
+        return
+
+    async def close(self) -> None:
+        return

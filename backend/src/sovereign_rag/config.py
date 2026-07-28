@@ -56,6 +56,7 @@ class Settings(BaseSettings):
     max_upload_mb: int = 25
     cors_origins: list[str] = ["http://localhost:5173"]
     seed_demo_data: bool = False  # ingest data/demo/ at boot if documents table empty
+    demo_data_dir: str = "../data/demo"  # demo corpus dir; relative to backend/
 
     @model_validator(mode="after")
     def check_provider_requirements(self) -> "Settings":
