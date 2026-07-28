@@ -1,0 +1,46 @@
+# syntax=docker/dockerfile:1
+
+# ---- Stage 1: resolve dependencies and bake the embedding model ----
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
+
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+
+WORKDIR /app
+
+# Dependency layer: only invalidated when the lockfile changes.
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --extra local --no-install-project
+
+# Project layer: sources and migrations, then install the project itself.
+COPY src ./src
+COPY migrations ./migrations
+RUN uv sync --frozen --no-dev --extra local
+
+# Bake the embedding model into an image layer: no Hugging Face download at
+# runtime, the container starts fully offline (frozen model, see README).
+RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('intfloat/multilingual-e5-small')"
+
+# ---- Stage 2: minimal non-root runtime ----
+FROM python:3.12-slim
+
+RUN useradd --uid 1000 --user-group --create-home app
+
+WORKDIR /app
+COPY --from=builder --chown=app:app /app/.venv ./.venv
+COPY --from=builder --chown=app:app /app/src ./src
+COPY --from=builder --chown=app:app /app/migrations ./migrations
+COPY --from=builder --chown=app:app /opt/hf-cache /opt/hf-cache
+
+ENV HF_HOME=/opt/hf-cache \
+    PATH="/app/.venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
+    CMD ["python", "-m", "sovereign_rag.healthcheck"]
+
+USER app
+
+CMD ["uvicorn", "sovereign_rag.main:app", "--host", "0.0.0.0", "--port", "8000"]
