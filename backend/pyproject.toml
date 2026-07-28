@@ -1,0 +1,62 @@
+[project]
+name = "sovereign-rag"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115", "uvicorn[standard]>=0.32",
+  "pydantic>=2.9", "pydantic-settings>=2.6",
+  "psycopg[binary,pool]>=3.2", "pgvector>=0.3",
+  "openai>=1.55",                      # transport for openai_compat AND azure (NOT an Azure SDK)
+  "httpx>=0.27",                       # transport for the native Ollama adapter + healthcheck
+  "structlog>=24.4",
+  "pypdf>=5.1", "python-docx>=1.1", "python-multipart>=0.0.17",
+]
+
+[project.optional-dependencies]
+local = ["sentence-transformers>=3.2", "torch>=2.2"]   # pulls torch -- see the CPU index below
+azure = ["azure-identity>=1.19"]         # ONLY keyless auth (Entra / managed identity)
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "pytest-cov", "respx>=0.21",
+       "ruff>=0.8", "pyright>=1.1.390"]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true                          # CPU wheels (~200 MB) instead of multi-GB CUDA wheels
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sovereign_rag"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+pythonVersion = "3.12"
+include = ["src", "tests"]
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+markers = [
+  "integration: requires a live Postgres (TEST_DATABASE_URL, default postgresql://rag:rag@localhost:5432/rag_test); skips cleanly when unreachable",
+]
+
+[tool.coverage.run]
+source = ["sovereign_rag"]
