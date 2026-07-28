@@ -5,6 +5,7 @@ mid-stream provider failures and client disconnects: nothing escapes audit.
 """
 
 import asyncio
+import contextlib
 import time
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
@@ -191,9 +192,14 @@ class ChatService:
         finally:
             if generation_ms is None and generation_started is not None:
                 generation_ms = int((time.perf_counter() - generation_started) * 1000)
-            async with self._pool.connection() as conn:
-                await conn.execute(
-                    _INSERT_ASSISTANT_MESSAGE,
+            # Starlette runs this generator under an anyio cancel scope where
+            # cancellation is level-triggered: once the client is gone,
+            # CancelledError is re-delivered at every await, so an unshielded
+            # INSERT could itself be cancelled and the audit row silently lost.
+            # The INSERT runs as a shielded task and is waited out to
+            # completion before the cancellation is allowed to continue.
+            persist = asyncio.get_running_loop().create_task(
+                self._persist_assistant_message(
                     {
                         "id": message_id,
                         "conversation_id": conv_id,
@@ -206,8 +212,28 @@ class ChatService:
                         "retrieval_ms": retrieval_ms,
                         "generation_ms": generation_ms,
                         "error_code": error_code,
-                    },
+                    }
                 )
+            )
+            try:
+                await asyncio.shield(persist)
+            except asyncio.CancelledError:
+                while not persist.done():
+                    with contextlib.suppress(BaseException):
+                        await asyncio.shield(persist)
+                if not persist.cancelled():
+                    exc = persist.exception()
+                    if exc is not None:
+                        logger.error(
+                            "assistant message persistence failed during disconnect",
+                            error=str(exc),
+                        )
+                raise
+
+    async def _persist_assistant_message(self, params: dict[str, Any]) -> None:
+        """Write the assistant audit row; runs shielded inside stream_reply's finally."""
+        async with self._pool.connection() as conn:
+            await conn.execute(_INSERT_ASSISTANT_MESSAGE, params)
 
     async def _resolve_conversation(
         self, user: User, conversation_id: UUID | None, message: str

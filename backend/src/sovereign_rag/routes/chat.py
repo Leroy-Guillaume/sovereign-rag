@@ -9,7 +9,8 @@ proxies and load balancers keep the connection open.
 import asyncio
 import contextlib
 import json
-from collections.abc import AsyncGenerator, AsyncIterator
+from collections.abc import AsyncIterator
+from types import AsyncGeneratorType
 from typing import Any
 from uuid import UUID
 
@@ -94,11 +95,20 @@ async def _sse_body(first: ChatEvent, events: AsyncIterator[ChatEvent]) -> Async
                 return
             yield _format_event(event)
     finally:
-        if task is not None and not task.done():
+        if task is not None:
             task.cancel()
-            with contextlib.suppress(BaseException):
-                await task
-        if isinstance(events, AsyncGenerator):
+            # A bare `await task` would itself be cancelled here (client gone
+            # means the request scope re-delivers CancelledError at every
+            # await), leaving the service generator mid-flight and a later
+            # aclose() raising "aclose(): asynchronous generator is already
+            # running". Shield and re-await until the drain really finished:
+            # the service persistence finally has then run to completion.
+            while not task.done():
+                with contextlib.suppress(BaseException):
+                    await asyncio.shield(task)
+            if not task.cancelled():
+                task.exception()  # retrieved; the service already persisted and reported
+        if isinstance(events, AsyncGeneratorType) and not events.ag_running:
             await events.aclose()
 
 

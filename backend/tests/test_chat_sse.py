@@ -1,8 +1,10 @@
 """SSE chat endpoint tests: event protocol, prompt construction, persistence, isolation."""
 
+import asyncio
 import json
+import logging
 import os
-from collections.abc import Callable
+from collections.abc import AsyncIterator, Callable, Sequence
 from contextlib import AbstractAsyncContextManager
 from typing import Any
 from uuid import UUID, uuid4
@@ -10,10 +12,13 @@ from uuid import UUID, uuid4
 import httpx
 import psycopg
 import pytest
+from psycopg_pool import AsyncConnectionPool
 
 from fakes import FakeEmbedding, FakeLLM, InMemoryVectorStore, make_settings
+from sovereign_rag.auth import User
 from sovereign_rag.chat.prompts import NO_CONTEXT_INSTRUCTION, build_messages, hits_to_sources
-from sovereign_rag.llm.base import ChatMessage
+from sovereign_rag.chat.service import ChatEvent, ChatService
+from sovereign_rag.llm.base import ChatMessage, CompletionChunk
 from sovereign_rag.store.base import ChunkIn, SearchHit
 
 ClientFactory = Callable[..., AbstractAsyncContextManager[httpx.AsyncClient]]
@@ -265,6 +270,80 @@ async def test_conversation_title_is_first_60_chars(api_client: ClientFactory, p
         conversations = (await client.get("/api/conversations", headers=AUTH_ALICE)).json()
         assert len(conversations) == 1
         assert conversations[0]["title"] == message[:60]
+
+
+# --- client disconnect (service-level, deterministic cancellation point) -----------------
+
+
+class GatedLLM:
+    """LLMClient double that yields one delta then parks until cancelled.
+
+    The gate event is never set: the stream suspends on it deterministically,
+    so the test can cancel the consumer exactly mid-generation without sleeps.
+    """
+
+    def __init__(self) -> None:
+        self.model = "fake/gated"
+        self.streaming = asyncio.Event()  # set once the first delta is out
+        self._gate = asyncio.Event()  # never set: cancellation lands here
+
+    def stream_chat(
+        self,
+        messages: Sequence[ChatMessage],
+        *,
+        temperature: float = 0.1,
+        max_tokens: int = 1024,
+    ) -> AsyncIterator[CompletionChunk]:
+        return self._generate()
+
+    async def _generate(self) -> AsyncIterator[CompletionChunk]:
+        yield CompletionChunk(delta="partial ")
+        self.streaming.set()
+        await self._gate.wait()
+        yield CompletionChunk(delta="never sent")  # pragma: no cover - cancelled before this
+
+    async def healthcheck(self) -> None:
+        return None
+
+
+@pytest.mark.integration
+async def test_client_disconnect_persists_partial_answer_and_reraises(
+    pg: AsyncConnectionPool,
+    caplog: pytest.LogCaptureFixture,
+    recwarn: pytest.WarningsRecorder,
+) -> None:
+    llm = GatedLLM()
+    service = ChatService(
+        pool=pg,
+        llm=llm,
+        embedder=FakeEmbedding(),
+        store=InMemoryVectorStore(),
+        settings=make_settings(database_url=TEST_DATABASE_URL),
+    )
+    user = User(id="alice", roles=frozenset())
+    received: list[ChatEvent] = []
+
+    async def consume() -> None:
+        async for event in service.stream_reply(user, None, "What is the nLPD?"):
+            received.append(event)
+
+    consumer = asyncio.create_task(consume())
+    await asyncio.wait_for(llm.streaming.wait(), timeout=5)
+    consumer.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await consumer
+
+    assert [event.type for event in received] == ["start", "sources", "delta"]
+
+    async with pg.connection() as conn:
+        cur = await conn.execute(
+            "SELECT content, error_code FROM messages WHERE role = 'assistant'"
+        )
+        rows = await cur.fetchall()
+    assert rows == [("partial ", "client_disconnect")]
+
+    assert not [w for w in recwarn if issubclass(w.category, RuntimeWarning)]
+    assert not [r for r in caplog.records if r.levelno >= logging.ERROR]
 
 
 @pytest.mark.integration
