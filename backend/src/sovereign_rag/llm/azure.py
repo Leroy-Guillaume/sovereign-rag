@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Sequence
 
+import httpx
 import openai
 from openai.types.chat import ChatCompletionMessageParam
 
@@ -55,6 +56,7 @@ class AzureOpenAILLM:
                 azure_endpoint=endpoint,
                 api_version=settings.azure_openai_api_version,
                 api_key=settings.azure_openai_api_key.get_secret_value(),
+                timeout=120,
             )
         else:
             try:
@@ -69,6 +71,7 @@ class AzureOpenAILLM:
                 azure_endpoint=endpoint,
                 api_version=settings.azure_openai_api_version,
                 azure_ad_token_provider=token_provider,
+                timeout=120,
             )
 
     async def stream_chat(
@@ -99,7 +102,10 @@ class AzureOpenAILLM:
                         prompt_tokens=chunk.usage.prompt_tokens,
                         completion_tokens=chunk.usage.completion_tokens,
                     )
-        except openai.OpenAIError as exc:
+        # Mid-stream transport failures (dropped connection while iterating the
+        # SSE body) surface as raw httpx errors from the SDK's stream iterator,
+        # not as OpenAIError -- catch both so transport details never leak.
+        except (openai.OpenAIError, httpx.HTTPError) as exc:
             raise ProviderError(
                 f"Azure OpenAI deployment '{self.model}' at {self._endpoint} failed: {exc}. "
                 "Check AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY and "
@@ -109,7 +115,7 @@ class AzureOpenAILLM:
     async def healthcheck(self) -> None:
         try:
             await self._client.models.list()
-        except openai.OpenAIError as exc:
+        except (openai.OpenAIError, httpx.HTTPError) as exc:
             raise ProviderError(
                 f"Azure OpenAI endpoint {self._endpoint} is unreachable: {exc}"
             ) from exc

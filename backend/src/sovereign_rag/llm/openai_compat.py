@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Sequence
 
+import httpx
 import openai
 from openai.types.chat import ChatCompletionMessageParam
 
@@ -53,7 +54,7 @@ class OpenAICompatLLM:
             if settings.openai_compat_api_key
             else "not-needed"  # some local servers (vLLM, Ollama) accept any key
         )
-        self._client = openai.AsyncOpenAI(base_url=base_url, api_key=api_key)
+        self._client = openai.AsyncOpenAI(base_url=base_url, api_key=api_key, timeout=120)
 
     async def stream_chat(
         self,
@@ -83,7 +84,10 @@ class OpenAICompatLLM:
                         prompt_tokens=chunk.usage.prompt_tokens,
                         completion_tokens=chunk.usage.completion_tokens,
                     )
-        except openai.OpenAIError as exc:
+        # Mid-stream transport failures (dropped connection while iterating the
+        # SSE body) surface as raw httpx errors from the SDK's stream iterator,
+        # not as OpenAIError -- catch both so transport details never leak.
+        except (openai.OpenAIError, httpx.HTTPError) as exc:
             raise ProviderError(
                 f"OpenAI-compatible endpoint at {self._base_url} failed: {exc}. "
                 "Check OPENAI_COMPAT_BASE_URL, OPENAI_COMPAT_API_KEY and OPENAI_COMPAT_MODEL."
@@ -92,7 +96,7 @@ class OpenAICompatLLM:
     async def healthcheck(self) -> None:
         try:
             await self._client.models.list()
-        except openai.OpenAIError as exc:
+        except (openai.OpenAIError, httpx.HTTPError) as exc:
             raise ProviderError(
                 f"OpenAI-compatible endpoint at {self._base_url} is unreachable: {exc}"
             ) from exc

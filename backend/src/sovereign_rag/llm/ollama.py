@@ -52,7 +52,20 @@ class OllamaLLM:
                 async for line in response.aiter_lines():
                     if not line.strip():
                         continue
-                    data: dict[str, Any] = json.loads(line)
+                    try:
+                        data: dict[str, Any] = json.loads(line)
+                    except json.JSONDecodeError as parse_exc:
+                        raise ProviderError(
+                            f"Received a malformed response line from Ollama at "
+                            f"{self._base_url}: {line[:200]!r}"
+                        ) from parse_exc
+                    if "error" in data:
+                        # Ollama reports mid-generation failures (e.g. a crashed
+                        # runner) as an in-band error line on the HTTP 200 stream.
+                        raise ProviderError(
+                            f"Ollama reported an error mid-stream: {data['error']}. "
+                            f"Check the Ollama server logs at {self._base_url}."
+                        )
                     if data.get("done"):
                         yield CompletionChunk(
                             delta="",

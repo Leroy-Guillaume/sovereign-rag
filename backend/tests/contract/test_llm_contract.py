@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 import re
-from collections.abc import Callable
+from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass
 
 import httpx
@@ -399,3 +399,108 @@ async def test_azure_wire_format_targets_deployment_url() -> None:
     assert request.headers["api-key"] == "azure-key"
     body = json.loads(request.content)
     assert body["stream_options"] == {"include_usage": True}
+
+
+# --- Mid-stream failures: transport drops and malformed payloads after HTTP 200 ---
+
+
+def _ollama_content_line(content: str) -> bytes:
+    line: dict[str, object] = {
+        "model": "qwen3:4b",
+        "message": {"role": "assistant", "content": content},
+        "done": False,
+    }
+    return json.dumps(line).encode() + b"\n"
+
+
+async def test_ollama_malformed_stream_line_raises_provider_error() -> None:
+    body = _ollama_content_line("Hel") + b"{this is not json\n"
+    with respx.mock(assert_all_called=True) as router:
+        router.post(f"{OLLAMA_BASE}/api/chat").mock(
+            return_value=httpx.Response(
+                200, content=body, headers={"content-type": "application/x-ndjson"}
+            )
+        )
+        client = get_llm_client(_ollama_settings())
+        with pytest.raises(ProviderError) as exc_info:
+            async for _ in client.stream_chat(MESSAGES):
+                pass
+
+    message = str(exc_info.value)
+    assert "malformed" in message
+    assert OLLAMA_BASE in message
+
+
+async def test_ollama_in_band_error_line_raises_provider_error() -> None:
+    error_line = json.dumps({"error": "runner process has terminated"}).encode() + b"\n"
+    body = _ollama_content_line("Hel") + error_line
+    with respx.mock(assert_all_called=True) as router:
+        router.post(f"{OLLAMA_BASE}/api/chat").mock(
+            return_value=httpx.Response(
+                200, content=body, headers={"content-type": "application/x-ndjson"}
+            )
+        )
+        client = get_llm_client(_ollama_settings())
+        with pytest.raises(ProviderError) as exc_info:
+            async for _ in client.stream_chat(MESSAGES):
+                pass
+
+    assert "runner process has terminated" in str(exc_info.value)
+
+
+class _DroppingStream(httpx.AsyncByteStream):
+    """Response body that yields one valid SSE chunk, then drops the connection."""
+
+    def __init__(self, first_chunk: bytes) -> None:
+        self._first_chunk = first_chunk
+
+    async def __aiter__(self) -> AsyncIterator[bytes]:
+        yield self._first_chunk
+        raise httpx.ReadError("connection dropped mid-stream")
+
+
+def _sse_first_chunk(model: str) -> bytes:
+    payload: dict[str, object] = {
+        "id": "chatcmpl-test",
+        "object": "chat.completion.chunk",
+        "created": 1700000000,
+        "model": model,
+        "choices": [
+            {
+                "index": 0,
+                "delta": {"role": "assistant", "content": "Hello"},
+                "finish_reason": None,
+            }
+        ],
+    }
+    return b"data: " + json.dumps(payload).encode() + b"\n\n"
+
+
+async def test_openai_compat_mid_stream_disconnect_raises_provider_error() -> None:
+    with respx.mock(assert_all_called=True) as router:
+        router.post(f"{COMPAT_BASE}/chat/completions").mock(
+            return_value=httpx.Response(
+                200,
+                stream=_DroppingStream(_sse_first_chunk("test-model")),
+                headers={"content-type": "text/event-stream"},
+            )
+        )
+        client = get_llm_client(_compat_settings())
+        with pytest.raises(ProviderError):
+            async for _ in client.stream_chat(MESSAGES):
+                pass
+
+
+async def test_azure_mid_stream_disconnect_raises_provider_error() -> None:
+    with respx.mock(assert_all_called=True) as router:
+        router.post(url__regex=AZURE_CHAT_RE).mock(
+            return_value=httpx.Response(
+                200,
+                stream=_DroppingStream(_sse_first_chunk(AZURE_DEPLOYMENT)),
+                headers={"content-type": "text/event-stream"},
+            )
+        )
+        client = get_llm_client(_azure_settings())
+        with pytest.raises(ProviderError):
+            async for _ in client.stream_chat(MESSAGES):
+                pass
