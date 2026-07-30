@@ -5,10 +5,13 @@
 Prerequisites: Python 3.12, [uv](https://docs.astral.sh/uv/), Node 22, Docker with Compose v2.
 
 ```bash
-# backend dependencies (dev group included by default; the local extra pulls
-# sentence-transformers and torch as CPU-only wheels via the pytorch-cpu index)
+# environment file first — compose refuses to load the project without it
+cp .env.example .env
+
+# backend dependencies (dev group included by default; torch comes as CPU-only
+# wheels via the pytorch-cpu index; --all-extras so pyright can resolve the azure adapters)
 cd backend
-uv sync --extra local
+uv sync --all-extras
 
 # frontend dependencies
 cd ../frontend
@@ -46,6 +49,7 @@ database is unreachable. To run them, point `TEST_DATABASE_URL` at a scratch dat
 (default: `postgresql://rag:rag@localhost:5432/rag_test`):
 
 ```bash
+docker compose exec postgres createdb -U rag rag_test   # first run only
 export TEST_DATABASE_URL=postgresql://rag:rag@localhost:5432/rag_test
 uv run pytest -m integration
 ```
