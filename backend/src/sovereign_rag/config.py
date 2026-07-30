@@ -15,6 +15,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="forbid")
 
+    # consumed by docker compose, not the app; declared so `cp .env.example .env`
+    # works from any cwd
+    compose_profiles: str = "ollama"
+
     app_env: Literal["dev", "prod"] = "dev"
     log_level: str = "INFO"
     database_url: str = "postgresql://rag:rag@localhost:5432/rag"
@@ -22,7 +26,7 @@ class Settings(BaseSettings):
     # --- LLM ---
     llm_provider: Literal["ollama", "azure_openai", "openai_compatible"] = "ollama"
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "qwen3:4b"
+    ollama_model: str = "qwen3:4b-instruct"
     ollama_keep_alive: str = "10m"  # keeps the model warm between questions
     ollama_think: bool = False  # native API flag - disables qwen3 <think> blocks
     openai_compat_base_url: str | None = None  # vLLM, Infomaniak AI Tools, Mistral...

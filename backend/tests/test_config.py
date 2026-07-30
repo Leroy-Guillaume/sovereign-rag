@@ -36,7 +36,7 @@ def test_defaults_load_with_empty_env() -> None:
     assert settings.database_url == "postgresql://rag:rag@localhost:5432/rag"
     assert settings.llm_provider == "ollama"
     assert settings.ollama_base_url == "http://localhost:11434"
-    assert settings.ollama_model == "qwen3:4b"
+    assert settings.ollama_model == "qwen3:4b-instruct"
     assert settings.ollama_keep_alive == "10m"
     assert settings.ollama_think is False
     assert settings.azure_openai_api_version == "2024-10-21"

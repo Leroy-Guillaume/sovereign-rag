@@ -1,0 +1,6 @@
+* text=auto
+*.pdf binary
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf
+.env.example text eol=lf

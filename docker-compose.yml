@@ -1,0 +1,75 @@
+# Local demo stack: cp .env.example .env && docker compose up -d --build
+#
+# Compose profiles: the two ollama services below belong to the "ollama"
+# profile. COMPOSE_PROFILES=ollama is set in .env.example, so the default demo
+# starts them automatically. To use an external LLM instead (openai_compatible
+# or azure_openai), clear COMPOSE_PROFILES in your .env and set LLM_PROVIDER
+# accordingly: both ollama services are then skipped entirely.
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: rag
+      POSTGRES_DB: rag
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag -d rag"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      # In-network hostnames override the localhost defaults from .env.
+      DATABASE_URL: postgresql://rag:rag@postgres:5432/rag
+      OLLAMA_BASE_URL: http://ollama:11434
+      DEMO_DATA_DIR: /app/data/demo
+    volumes:
+      - ./data/demo:/app/data/demo:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+
+  ollama:
+    profiles: ["ollama"]
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_models:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  ollama-pull:
+    profiles: ["ollama"]
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["ollama", "pull", "qwen3:4b-instruct"]
+    restart: "no"
+
+volumes:
+  pgdata:
+  ollama_models:

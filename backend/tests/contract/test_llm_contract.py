@@ -330,9 +330,9 @@ async def test_ollama_wire_format_pins_native_api_and_disables_think() -> None:
         text, _, _ = await collect(client.stream_chat(MESSAGES, temperature=0.2, max_tokens=64))
 
     assert text == "Hello world"
-    assert client.model == "qwen3:4b"
+    assert client.model == "qwen3:4b-instruct"
     body = json.loads(route.calls.last.request.content)
-    assert body["model"] == "qwen3:4b"
+    assert body["model"] == "qwen3:4b-instruct"
     assert body["stream"] is True
     assert body["think"] is False  # keeps qwen3 <think> blocks out of the stream
     assert body["keep_alive"] == "10m"
