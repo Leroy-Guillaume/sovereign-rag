@@ -33,6 +33,7 @@ COPY --from=builder --chown=app:app /app/migrations ./migrations
 COPY --from=builder --chown=app:app /opt/hf-cache /opt/hf-cache
 
 ENV HF_HOME=/opt/hf-cache \
+    HF_HUB_OFFLINE=1 \
     PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1
 
