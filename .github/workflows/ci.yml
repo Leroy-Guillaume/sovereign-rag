@@ -1,0 +1,200 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync --frozen
+      - name: Ruff lint
+        working-directory: backend
+        run: uv run ruff check .
+      - name: Ruff format check
+        working-directory: backend
+        run: uv run ruff format --check .
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: ESLint
+        working-directory: frontend
+        run: npm run lint
+
+  typecheck:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install backend dependencies (all extras so pyright can resolve every adapter)
+        working-directory: backend
+        run: uv sync --frozen --all-extras
+      - name: Pyright (strict)
+        working-directory: backend
+        run: uv run pyright
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: TypeScript check
+        working-directory: frontend
+        run: npm run typecheck
+
+  test:
+    needs: typecheck
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: rag
+          POSTGRES_PASSWORD: rag
+          POSTGRES_DB: rag_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://rag:rag@localhost:5432/rag_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install backend dependencies
+        working-directory: backend
+        run: uv sync --frozen --extra local
+      - name: Pytest (all tests, integration included) with coverage gate
+        working-directory: backend
+        run: uv run pytest --cov=sovereign_rag --cov-fail-under=80 -m ""
+
+  core-no-azure:
+    needs: typecheck
+    runs-on: ubuntu-latest
+    env:
+      LLM_PROVIDER: openai_compatible
+      OPENAI_COMPAT_BASE_URL: http://fake:8001/v1
+      OPENAI_COMPAT_MODEL: fake
+      EMBEDDING_PROVIDER: azure_openai
+      AZURE_OPENAI_ENDPOINT: https://fake.example
+      AZURE_OPENAI_EMBEDDING_DEPLOYMENT: fake
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install core profile (no extras)
+        working-directory: backend
+        run: uv sync --frozen
+      - name: Boot create_app under the core profile and assert no azure module loads
+        working-directory: backend
+        run: |
+          uv run python - <<'PY'
+          import sys
+
+          from sovereign_rag.config import Settings
+          from sovereign_rag.main import create_app
+
+          create_app(Settings(_env_file=None))
+          loaded = [m for m in sys.modules if m == "azure" or m.startswith("azure.")]
+          assert not loaded, f"azure modules loaded in core profile: {loaded}"
+          print("core profile OK: create_app() ran without loading any azure module")
+          PY
+
+  build:
+    needs: [test, core-no-azure]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          push: false
+          load: true
+          tags: sovereign-rag-api:ci
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+      - name: Build frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          push: false
+          load: true
+          tags: sovereign-rag-frontend:ci
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+      - name: Trivy scan backend image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: sovereign-rag-api:ci
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+      - name: Trivy scan frontend image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: sovereign-rag-frontend:ci
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+
+  terraform:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No terraform yet (Phase 4) — pass as no-op
+        if: hashFiles('deploy/azure/**/*.tf') == ''
+        run: echo "deploy/azure contains no .tf files yet; skipping terraform checks"
+      - uses: hashicorp/setup-terraform@v3
+        if: hashFiles('deploy/azure/**/*.tf') != ''
+      - name: Terraform fmt
+        if: hashFiles('deploy/azure/**/*.tf') != ''
+        run: terraform fmt -check -recursive deploy/azure
+      - name: Terraform validate
+        if: hashFiles('deploy/azure/**/*.tf') != ''
+        run: |
+          terraform -chdir=deploy/azure init -backend=false
+          terraform -chdir=deploy/azure validate
