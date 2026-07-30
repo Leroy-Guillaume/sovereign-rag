@@ -23,7 +23,7 @@ class LLMClient(Protocol):
     chunk carrying token counts when the provider reports them. Network/provider
     failures raise ProviderError (httpx/openai exceptions never leak)."""
 
-    model: str  # e.g. "qwen3:4b" -- persisted as "{provider}/{model}"
+    model: str  # e.g. "qwen3:4b-instruct" -- persisted as "{provider}/{model}"
 
     def stream_chat(
         self,

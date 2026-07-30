@@ -10,7 +10,7 @@ Adding a provider (see CONTRIBUTING.md, "add an LLM provider in 30 minutes"):
    non-exhaustive.
 2. Write the adapter (``openai_compat.py`` is the commented model, ~80 lines).
 3. Add the factory branch below.
-4. Append a factory to ``CLIENT_FACTORIES`` in
+4. Append a case to ``CASES`` in
    ``tests/contract/test_llm_contract.py`` -- the contract suite runs
    automatically against the new implementation.
 """

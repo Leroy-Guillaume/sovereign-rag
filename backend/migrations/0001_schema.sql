@@ -63,7 +63,7 @@ CREATE TABLE messages (
     sources           jsonb       NOT NULL DEFAULT '[]',
     -- audit snapshot, survives document deletion (LIPAD traceability):
     -- [{chunk_id, document_id, filename, section, page, excerpt, score, vec_rank, fts_rank}]
-    model             text,                   -- assistant messages: "ollama/qwen3:4b"
+    model             text,                   -- assistant messages: "ollama/qwen3:4b-instruct"
     prompt_tokens     integer,
     completion_tokens integer,
     retrieval_ms      integer,                -- typed columns: P2 dashboard p50/p95 = trivial SQL
