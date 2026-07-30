@@ -16,7 +16,8 @@ document claims a feature that the code does not have today.
 Ollama, embeddings are computed by a sentence-transformers model inside the API container, and
 all data (documents, chunks, vectors, conversations) lives in your PostgreSQL instance. After
 the one-time Ollama model pull — the embedding weights are already baked into the API image at
-build time — the application makes no outbound network call in this profile. This is the
+build time — the application makes no outbound network call in this profile (the image sets
+`HF_HUB_OFFLINE=1`, so not even a model-freshness check leaves the container). This is the
 profile to choose when documents or prompts must never leave your infrastructure.
 
 **OpenAI-compatible profile** (`LLM_PROVIDER=openai_compatible`). The LLM is any endpoint that
@@ -43,7 +44,7 @@ The same information is annotated variable-by-variable in `.env.example`
 
 | Data | Local profile | OpenAI-compatible profile | Azure profile |
 |---|---|---|---|
-| User prompts | Stored in your PostgreSQL; processed by Ollama on your host. **Never leaves your infrastructure.** | Stored in your PostgreSQL. The prompt and the retrieved passages transit to the endpoint you configured — you choose the operator and the jurisdiction. | Stored in your PostgreSQL. Prompt and retrieved passages are sent to Azure OpenAI in your selected region; Microsoft does not train models on your data ([commitment](https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy)). |
+| User prompts | Stored in your PostgreSQL; processed by Ollama on your host. **Never leaves your infrastructure.** | Stored in your PostgreSQL. The prompt and the retrieved passages transit to the endpoint you configured — you choose the operator and the jurisdiction. | Stored in your PostgreSQL. Prompt and retrieved passages are sent to Azure OpenAI in your selected region (use a regional, non-global deployment type); Microsoft does not train models on your data ([commitment](https://learn.microsoft.com/en-us/legal/cognitive-services/openai/data-privacy)). |
 | Uploaded documents and chunks | Your PostgreSQL only. Never leaves your host. | Your PostgreSQL. Full documents never leave; only the passages retrieved for a given question are embedded in prompts sent to the endpoint. | Your PostgreSQL. Same: only retrieved passages leave, inside prompts to Azure OpenAI in your region. |
 | Embedding vectors | Computed inside the API container (CPU); stored in your PostgreSQL. No third party. | Computed locally by default (`EMBEDDING_PROVIDER=local`); stored in your PostgreSQL. Nothing transits for indexing. | With `EMBEDDING_PROVIDER=azure_openai`, chunk and query text transit to your Azure embeddings deployment; the resulting vectors are stored in your PostgreSQL. |
 | LLM inference | Ollama on your host. No third party. | At the endpoint you configured; its operator sees prompts and produces completions under your contract with them. | Azure OpenAI in the region you selected, processed by Microsoft under Azure data-processing terms. |
@@ -53,8 +54,8 @@ The same information is annotated variable-by-variable in `.env.example`
 
 ## 3. ISO/IEC 27001:2022 Annex A mapping
 
-The control names below are our own short descriptions of each control's theme; this document
-quotes no text from the standard.
+Control references use the standard's publicly available control titles; no text from the body
+of the standard is reproduced.
 
 | Control | Theme | How sovereign-rag addresses it | Status |
 |---|---|---|---|
@@ -63,10 +64,10 @@ quotes no text from the standard.
 | A.5.28 | Collection of evidence | Every assistant message persists an immutable snapshot of the sources shown to the user (filename, section/page, excerpt, score, per-leg ranks) that **survives document deletion**, plus a `request_id` correlation key. Persistence runs in a `finally` block shielded from cancellation, so the audit row lands on every exit path — success, provider failure, even a client disconnect mid-answer (`error_code` records the cause). A dedicated append-only `audit_log` table is scheduled. | Implemented (Phase 1); audit_log Roadmap (Phase 2) |
 | A.8.9 | Configuration management | `.env` is the single source of runtime configuration; a CI-enforced test (`backend/tests/test_env_example.py`) asserts `.env.example` covers every `Settings` field, so documentation cannot drift from code. Embedding model and dimensions are frozen: a boot-time check against the `embedding_config` table refuses to start on mismatch, preventing silent index invalidation. | Implemented (Phase 1) |
 | A.8.12 | Data leakage prevention | The local profile is structural DLP: no outbound data path exists. Every provider block in `.env.example` is annotated `# data leaves your infra: yes/no`. A `redact()` seam already exists in the prompt builder for PII redaction (Presidio). | Implemented (Phase 1, structural); PII redaction Roadmap (Phase 2) |
-| A.8.15 | Logging | Structured logging (structlog); a per-request `request_id` is generated by middleware, bound to every log line, and persisted with each message for end-to-end correlation. Exportable audit trail. | Implemented (Phase 1); export Roadmap (Phase 2) |
+| A.8.15 | Logging | Structured logging (structlog); a per-request `request_id` is generated by middleware, bound to every log line, and persisted with each message for end-to-end correlation. Consolidated export is scheduled (Phase 2). | Implemented (Phase 1); export Roadmap (Phase 2) |
 | A.8.16 | Monitoring activities | `/healthz` (liveness, no dependencies) and `/readyz` (database ping + LLM and embeddings healthchecks, cached 10 s); Docker HEALTHCHECKs on every service. Metrics dashboard built on the typed per-message columns. | Implemented (Phase 1); dashboard Roadmap (Phase 2) |
 | A.8.24 | Use of cryptography | Operator guidance: terminate TLS at your reverse proxy or ingress in front of the frontend/API; encrypt PostgreSQL at rest via platform disk encryption (LUKS, cloud-managed keys). In the application: API keys are compared in constant time (`secrets.compare_digest`, iterating every configured key with no early exit); no secret is ever committed or logged. | Implemented (Phase 1) + operator guidance |
-| A.8.25–A.8.31 | Secure development lifecycle | CI gates on every push: ruff lint and format check, pyright strict type checking, test coverage ≥ 80 %, integration tests against a real PostgreSQL service container, a Trivy scan of both images failing on CRITICAL/HIGH findings, a dedicated job proving the core installs and boots without Azure SDKs, multi-stage non-root images, and **zero cloud secrets in the pipeline** (all providers are faked in tests). | Implemented (Phase 1) |
+| A.8.25–A.8.31 | Secure development lifecycle | CI gates on every push to main and every pull request: ruff lint and format check, pyright strict type checking, test coverage ≥ 80 %, integration tests against a real PostgreSQL service container, a Trivy scan of both images failing on CRITICAL/HIGH findings, a dedicated job proving the core installs and boots without Azure SDKs, multi-stage non-root images, and **zero cloud secrets in the pipeline** (all providers are faked in tests). | Implemented (Phase 1) |
 
 **Note on Row-Level Security.** Phase 2 access control is enforced as an explicit SQL predicate
 applied inside each retrieval leg — visible, unit-testable with two-principal leakage tests, and

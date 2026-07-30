@@ -290,9 +290,9 @@ the production evolution path once the system goes multi-instance.
   in pure Python that doubles as the second executable of the store contract suite. Fakes have
   behavior, so tests assert outcomes instead of call sequences.
 - **Real PostgreSQL in CI.** Every SQL query is exercised against a real
-  `pgvector/pgvector:pg16` database (`TEST_DATABASE_URL`) — a service container on every CI
-  push. Integration tests are marked and skip cleanly when no database is reachable, so the
-  default local run stays fast.
+  `pgvector/pgvector:pg16` database (`TEST_DATABASE_URL`) — a service container on every push
+  to main and every pull request. Integration tests are marked and skip cleanly when no
+  database is reachable, so the default local run stays fast.
 - **The no-azure-in-core proof, twice.** (1) A test asserts that under the default profile no
   `azure*` module is present in `sys.modules`. (2) A dedicated CI job (`core-no-azure`) installs
   the project with *no extras*, actually boots `create_app()` under a profile that exercises the
