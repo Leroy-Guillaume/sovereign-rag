@@ -31,6 +31,14 @@ cd ../frontend
 npm run dev
 ```
 
+Note on env resolution: `Settings` resolves its `.env` file against the current
+working directory, so uvicorn started from `backend/` does **not** read the
+repo-root `.env`. Without a `backend/.env` the dev API falls back to the
+built-in dev defaults: the `dev-only-key` API key and the
+`localhost:5432` `DATABASE_URL`. If you want the repo-root values (for example
+the `sk-demo` keys or a custom `POSTGRES_HOST_PORT`), copy or link the file
+into `backend/`: `cp .env backend/.env`.
+
 ## Quality gates
 
 Every PR must pass all of these locally — CI runs the same commands.
