@@ -19,7 +19,7 @@ from fastapi.responses import StreamingResponse
 
 from ..auth import CurrentUser
 from ..chat.service import ChatEvent, ChatService
-from ..schemas import ChatRequest
+from ..schemas import ChatRequest, ConversationDetail, ConversationOut, MessageOut
 
 router = APIRouter()
 
@@ -127,18 +127,18 @@ async def post_chat(request: Request, body: ChatRequest, user: CurrentUser) -> S
     )
 
 
-@router.get("/api/conversations")
-async def list_conversations(request: Request, user: CurrentUser) -> list[dict[str, Any]]:
+@router.get("/api/conversations", response_model=list[ConversationOut])
+async def list_conversations(request: Request, user: CurrentUser) -> list[ConversationOut]:
     async with request.app.state.pool.connection() as conn:
         cur = await conn.execute(_SELECT_CONVERSATIONS, {"user_id": user.id})
         rows = await cur.fetchall()
-    return [{"id": str(row[0]), "title": row[1], "created_at": row[2].isoformat()} for row in rows]
+    return [ConversationOut(id=row[0], title=row[1], created_at=row[2]) for row in rows]
 
 
-@router.get("/api/conversations/{conversation_id}")
+@router.get("/api/conversations/{conversation_id}", response_model=ConversationDetail)
 async def get_conversation(
     conversation_id: UUID, request: Request, user: CurrentUser
-) -> dict[str, Any]:
+) -> ConversationDetail:
     async with request.app.state.pool.connection() as conn:
         cur = await conn.execute(_SELECT_CONVERSATION, {"id": conversation_id, "user_id": user.id})
         conversation = await cur.fetchone()
@@ -147,22 +147,24 @@ async def get_conversation(
             raise HTTPException(status_code=404, detail="Conversation not found")
         cur = await conn.execute(_SELECT_MESSAGES, {"conversation_id": conversation_id})
         rows = await cur.fetchall()
-    return {
-        "id": str(conversation[0]),
-        "title": conversation[1],
-        "created_at": conversation[2].isoformat(),
-        "messages": [
-            {
-                "id": str(row[0]),
-                "role": row[1],
-                "content": row[2],
-                "sources": row[3],
-                "model": row[4],
-                "created_at": row[5].isoformat(),
-            }
+    return ConversationDetail(
+        id=conversation[0],
+        title=conversation[1],
+        created_at=conversation[2],
+        messages=[
+            # sources is the persisted jsonb snapshot: SourceOut-shaped dicts with
+            # UUIDs as strings, which pydantic coerces back to UUID on validation.
+            MessageOut(
+                id=row[0],
+                role=row[1],
+                content=row[2],
+                sources=row[3],
+                model=row[4],
+                created_at=row[5],
+            )
             for row in rows
         ],
-    }
+    )
 
 
 @router.get("/api/me")
