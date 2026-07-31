@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     # consumed by docker compose, not the app; declared so `cp .env.example .env`
     # works from any cwd
     compose_profiles: str = "ollama"
+    # consumed by docker compose, not the app; host port its postgres binds to
+    postgres_host_port: int = 5432
 
     app_env: Literal["dev", "prod"] = "dev"
     log_level: str = "INFO"
