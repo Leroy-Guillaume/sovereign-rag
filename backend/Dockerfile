@@ -12,14 +12,15 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --extra local --no-install-project
 
+# Bake the embedding model into an image layer: no Hugging Face download at
+# runtime, the container starts fully offline (frozen model, see README).
+# Placed before the source COPY so editing src/ never re-downloads the weights.
+RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('intfloat/multilingual-e5-small')"
+
 # Project layer: sources and migrations, then install the project itself.
 COPY src ./src
 COPY migrations ./migrations
 RUN uv sync --frozen --no-dev --extra local
-
-# Bake the embedding model into an image layer: no Hugging Face download at
-# runtime, the container starts fully offline (frozen model, see README).
-RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('intfloat/multilingual-e5-small')"
 
 # ---- Stage 2: minimal non-root runtime ----
 FROM python:3.12-slim
