@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router";
 import { ApiError, deleteDocument, listDocuments, me, uploadDocument } from "../api";
 import type { AppOutletContext } from "../App";
 import type { DocumentOut } from "../types";
