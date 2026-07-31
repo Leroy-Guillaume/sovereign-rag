@@ -86,8 +86,10 @@ class OpenAICompatLLM:
                     )
         # Mid-stream transport failures (dropped connection while iterating the
         # SSE body) surface as raw httpx errors from the SDK's stream iterator,
-        # not as OpenAIError -- catch both so transport details never leak.
-        except (openai.OpenAIError, httpx.HTTPError) as exc:
+        # not as OpenAIError; malformed SSE JSON on a 200 stream raises
+        # json.JSONDecodeError (a ValueError) from the SDK's sse.json() --
+        # catch all three so provider details never leak.
+        except (openai.OpenAIError, httpx.HTTPError, ValueError) as exc:
             raise ProviderError(
                 f"OpenAI-compatible endpoint at {self._base_url} failed: {exc}. "
                 "Check OPENAI_COMPAT_BASE_URL, OPENAI_COMPAT_API_KEY and OPENAI_COMPAT_MODEL."

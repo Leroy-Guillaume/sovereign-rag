@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import AsyncIterator, Sequence
-from typing import Any
+from typing import Any, cast
 
 import httpx
 
@@ -53,12 +53,20 @@ class OllamaLLM:
                     if not line.strip():
                         continue
                     try:
-                        data: dict[str, Any] = json.loads(line)
+                        parsed: Any = json.loads(line)
                     except json.JSONDecodeError as parse_exc:
                         raise ProviderError(
                             f"Received a malformed response line from Ollama at "
                             f"{self._base_url}: {line[:200]!r}"
                         ) from parse_exc
+                    if not isinstance(parsed, dict):
+                        # Valid JSON but not an object: reject it here instead of
+                        # crashing on the dict lookups below.
+                        raise ProviderError(
+                            f"Received a non-object response line from Ollama at "
+                            f"{self._base_url}: {line[:200]!r}"
+                        )
+                    data = cast(dict[str, Any], parsed)
                     if "error" in data:
                         # Ollama reports mid-generation failures (e.g. a crashed
                         # runner) as an in-band error line on the HTTP 200 stream.

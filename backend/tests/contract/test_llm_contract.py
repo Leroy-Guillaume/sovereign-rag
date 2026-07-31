@@ -431,6 +431,26 @@ async def test_ollama_malformed_stream_line_raises_provider_error() -> None:
     assert OLLAMA_BASE in message
 
 
+async def test_ollama_non_object_stream_line_raises_provider_error() -> None:
+    # Valid JSON that is not an object: the adapter must reject it, not crash
+    # on a dict lookup, and must keep the ProviderError contract.
+    body = _ollama_content_line("Hel") + b"42\n"
+    with respx.mock(assert_all_called=True) as router:
+        router.post(f"{OLLAMA_BASE}/api/chat").mock(
+            return_value=httpx.Response(
+                200, content=body, headers={"content-type": "application/x-ndjson"}
+            )
+        )
+        client = get_llm_client(_ollama_settings())
+        with pytest.raises(ProviderError) as exc_info:
+            async for _ in client.stream_chat(MESSAGES):
+                pass
+
+    message = str(exc_info.value)
+    assert "non-object" in message
+    assert OLLAMA_BASE in message
+
+
 async def test_ollama_in_band_error_line_raises_provider_error() -> None:
     error_line = json.dumps({"error": "runner process has terminated"}).encode() + b"\n"
     body = _ollama_content_line("Hel") + error_line
@@ -497,6 +517,41 @@ async def test_azure_mid_stream_disconnect_raises_provider_error() -> None:
             return_value=httpx.Response(
                 200,
                 stream=_DroppingStream(_sse_first_chunk(AZURE_DEPLOYMENT)),
+                headers={"content-type": "text/event-stream"},
+            )
+        )
+        client = get_llm_client(_azure_settings())
+        with pytest.raises(ProviderError):
+            async for _ in client.stream_chat(MESSAGES):
+                pass
+
+
+def _sse_malformed_json_body(model: str) -> bytes:
+    """A valid first SSE chunk followed by a data line that is not valid JSON."""
+    return _sse_first_chunk(model) + b"data: {garbage\n\n"
+
+
+async def test_openai_compat_malformed_sse_json_raises_provider_error() -> None:
+    with respx.mock(assert_all_called=True) as router:
+        router.post(f"{COMPAT_BASE}/chat/completions").mock(
+            return_value=httpx.Response(
+                200,
+                content=_sse_malformed_json_body("test-model"),
+                headers={"content-type": "text/event-stream"},
+            )
+        )
+        client = get_llm_client(_compat_settings())
+        with pytest.raises(ProviderError):
+            async for _ in client.stream_chat(MESSAGES):
+                pass
+
+
+async def test_azure_malformed_sse_json_raises_provider_error() -> None:
+    with respx.mock(assert_all_called=True) as router:
+        router.post(url__regex=AZURE_CHAT_RE).mock(
+            return_value=httpx.Response(
+                200,
+                content=_sse_malformed_json_body(AZURE_DEPLOYMENT),
                 headers={"content-type": "text/event-stream"},
             )
         )

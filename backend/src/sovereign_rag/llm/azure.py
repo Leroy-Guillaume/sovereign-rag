@@ -104,8 +104,10 @@ class AzureOpenAILLM:
                     )
         # Mid-stream transport failures (dropped connection while iterating the
         # SSE body) surface as raw httpx errors from the SDK's stream iterator,
-        # not as OpenAIError -- catch both so transport details never leak.
-        except (openai.OpenAIError, httpx.HTTPError) as exc:
+        # not as OpenAIError; malformed SSE JSON on a 200 stream raises
+        # json.JSONDecodeError (a ValueError) from the SDK's sse.json() --
+        # catch all three so provider details never leak.
+        except (openai.OpenAIError, httpx.HTTPError, ValueError) as exc:
             raise ProviderError(
                 f"Azure OpenAI deployment '{self.model}' at {self._endpoint} failed: {exc}. "
                 "Check AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY and "
