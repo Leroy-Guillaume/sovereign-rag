@@ -224,6 +224,10 @@ def create_app(
                 demo_dir = _resolve_demo_dir(app_settings)
                 logger.info("seeding demo corpus", demo_dir=str(demo_dir))
                 await ingestion.seed_demo(demo_dir)
+            if _is_real_pool(active_pool):
+                # Rebuild the term-frequency snapshot the hybrid query filters
+                # with; a corpus ingested by a previous run left it stale.
+                await ingestion.refresh_lexeme_stats()
         except BaseException:
             # A failed boot must not leak the pool it created.
             if owns_pool:

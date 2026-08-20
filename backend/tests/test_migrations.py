@@ -56,7 +56,7 @@ async def test_apply_migrations_twice_is_idempotent(
     async with migrated_pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:
         await cur.execute("SELECT filename FROM schema_migrations ORDER BY filename")
         rows = await cur.fetchall()
-    assert [row["filename"] for row in rows] == ["0001_schema.sql"]
+    assert [row["filename"] for row in rows] == ["0001_schema.sql", "0002_lexeme_df.sql"]
 
 
 async def test_vector_extension_installed(migrated_pool: AsyncConnectionPool) -> None:

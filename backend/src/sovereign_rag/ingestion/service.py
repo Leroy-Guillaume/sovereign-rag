@@ -51,6 +51,11 @@ RETURNING id, filename, content_type, size_bytes, status, error, owner_id, creat
 _MARK_READY = "UPDATE documents SET status = 'ready', meta = %(meta)s WHERE id = %(id)s"
 _MARK_FAILED = "UPDATE documents SET status = 'failed', error = %(error)s WHERE id = %(id)s"
 
+# CONCURRENTLY: readers of the hybrid query never block on the refresh. It
+# cannot run inside a transaction block, hence the autocommit connection in
+# refresh_lexeme_stats().
+_REFRESH_LEXEME_DF = "REFRESH MATERIALIZED VIEW CONCURRENTLY lexeme_df"
+
 
 class IngestionService:
     """Coordinates extraction, chunking, embedding and storage for uploads."""
@@ -136,10 +141,26 @@ class IngestionService:
             await self._store.add_chunks(document_id, chunks)
             async with self._pool.connection() as conn:
                 await conn.execute(_MARK_READY, {"id": document_id, "meta": Jsonb(extracted.meta)})
+            await self.refresh_lexeme_stats()
         except Exception as exc:
             log.warning("ingestion_failed", document_id=str(document_id), error=str(exc))
             async with self._pool.connection() as conn:
                 await conn.execute(_MARK_FAILED, {"id": document_id, "error": str(exc)[:500]})
+
+    async def refresh_lexeme_stats(self) -> None:
+        """Refresh the lexeme_df document-frequency snapshot used by hybrid search.
+
+        Best-effort by design: retrieval degrades gracefully on stale (or
+        empty) statistics, so a failed refresh must never fail an ingestion
+        or a boot. Called after each successful ingestion and from the boot
+        sequence.
+        """
+        try:
+            async with self._pool.connection() as conn:
+                await conn.set_autocommit(True)
+                await conn.execute(_REFRESH_LEXEME_DF)
+        except Exception as exc:
+            log.warning("lexeme_stats_refresh_failed", error=str(exc))
 
     async def wait_idle(self) -> None:
         """Wait for every in-flight ingestion task (used by tests and the demo seed)."""

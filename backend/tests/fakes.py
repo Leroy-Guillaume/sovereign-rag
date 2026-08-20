@@ -19,6 +19,7 @@ from sovereign_rag.config import Settings
 from sovereign_rag.errors import ProviderError
 from sovereign_rag.llm.base import ChatMessage, CompletionChunk
 from sovereign_rag.store.base import ChunkIn, SearchHit
+from sovereign_rag.store.pgvector import QUERY_STOPLIST
 
 
 def make_settings(**overrides: Any) -> Settings:
@@ -116,7 +117,49 @@ class FakeEmbedding:
 
 _CANDIDATES_PER_LEG = 40  # matches Settings.retrieval_candidates default
 _RRF_K = 60  # matches Settings.rrf_k default
+_WEIGHT_FTS = 1.0  # matches Settings.rrf_weight_fts default
+_PER_DOCUMENT_CAP = 3  # matches Settings.fusion_per_document_cap default
 _WORD_RE = re.compile(r"[a-z0-9]+")
+
+# Minimal stand-in for the store's term selection: the query stoplist plus a
+# small multilingual stopword set (the real store derives stopwords from the
+# three Postgres configs and a corpus frequency band; the fake only needs the
+# same *shape*: informative terms, strict pass first, relaxed fallback).
+_FAKE_STOPWORDS = frozenset(
+    [
+        *QUERY_STOPLIST,
+        "le",
+        "la",
+        "les",
+        "des",
+        "de",
+        "du",
+        "un",
+        "une",
+        "est",
+        "sont",
+        "et",
+        "the",
+        "an",
+        "is",
+        "are",
+        "of",
+        "for",
+        "and",
+        "to",
+        "in",
+        "der",
+        "die",
+        "das",
+        "und",
+        "ist",
+        "sind",
+        "den",
+        "dem",
+        "ein",
+        "eine",
+    ]
+)
 
 
 def _cosine(a: Sequence[float], b: Sequence[float]) -> float:
@@ -143,9 +186,11 @@ class _StoredChunk:
 class InMemoryVectorStore:
     """Pure-Python VectorStore double mirroring PgVectorStore's RRF fusion.
 
-    Vector leg: cosine similarity. FTS leg: naive keyword matching ranked by
-    total query-term frequency. Each leg keeps its top 40 candidates; fusion
-    is reciprocal rank fusion with rrf_k=60, like the SQL in store/pgvector.py.
+    Vector leg: cosine similarity. FTS leg: the same shape as the SQL store's
+    lexical leg -- informative query terms only, a strict pass requiring every
+    term, and a relaxed any-term fallback when the strict pass is empty. Each
+    leg keeps its top 40 candidates; fusion is weighted reciprocal rank fusion
+    with rrf_k=60 and a per-document cap, like the SQL in store/pgvector.py.
 
     filenames: optional document_id -> filename mapping used to fill
     SearchHit.filename (add_chunks never sees filenames); defaults to
@@ -193,9 +238,18 @@ class InMemoryVectorStore:
             if vec_rank is not None:
                 score += 1.0 / (_RRF_K + vec_rank)
             if fts_rank is not None:
-                score += 1.0 / (_RRF_K + fts_rank)
+                score += _WEIGHT_FTS / (_RRF_K + fts_rank)
             fused.append((score, chunk, vec_rank, fts_rank))
         fused.sort(key=lambda item: (-item[0], item[1].order))
+        if _PER_DOCUMENT_CAP > 0:
+            kept: list[tuple[float, _StoredChunk, int | None, int | None]] = []
+            per_doc: dict[UUID, int] = {}
+            for item in fused:
+                seen = per_doc.get(item[1].document_id, 0)
+                if seen < _PER_DOCUMENT_CAP:
+                    per_doc[item[1].document_id] = seen + 1
+                    kept.append(item)
+            fused = kept
         return [
             SearchHit(
                 chunk_id=chunk.chunk_id,
@@ -220,15 +274,25 @@ class InMemoryVectorStore:
         return {chunk.chunk_id: rank for rank, chunk in enumerate(top, start=1)}
 
     def _fts_leg(self, query_text: str) -> dict[UUID, int]:
-        terms = set(_WORD_RE.findall(query_text.lower()))
+        terms = {
+            tok
+            for tok in _WORD_RE.findall(query_text.lower())
+            if len(tok) >= 2 and tok not in _FAKE_STOPWORDS
+        }
         if not terms:
             return {}
-        matches: list[tuple[int, _StoredChunk]] = []
+        scored: list[tuple[set[str], int, _StoredChunk]] = []
         for chunk in self._chunks:
             tokens = _WORD_RE.findall(chunk.content.lower())
-            frequency = sum(1 for token in tokens if token in terms)
-            if frequency > 0:
-                matches.append((frequency, chunk))
+            present = terms & set(tokens)
+            if present:
+                frequency = sum(1 for token in tokens if token in terms)
+                scored.append((present, frequency, chunk))
+        # strict pass: chunks containing every informative term; relaxed
+        # fallback (any term) only when the strict pass matched nothing.
+        matches = [(f, c) for present, f, c in scored if present == terms]
+        if not matches:
+            matches = [(f, c) for _, f, c in scored]
         matches.sort(key=lambda item: (-item[0], item[1].order))
         top = matches[:_CANDIDATES_PER_LEG]
         return {chunk.chunk_id: rank for rank, (_, chunk) in enumerate(top, start=1)}
