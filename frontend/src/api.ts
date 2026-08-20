@@ -1,4 +1,5 @@
 import type {
+  AdminMetrics,
   ChatDeltaData,
   ChatDoneData,
   ChatErrorData,
@@ -81,6 +82,10 @@ export function uploadDocument(file: File): Promise<DocumentOut> {
 
 export function deleteDocument(id: string): Promise<void> {
   return request<void>(`/api/documents/${id}`, { method: "DELETE" });
+}
+
+export function getAdminMetrics(): Promise<AdminMetrics> {
+  return request<AdminMetrics>("/api/admin/metrics");
 }
 
 export function listConversations(): Promise<ConversationOut[]> {

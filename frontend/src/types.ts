@@ -87,3 +87,25 @@ export type ChatEvent =
   | { event: "delta"; data: ChatDeltaData }
   | { event: "done"; data: ChatDoneData }
   | { event: "error"; data: ChatErrorData };
+
+export interface LatencyOut {
+  p50_ms: number | null;
+  p95_ms: number | null;
+}
+
+export interface CitedDocument {
+  filename: string;
+  citations: number;
+}
+
+export interface AdminMetrics {
+  window_days: number;
+  answers: number;
+  conversations: number;
+  prompt_tokens: number;
+  completion_tokens: number;
+  errors: number;
+  retrieval: LatencyOut;
+  generation: LatencyOut;
+  top_cited: CitedDocument[];
+}

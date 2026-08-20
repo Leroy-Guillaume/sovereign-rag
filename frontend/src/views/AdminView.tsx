@@ -1,16 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router";
-import { ApiError, deleteDocument, listDocuments, me, uploadDocument } from "../api";
+import { ApiError, deleteDocument, getAdminMetrics, listDocuments, me, uploadDocument } from "../api";
 import type { AppOutletContext } from "../App";
-import type { DocumentOut } from "../types";
-
-const METRIC_CARDS = ["Usage", "Costs", "Latency"] as const;
+import type { AdminMetrics, DocumentOut } from "../types";
 
 const STATUS_STYLES: Record<DocumentOut["status"], string> = {
   processing: "bg-amber-950 text-amber-300",
   ready: "bg-emerald-950 text-emerald-300",
   failed: "bg-red-950 text-red-300",
 };
+
+function formatCount(value: number): string {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}k`;
+  return `${value}`;
+}
+
+function formatLatency(ms: number | null): string {
+  if (ms === null) return "n/a";
+  return ms >= 1000 ? `${(ms / 1000).toFixed(1)} s` : `${ms} ms`;
+}
 
 function formatSize(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -22,12 +31,14 @@ export default function AdminView() {
   const { onUnauthorized } = useOutletContext<AppOutletContext>();
   const [access, setAccess] = useState<"loading" | "granted" | "forbidden">("loading");
   const [documents, setDocuments] = useState<DocumentOut[]>([]);
+  const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const refresh = useCallback(async () => {
     try {
       setDocuments(await listDocuments());
+      setMetrics(await getAdminMetrics());
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) onUnauthorized();
     }
@@ -147,20 +158,59 @@ export default function AdminView() {
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {METRIC_CARDS.map((label) => (
-            <div
-              key={label}
-              className="rounded-lg border border-neutral-800 bg-neutral-900 p-4 opacity-60"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-neutral-300">{label}</span>
-                <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-neutral-400">
-                  Phase 2
-                </span>
-              </div>
-              <div className="mt-3 text-2xl font-semibold text-neutral-600">n/a</div>
+          <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-neutral-300">Usage</span>
+              <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-neutral-400">
+                {metrics ? `${metrics.window_days} days` : "…"}
+              </span>
             </div>
-          ))}
+            <div className="mt-3 text-2xl font-semibold text-neutral-100">
+              {metrics ? formatCount(metrics.answers) : "…"}
+              <span className="ml-1 text-sm font-normal text-neutral-400">answers</span>
+            </div>
+            <div className="mt-1 text-xs text-neutral-400">
+              {metrics
+                ? `${formatCount(metrics.conversations)} conversations · ${formatCount(metrics.errors)} errors`
+                : ""}
+            </div>
+          </div>
+          <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-neutral-300">Tokens</span>
+              <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-neutral-400">
+                prompt / completion
+              </span>
+            </div>
+            <div className="mt-3 text-2xl font-semibold text-neutral-100">
+              {metrics ? formatCount(metrics.prompt_tokens) : "…"}
+              <span className="mx-1 text-neutral-500">/</span>
+              {metrics ? formatCount(metrics.completion_tokens) : "…"}
+            </div>
+            <div className="mt-1 text-xs text-neutral-400">
+              {metrics && metrics.top_cited.length > 0
+                ? `top cited: ${metrics.top_cited[0].filename}`
+                : ""}
+            </div>
+          </div>
+          <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-neutral-300">Latency</span>
+              <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-neutral-400">
+                p50 / p95
+              </span>
+            </div>
+            <div className="mt-3 text-2xl font-semibold text-neutral-100">
+              {metrics ? formatLatency(metrics.generation.p50_ms) : "…"}
+              <span className="mx-1 text-neutral-500">/</span>
+              {metrics ? formatLatency(metrics.generation.p95_ms) : "…"}
+            </div>
+            <div className="mt-1 text-xs text-neutral-400">
+              {metrics
+                ? `retrieval ${formatLatency(metrics.retrieval.p50_ms)} / ${formatLatency(metrics.retrieval.p95_ms)}`
+                : ""}
+            </div>
+          </div>
         </div>
 
         {actionError !== null && (
