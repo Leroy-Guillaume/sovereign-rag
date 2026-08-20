@@ -93,3 +93,31 @@ async def test_metrics_aggregates_the_typed_columns(
     # citation ledger: a.md cited twice, ties broken by name
     assert body["top_cited"][0] == {"filename": "a.md", "citations": 2}
     assert {c["filename"] for c in body["top_cited"]} == {"a.md", "b.md", "c.md"}
+
+
+async def test_metrics_window_excludes_old_messages(
+    api_client: ClientFactory, pg: AsyncConnectionPool
+) -> None:
+    """The 30-day window is delivered behavior: a message just outside it
+    must not count anywhere (usage, latency, citations)."""
+    async with pg.connection() as conn:
+        conv = uuid4()
+        await conn.execute(
+            "INSERT INTO conversations (id, user_id, title) VALUES (%s, 'alice', 't')",
+            (conv,),
+        )
+        await conn.execute(
+            """INSERT INTO messages
+               (conversation_id, request_id, role, content, sources,
+                prompt_tokens, completion_tokens, retrieval_ms, generation_ms,
+                error_code, created_at)
+               VALUES (%s, %s, 'assistant', 'x', %s, 10, 5, 100, 1000, NULL,
+                       now() - interval '31 days')""",
+            (conv, uuid4(), Jsonb([{"filename": "old.md"}])),
+        )
+    async with _client(api_client) as client:
+        body = (await client.get("/api/admin/metrics", headers=AUTH_ADMIN)).json()
+    assert body["answers"] == 0
+    assert body["prompt_tokens"] == 0
+    assert body["retrieval"] == {"p50_ms": None, "p95_ms": None}
+    assert body["top_cited"] == []

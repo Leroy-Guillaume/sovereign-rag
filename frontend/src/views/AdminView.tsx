@@ -39,8 +39,15 @@ export default function AdminView() {
     try {
       setDocuments(await listDocuments());
       setMetrics(await getAdminMetrics());
+      setActionError(null);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 401) onUnauthorized();
+      if (err instanceof ApiError && err.status === 401) {
+        onUnauthorized();
+        return;
+      }
+      // A failed refresh must say so: silently keeping stale state renders
+      // as "No documents yet" and frozen tiles, which reads as healthy.
+      setActionError(err instanceof Error ? err.message : "Failed to load admin data");
     }
   }, [onUnauthorized]);
 
@@ -52,8 +59,18 @@ export default function AdminView() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        if (err instanceof ApiError && err.status === 401) onUnauthorized();
-        setAccess("forbidden");
+        if (err instanceof ApiError && err.status === 401) {
+          onUnauthorized();
+          return;
+        }
+        // Only a definitive 403 means "not admin"; a network failure must
+        // not accuse the user's key of lacking a role it may well have.
+        if (err instanceof ApiError && err.status === 403) {
+          setAccess("forbidden");
+        } else {
+          setAccess("granted");
+          setActionError(err instanceof Error ? err.message : "Failed to verify access");
+        }
       });
     return () => {
       cancelled = true;
