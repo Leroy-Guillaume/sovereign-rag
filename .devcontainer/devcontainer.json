@@ -2,12 +2,14 @@
   "name": "sovereign-rag",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": false
+    },
     "ghcr.io/devcontainers/features/node:1": {
       "version": "22"
     }
   },
-  "postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH=\"$HOME/.local/bin:$PATH\" && (cd backend && uv sync --all-extras) && (cd frontend && npm install)",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -21,5 +23,12 @@
         "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python"
       }
     }
-  }
+  },
+  "remoteEnv": {
+    "PATH": "${containerEnv:HOME}/.local/bin:${containerEnv:PATH}"
+  },
+  "mounts": [
+    "source=sovereign-rag-backend-venv,target=${containerWorkspaceFolder}/backend/.venv,type=volume",
+    "source=sovereign-rag-frontend-node-modules,target=${containerWorkspaceFolder}/frontend/node_modules,type=volume"
+  ]
 }

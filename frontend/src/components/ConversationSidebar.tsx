@@ -17,7 +17,7 @@ export default function ConversationSidebar() {
       })
       .catch(() => {
         // No key yet, or backend unreachable: an empty list is the right
-        // fallback — the key modal / view-level errors handle the rest.
+        // fallback: the key modal / view-level errors handle the rest.
       });
     return () => {
       cancelled = true;

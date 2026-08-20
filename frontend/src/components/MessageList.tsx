@@ -56,7 +56,7 @@ export default function MessageList({ messages, status }: MessageListProps) {
     <div className="flex-1 overflow-y-auto px-6 py-4">
       {messages.length === 0 && (
         <div className="flex h-full items-center justify-center text-sm text-neutral-500">
-          Ask a question — answers cite their sources.
+          Ask a question. Answers cite their sources.
         </div>
       )}
       <ul className="mx-auto flex max-w-3xl flex-col gap-4">

@@ -2,7 +2,7 @@ import type { SourceOut } from "../types";
 
 interface SourceCardProps {
   source: SourceOut;
-  /** 1-based citation number — matches the [n] markers in the answer. */
+  /** 1-based citation number, matching the [n] markers in the answer. */
   index: number;
   /** DOM id targeted by the [n] citation buttons in MessageList. */
   anchorId: string;
@@ -12,7 +12,7 @@ interface SourceCardProps {
 export default function SourceCard({ source, index, anchorId, highlighted }: SourceCardProps) {
   const where = [source.section, source.page !== null ? `page ${source.page}` : null]
     .filter((part): part is string => part !== null)
-    .join(" — ");
+    .join(" - ");
 
   return (
     <div

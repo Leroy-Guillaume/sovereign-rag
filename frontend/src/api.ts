@@ -109,7 +109,7 @@ export interface ChatStreamHandlers {
  * Consume the POST /api/chat SSE stream.
  *
  * EventSource cannot send a POST body or an Authorization header, so this is
- * a hand-rolled parser — deliberately pedagogical: buffer the decoded bytes,
+ * a hand-rolled parser, deliberately pedagogical: buffer the decoded bytes,
  * split on "\n\n" (the SSE event boundary), then read the "event: " and
  * "data: " lines of each block. Lines starting with ":" are SSE comments
  * (the server's ": ping" heartbeat) and are ignored per the spec.
@@ -152,7 +152,7 @@ export async function streamChat(
     }
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
-      return; // user pressed stop or navigated away — not an error
+      return; // user pressed stop or navigated away, not an error
     }
     throw err;
   }
@@ -162,7 +162,7 @@ function dispatchBlock(block: string, handlers: ChatStreamHandlers): void {
   let event = "";
   let data = "";
   for (const line of block.split("\n")) {
-    if (line.startsWith(":")) continue; // SSE comment — ": ping" heartbeat
+    if (line.startsWith(":")) continue; // SSE comment, the ": ping" heartbeat
     if (line.startsWith("event: ")) event = line.slice("event: ".length);
     if (line.startsWith("data: ")) data = line.slice("data: ".length); // single-line JSON payloads
   }

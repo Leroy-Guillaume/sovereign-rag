@@ -57,7 +57,7 @@ export default function App() {
             <p className="mt-2 text-sm leading-relaxed text-neutral-400">
               Paste one of the keys configured in{" "}
               <code className="text-neutral-300">AUTH_API_KEYS</code>. The key is kept in this
-              browser's localStorage only (demo setup — OIDC lands in Phase 2).
+              browser's localStorage only (demo setup; OIDC lands in Phase 2).
             </p>
             <input
               type="password"

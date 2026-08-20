@@ -96,8 +96,8 @@ def test_build_messages_numbers_context_and_applies_redact() -> None:
     history = [ChatMessage(role="user", content="hi"), ChatMessage(role="assistant", content="yo")]
     messages = build_messages(history, "what?", hits, redact=lambda text: text.upper())
     assert messages[0].role == "system"
-    assert "[1] a.md — Intro:\nALPHA" in messages[0].content
-    assert "[2] b.pdf — page 3:\nBETA" in messages[0].content
+    assert "[1] a.md - Intro:\nALPHA" in messages[0].content
+    assert "[2] b.pdf - page 3:\nBETA" in messages[0].content
     assert messages[1:3] == history
     assert messages[-1] == ChatMessage(role="user", content="what?")
 

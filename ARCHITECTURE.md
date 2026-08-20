@@ -1,6 +1,6 @@
 # Architecture
 
-This document records how sovereign-rag is structured and **why** — every decision that a
+This document records how sovereign-rag is structured and **why**: every decision that a
 reviewer might challenge is written down with its context, the decision, and its consequences.
 The compliance view (data residency, ISO 27001, nLPD, LIPAD) lives in
 [COMPLIANCE.md](COMPLIANCE.md); the contributor workflow (including "add an LLM provider in 30
@@ -22,18 +22,18 @@ Module-level view (same diagram style as the README, one level deeper):
 
 ```mermaid
 flowchart TB
-    subgraph routes["routes/ — HTTP only, zero business logic"]
+    subgraph routes["routes/ (HTTP only, zero business logic)"]
         RDOC["routes/documents.py"]
         RCHAT["routes/chat.py"]
         RHEALTH["routes/health.py"]
     end
 
-    subgraph services["services — the only modules with business logic"]
+    subgraph services["services (the only modules with business logic)"]
         SING["ingestion/ (extract, chunking, service)"]
         SCHAT["chat/ (prompts, service)"]
     end
 
-    subgraph adapters["adapters — talk to the outside world, never to each other"]
+    subgraph adapters["adapters (talk to the outside world, never to each other)"]
         ALLM["llm/ (ollama, openai_compat, azure)"]
         AEMB["embeddings/ (local, azure)"]
         ASTORE["store/ (pgvector)"]
@@ -46,7 +46,7 @@ flowchart TB
         AUTH["auth.py (Authenticator, CurrentUser)"]
     end
 
-    MAIN["main.py — composition root: factories, app.state, lifespan"]
+    MAIN["main.py (composition root: factories, app.state, lifespan)"]
 
     RDOC --> SING
     RCHAT --> SCHAT
@@ -85,8 +85,8 @@ routes  →  services  →  adapters  →  config / errors
   factories (`get_llm_client`, `get_embedding_client`, `get_vector_store`). Routes and services
   see only the Protocols.
 
-The rule is enforced in review, not by an import linter: the one critical case — no `azure*`
-import outside the Azure adapters — is locked down by two *executable* mechanisms (see section
+The rule is enforced in review, not by an import linter: the one critical case, no `azure*`
+import outside the Azure adapters, is locked down by two *executable* mechanisms (see section
 4), and a one-sentence rule does not need a third.
 
 ## 3. Decision records
@@ -95,7 +95,7 @@ import outside the Azure adapters — is locked down by two *executable* mechani
 
 **Context.** Hybrid retrieval needs a vector index and full-text search over the same corpus.
 Dedicated engines (Qdrant, Weaviate, Azure AI Search) do this well but add a second stateful
-service, a second backup story, and a second security perimeter — against a target corpus of
+service, a second backup story, and a second security perimeter, against a target corpus of
 thousands, not billions, of chunks.
 
 **Decision.** PostgreSQL + pgvector is the only Phase 1 store. Documents, chunks, vectors,
@@ -117,7 +117,7 @@ via environment, stateless API, healthchecks, non-root), so they run unchanged o
 other orchestrator later.
 
 **Consequences.** No Helm charts or manifests to maintain in Phase 1; Phase 4 deploys the same
-images to Azure with Terraform. What is lost — self-healing, rolling deploys — is not needed for
+images to Azure with Terraform. What is lost (self-healing, rolling deploys) is not needed for
 a single-instance pilot.
 
 ### 3.3 Provider abstraction via environment + Protocols
@@ -133,7 +133,7 @@ environment variable; each factory does a `match` with lazy imports per branch a
 
 **Consequences.** Adapters import nothing from each other and nothing from services; pyright
 verifies conformance at usage sites and flags a non-exhaustive `match` the moment a new provider
-value is added to the `Literal` — which is exactly the walkthrough in CONTRIBUTING.md (its
+value is added to the `Literal`, which is exactly the walkthrough in CONTRIBUTING.md (its
 condensed version lives in the `sovereign_rag/llm` factory docstring). Lazy imports keep
 optional SDKs (torch, azure-identity) out of profiles that do not use them.
 
@@ -142,15 +142,15 @@ optional SDKs (torch, azure-identity) out of profiles that do not use them.
 **Context.** The knowledge this template transmits *is* SQL: reciprocal rank fusion, HNSW
 tuning, generated tsvector columns, the `<=>` operator. An ORM would wrap all of it in sessions
 and a unit of work for what is otherwise trivial CRUD. Without an ORM, Alembic loses
-autogenerate — only its execution machinery would remain.
+autogenerate: only its execution machinery would remain.
 
 **Decision.** psycopg3 async with raw SQL as named module-level constants; migrations are
 numbered `.sql` files applied by a ~40-line runner (a `schema_migrations` table, lexicographic
 order, one transaction per file, `pg_advisory_lock` against concurrent boots).
 
 **Consequences.** Every query is visible, reviewable, and tested against a real PostgreSQL in
-CI. Schema changes are deliberate, hand-written files. The runner is readable in two minutes —
-that is the point. The trade-off is accepted: no autogenerate, and reviewers who equate
+CI. Schema changes are deliberate, hand-written files. The runner is readable in two minutes,
+and that is the point. The trade-off is accepted: no autogenerate, and reviewers who equate
 "production-grade" with "SQLAlchemy + Alembic" will want to read this section.
 
 ### 3.5 multilingual-e5-small default, bge-m3 upgrade path
@@ -172,14 +172,14 @@ corrupt retrieval, two guards exist: the `embedding_config` singleton row is che
 
 **Context.** Reasoning builds of the qwen3 family emit `<think>` blocks that would ruin
 first-token latency. The default demo model is the instruct build (`qwen3:4b-instruct`), which
-has no thinking mode — but the adapter must keep that guarantee when an operator points
+has no thinking mode, but the adapter must keep that guarantee when an operator points
 `OLLAMA_MODEL` at a reasoning build. Ollama's OpenAI-compatible endpoint exposes neither the
 `think` flag nor `keep_alive`.
 
 **Decision.** The Ollama adapter speaks the native `/api/chat` API over httpx, sending
 `think: false` and `keep_alive` so the model stays warm between questions.
 
-**Consequences.** Clean control of the two flags that make the local demo responsive — and a
+**Consequences.** Clean control of the two flags that make the local demo responsive, plus a
 pedagogical bonus: two different transports (httpx vs the openai SDK) behind the same Protocol
 prove the abstraction is real. The native API is not a standard; the contract suite with
 recorded request/response shapes pins the expected format, and the `openai_compatible` adapter
@@ -196,7 +196,7 @@ mirrored at query time by an OR of three `websearch_to_tsquery` calls.
 
 **Consequences.** Zero application code, zero language-detection dependency, and an index that
 cannot desynchronize from the content. Accepted cost: a GIN index roughly twice as large and
-occasional cross-language stem noise — amortized by the vector leg of the fusion and measured in
+occasional cross-language stem noise, amortized by the vector leg of the fusion and measured in
 Phase 3. This is the most debatable choice in the design, and it is owned as such.
 
 ### 3.8 RRF fused in SQL, inside the store
@@ -209,7 +209,7 @@ producing per-leg ranks, fused with `FULL OUTER JOIN` and the RRF formula
 
 **Consequences.** One database round-trip. The interface stays at the right altitude ("the k
 best chunks"), so callers never juggle two result lists. The Phase 2 ACL predicate applies
-*inside each CTE, before fusion* — filtering after fusion would waste candidates and leak rank
+*inside each CTE, before fusion*: filtering after fusion would waste candidates and leak rank
 information. And stores with native hybrid fusion (Qdrant, Azure AI Search) keep using it behind
 the same Protocol, which a Python-side fusion would forbid.
 
@@ -218,7 +218,7 @@ the same Protocol, which a Python-side fusion would forbid.
 **Context.** Phase 2 adds per-document permissions. PostgreSQL RLS with a shared async pool
 requires per-transaction role or setting switches and makes isolation tests indirect. This
 decision is taken now because it freezes the `hybrid_search` signature: it accepts `user_id`
-from Phase 1 (carried, not yet enforced — documented in the Protocol and in COMPLIANCE.md).
+from Phase 1 (carried, not yet enforced, but documented in the Protocol and in COMPLIANCE.md).
 
 **Decision.** A single helper, `acl_predicate()`, generates an `EXISTS (...)` fragment against
 `document_permissions`, applied in each retrieval leg (Roadmap, Phase 2; the two CTEs already
@@ -235,11 +235,11 @@ does not depend on it.
 template.
 
 **Decision.** Uploads return 202 immediately (200 with the existing row when the same bytes
-were already ingested — idempotency by sha256); processing runs in an `asyncio.create_task`,
+were already ingested, by sha256 idempotency); processing runs in an `asyncio.create_task`,
 with document status (`processing` / `ready` / `failed`) persisted in the database and a
 boot-time sweep that marks interrupted jobs as `failed`.
 
-**Consequences.** A restart kills in-flight jobs — mitigated by the sweep and by trivial
+**Consequences.** A restart kills in-flight jobs, mitigated by the sweep and by trivial
 re-upload (ingestion is idempotent by sha256). Heavy embedding work runs in threads to keep the
 event loop responsive. The evolution path is localized: a `jobs` table plus a separate worker
 process, with no schema change to the Phase 1 tables.
@@ -255,7 +255,7 @@ streams events back.
 **Consequences.** No connection upgrade, so every proxy and load balancer cooperates (nginx just
 needs `proxy_buffering off`); the stream is debuggable with curl; the heartbeat keeps idle
 intermediaries from cutting the connection. Client aborts surface as disconnects, and the server
-persists the partial answer with `error_code='client_disconnect'` — nothing escapes the audit
+persists the partial answer with `error_code='client_disconnect'`, so nothing escapes the audit
 trail. This last property took real engineering: once the client is gone, the ASGI stack
 re-delivers cancellation at every `await`, so an unshielded INSERT in the `finally` block would
 itself be cancelled and the audit row silently lost. The service therefore persists the
@@ -274,7 +274,7 @@ pipeline.
 dashboard is SQL over these columns (plus `audit_log` and `message_feedback` once they exist).
 
 **Consequences.** Zero new infrastructure, and the metrics are join-able with the audit trail by
-`request_id` — a property Prometheus counters cannot offer. Prometheus/Grafana is documented as
+`request_id`, a property Prometheus counters cannot offer. Prometheus/Grafana is documented as
 the production evolution path once the system goes multi-instance.
 
 ## 4. Testing strategy
@@ -286,11 +286,11 @@ the production evolution path once the system goes multi-instance.
   automatically.
 - **Fakes over mocks.** `backend/tests/fakes.py` provides `FakeLLM` (scripted chunks, records
   received messages, can fail mid-stream), `FakeEmbedding` (deterministic hash-seeded
-  normalized vectors), and `InMemoryVectorStore` — a full `VectorStore` implementation with RRF
+  normalized vectors), and `InMemoryVectorStore`, a full `VectorStore` implementation with RRF
   in pure Python that doubles as the second executable of the store contract suite. Fakes have
   behavior, so tests assert outcomes instead of call sequences.
 - **Real PostgreSQL in CI.** Every SQL query is exercised against a real
-  `pgvector/pgvector:pg16` database (`TEST_DATABASE_URL`) — a service container on every push
+  `pgvector/pgvector:pg16` database (`TEST_DATABASE_URL`), a service container on every push
   to main and every pull request. Integration tests are marked and skip cleanly when no
   database is reachable, so the default local run stays fast.
 - **The no-azure-in-core proof, twice.** (1) A test asserts that under the default profile no
@@ -311,4 +311,4 @@ the production evolution path once the system goes multi-instance.
 | Embeddings | multilingual-e5-small (384 d) | bge-m3 (1024 d) | Env vars + `vector(1024)` migration + re-ingestion; boot guard blocks silent switches; prefix table already knows bge-m3 |
 | Metrics | Typed columns on `messages` | SQL dashboard (Phase 2), Prometheus (production) | `messages_created_idx`; `jsonb_array_elements(sources)` for citation aggregates |
 | PII | `redact()` no-op seam in the prompt builder | Presidio redaction (Phase 2) | The seam is the only integration point; callers never change |
-| Feedback | — | Thumbs up/down (Phase 2) | Additive `0004_feedback.sql`, no `ALTER` on Phase 1 tables |
+| Feedback | none | Thumbs up/down (Phase 2) | Additive `0004_feedback.sql`, no `ALTER` on Phase 1 tables |

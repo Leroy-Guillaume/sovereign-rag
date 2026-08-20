@@ -1,6 +1,6 @@
 """LLM adapter for Azure OpenAI.
 
-Transport is the ``openai`` SDK (``AsyncAzureOpenAI``) — not an Azure SDK.
+Transport is the ``openai`` SDK (``AsyncAzureOpenAI``), not an Azure SDK.
 API-key auth works with the core dependencies alone; keyless auth (managed
 identity, ``az login``) needs ``azure-identity``, imported lazily below so the
 default install profile never loads any ``azure*`` module.
@@ -37,7 +37,7 @@ def _to_openai_messages(messages: Sequence[ChatMessage]) -> list[ChatCompletionM
 class AzureOpenAILLM:
     """Streams chat completions from an Azure OpenAI deployment."""
 
-    model: str  # the deployment name — what Azure routes requests on
+    model: str  # the deployment name, what Azure routes requests on
 
     def __init__(self, settings: Settings) -> None:
         # The Settings validator guarantees these when llm_provider=azure_openai;

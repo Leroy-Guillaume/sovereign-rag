@@ -1,8 +1,8 @@
-# Loi fédérale sur la protection des données (LPD / nLPD) — extraits
+# Loi fédérale sur la protection des données (LPD / nLPD), extraits
 
 > Source: https://www.fedlex.admin.ch/eli/cc/2022/491/fr
-> SR 235.1 — Loi fédérale du 25 septembre 2020 sur la protection des données (état le 1er septembre 2023)
-> Official Swiss legal text — not protected by copyright (art. 5 CopA)
+> SR 235.1: Loi fédérale du 25 septembre 2020 sur la protection des données (état le 1er septembre 2023)
+> Official Swiss legal text, not protected by copyright (art. 5 CopA)
 > Fetched: 2026-07-13
 > Excerpts: articles 1 à 8, 19 et 25
 

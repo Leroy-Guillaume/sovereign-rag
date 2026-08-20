@@ -25,6 +25,13 @@ RUN uv sync --frozen --no-dev --extra local
 # ---- Stage 2: minimal non-root runtime ----
 FROM python:3.12-slim
 
+# Apply the distribution security updates published since the base image was
+# built. The CI gate rejects any fixable CRITICAL/HIGH finding, and the base
+# image is rebuilt on its own cadence, not Debian's advisory cadence.
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN useradd --uid 1000 --user-group --create-home app
 
 WORKDIR /app

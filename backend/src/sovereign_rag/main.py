@@ -90,7 +90,7 @@ async def _ensure_embedding_config(pool: AsyncConnectionPool, settings: Settings
                 f"Embedding model mismatch: index built with {db_model} ({db_dim} dims), "
                 f"configured {settings.embedding_model} "
                 f"({settings.embedding_dimensions} dims). "
-                "Changing embedding models invalidates the whole index — see README."
+                "Changing embedding models invalidates the whole index. See README."
             )
 
 
