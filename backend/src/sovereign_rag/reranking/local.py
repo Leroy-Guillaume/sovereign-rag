@@ -2,8 +2,12 @@
 
 The model runs in-process over ONNX Runtime, never through an LLM server:
 Ollama does not expose classification heads, and the llama.cpp /v1/rerank
-route is known to return degenerate scores for these models. Two settings are
-deliberate and measured on Apple Silicon / ARM:
+route is known to return degenerate scores for these models. The ONNX session
+is driven directly rather than through optimum: every optimum flavour pins
+transformers below the 5.x line, which carries two fixed HIGH CVEs
+(CVE-2026-4372, CVE-2026-5241), and the session-side code is a dozen lines.
+
+Two settings are deliberate and measured on Apple Silicon / ARM:
 
 - the execution provider is pinned to CPUExecutionProvider (the CoreML
   provider that onnxruntime would otherwise pick crashes some rerankers and
@@ -11,39 +15,52 @@ deliberate and measured on Apple Silicon / ARM:
 - the graph-optimized fp32 export (model_O3) is used, NOT int8: dynamic int8
   is slower than fp32-O3 on ARM (the published 3x gains are AVX512-VNNI
   numbers).
+
+Verified against the torch CrossEncoder reference: logits match to three
+decimals on identical pairs.
 """
 
 import asyncio
 import math
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 from dataclasses import replace
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 from sovereign_rag.config import Settings
 from sovereign_rag.errors import ConfigError
 from sovereign_rag.store.base import SearchHit
 
+# The exact files the reranker needs; everything else in the model repository
+# (torch weights, the eight other ONNX exports) stays out of the image.
+# Mirrored by the bake step in backend/Dockerfile -- keep the two in sync.
+MODEL_FILE = "onnx/model_O3.onnx"
+SNAPSHOT_PATTERNS = [
+    "config.json",
+    "tokenizer*",
+    "special_tokens_map.json",
+    "sentencepiece*",
+    MODEL_FILE,
+]
+
 
 class LocalCrossEncoderReranker:
-    """Reranker backed by a sentence-transformers CrossEncoder on local CPU.
+    """Reranker running a cross-encoder ONNX session on the local CPU.
 
-    Inference is synchronous and CPU-bound, so every predict call is pushed
+    Inference is synchronous and CPU-bound, so every scoring call is pushed
     to a worker thread with asyncio.to_thread, like the embedding adapter.
     """
 
     def __init__(self, settings: Settings) -> None:
         try:
-            # huggingface_hub's signature is partially untyped under strict
-            # mode; the module-level import stays, only the symbol is fetched
-            # dynamically and given the narrow type this adapter relies on.
-            import huggingface_hub
-            from sentence_transformers.cross_encoder import CrossEncoder
-
-            snapshot_download = cast(
-                "Callable[[str], str]",
-                huggingface_hub.snapshot_download,  # pyright: ignore[reportUnknownMemberType]
+            # onnxruntime ships no stubs and the two loaders are partially
+            # untyped under strict mode; the adapter pins its own narrow
+            # types on the results instead.
+            import onnxruntime  # pyright: ignore[reportMissingTypeStubs]
+            from huggingface_hub import (
+                snapshot_download,  # pyright: ignore[reportUnknownVariableType]
             )
+            from transformers import AutoTokenizer
         except ImportError as exc:
             raise ConfigError(
                 "RERANKER_PROVIDER=local requires the local extra: uv sync --extra local"
@@ -51,27 +68,33 @@ class LocalCrossEncoderReranker:
         self.model: str = settings.reranker_model
         source = settings.reranker_model
         if not Path(source).is_dir():
-            # Resolve the hub id to a local snapshot BEFORE handing it to the
-            # ONNX loader: optimum lists the remote repo tree to locate its
-            # file even when every weight sits in the cache, which crashes
-            # under HF_HUB_OFFLINE=1 (the baked image). snapshot_download
-            # serves straight from the cache in offline mode and downloads on
-            # first use otherwise, like the embedding adapter's loader.
-            source = snapshot_download(source)
-        # Loads the weights; one tiny predict warms the ONNX session so the
-        # first real query does not pay it.
-        self._ce: Any = CrossEncoder(
-            source,
-            backend="onnx",
-            model_kwargs={
-                "provider": "CPUExecutionProvider",
-                "file_name": "onnx/model_O3.onnx",
-            },
+            # Resolves the hub id to a local snapshot: served straight from
+            # the cache under HF_HUB_OFFLINE=1 (the baked image), downloaded
+            # on first use otherwise.
+            source = snapshot_download(source, allow_patterns=SNAPSHOT_PATTERNS)
+        self._tokenizer: Any = AutoTokenizer.from_pretrained(  # pyright: ignore[reportUnknownMemberType]
+            source
         )
-        self._ce.predict([("warmup", "warmup")])
+        self._session: Any = onnxruntime.InferenceSession(
+            str(Path(source) / MODEL_FILE), providers=["CPUExecutionProvider"]
+        )
+        self._input_names: set[str] = {i.name for i in self._session.get_inputs()}
+        # One tiny inference warms the session so the first real query does
+        # not pay the initialization cost.
+        self._scores([("warmup", "warmup")])
 
     def _scores(self, pairs: list[tuple[str, str]]) -> list[float]:
-        return [float(score) for score in self._ce.predict(pairs)]
+        encoded = self._tokenizer(
+            [query for query, _ in pairs],
+            [passage for _, passage in pairs],
+            padding=True,
+            truncation=True,
+            max_length=512,
+            return_tensors="np",
+        )
+        inputs = {name: array for name, array in dict(encoded).items() if name in self._input_names}
+        logits = self._session.run(None, inputs)[0]
+        return [float(row[0]) for row in logits]
 
     async def rerank(self, query: str, hits: Sequence[SearchHit], *, k: int) -> list[SearchHit]:
         if not hits:

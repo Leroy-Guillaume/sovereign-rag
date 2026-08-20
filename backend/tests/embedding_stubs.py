@@ -15,29 +15,6 @@ from typing import Any
 import pytest
 
 
-class StubCrossEncoder:
-    """Captures constructor/predict arguments; scores by shared-word count.
-
-    Deterministic and content-sensitive: a pair sharing more words scores
-    higher, so reranking tests can assert real reordering.
-    """
-
-    last_instance: "StubCrossEncoder | None" = None
-
-    def __init__(self, model_name: str, **kwargs: Any) -> None:
-        self.model_name = model_name
-        self.kwargs = kwargs
-        self.predict_calls: list[list[tuple[str, str]]] = []
-        StubCrossEncoder.last_instance = self
-
-    def predict(self, pairs: list[tuple[str, str]]) -> list[float]:
-        self.predict_calls.append(list(pairs))
-        return [
-            float(len(set(query.lower().split()) & set(passage.lower().split())))
-            for query, passage in pairs
-        ]
-
-
 class StubSentenceTransformer:
     """Captures constructor/encode arguments and returns deterministic vectors."""
 
@@ -70,12 +47,4 @@ def install_stub_sentence_transformers(
     module.__spec__ = ModuleSpec("sentence_transformers", loader=None)
     module.__dict__["SentenceTransformer"] = StubSentenceTransformer
     monkeypatch.setitem(sys.modules, "sentence_transformers", module)
-    # The reranker imports from the sentence_transformers.cross_encoder
-    # submodule; register it with the same real-ModuleSpec treatment.
-    submodule = ModuleType("sentence_transformers.cross_encoder")
-    submodule.__spec__ = ModuleSpec("sentence_transformers.cross_encoder", loader=None)
-    submodule.__dict__["CrossEncoder"] = StubCrossEncoder
-    module.__dict__["cross_encoder"] = submodule
-    monkeypatch.setitem(sys.modules, "sentence_transformers.cross_encoder", submodule)
-    monkeypatch.setattr(StubCrossEncoder, "last_instance", None)
     return StubSentenceTransformer
