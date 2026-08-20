@@ -8,6 +8,18 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 
+class PermissionIn(BaseModel):
+    """Grant request: a user_id, or '*' for every authenticated user."""
+
+    principal: str = Field(min_length=1, max_length=200, pattern=r"^\S+$")
+
+
+class PermissionOut(BaseModel):
+    principal: str
+    granted_by: str
+    granted_at: datetime
+
+
 class DocumentOut(BaseModel):
     id: UUID
     filename: str

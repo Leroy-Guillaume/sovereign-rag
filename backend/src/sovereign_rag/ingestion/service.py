@@ -40,6 +40,20 @@ FROM documents
 WHERE sha256 = %(sha256)s
 """
 
+_VISIBLE_TO = """\
+SELECT 1 FROM documents d
+WHERE d.id = %(id)s
+  AND (d.owner_id = %(user_id)s
+       OR EXISTS (SELECT 1 FROM document_permissions p
+                  WHERE p.document_id = d.id AND p.principal IN (%(user_id)s, '*')))
+"""
+
+_GRANT_ALL = """\
+INSERT INTO document_permissions (document_id, principal, granted_by)
+VALUES (%(document_id)s, '*', 'system:seed')
+ON CONFLICT DO NOTHING
+"""
+
 _INSERT_DOCUMENT = """\
 INSERT INTO documents (filename, content_type, sha256, size_bytes, status, owner_id,
                        embedding_model)
@@ -55,6 +69,16 @@ _MARK_FAILED = "UPDATE documents SET status = 'failed', error = %(error)s WHERE 
 # cannot run inside a transaction block, hence the autocommit connection in
 # refresh_lexeme_stats().
 _REFRESH_LEXEME_DF = "REFRESH MATERIALIZED VIEW CONCURRENTLY lexeme_df"
+
+
+class DuplicateContentError(Exception):
+    """Identical bytes already ingested by a document the requester cannot see.
+
+    Returning the existing row would leak its metadata; silently granting
+    access would turn the sha256 dedupe into a share-by-hash-probing channel.
+    The route maps this to 409. The accepted trade-off (a content-hash
+    existence oracle at pilot scale) is recorded in ARCHITECTURE 3.10.
+    """
 
 
 class IngestionService:
@@ -89,6 +113,13 @@ class IngestionService:
             await cur.execute(_SELECT_BY_SHA, {"sha256": sha256})
             existing = await cur.fetchone()
             if existing is not None:
+                visible = await (
+                    await conn.execute(_VISIBLE_TO, {"id": existing["id"], "user_id": owner_id})
+                ).fetchone()
+                if visible is None:
+                    raise DuplicateContentError(
+                        "identical content was already ingested by another user"
+                    )
                 return existing, True
             await cur.execute(
                 _INSERT_DOCUMENT,
@@ -180,10 +211,14 @@ class IngestionService:
             content_type = _SUPPORTED_EXTENSIONS.get(path.suffix.lower())
             if content_type is None:
                 continue
-            await self.ingest_upload(
+            row, _ = await self.ingest_upload(
                 filename=path.name,
                 data=path.read_bytes(),
                 content_type=content_type,
                 owner_id="system",
             )
+            # The demo corpus exists to be searched by whoever signs in with a
+            # demo key: grant it to everyone, like the Phase 1 backfill.
+            async with self._pool.connection() as conn:
+                await conn.execute(_GRANT_ALL, {"document_id": row["id"]})
         await self.wait_idle()
