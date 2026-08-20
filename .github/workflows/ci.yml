@@ -13,39 +13,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  quality:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-        with:
-          python-version: "3.12"
-          enable-cache: true
-          cache-dependency-glob: backend/uv.lock
-      - name: Install backend dependencies
-        working-directory: backend
-        run: uv sync --frozen
-      - name: Ruff lint
-        working-directory: backend
-        run: uv run ruff check .
-      - name: Ruff format check
-        working-directory: backend
-        run: uv run ruff format --check .
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-      - name: ESLint
-        working-directory: frontend
-        run: npm run lint
-
-  typecheck:
-    needs: lint
-    runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -56,6 +26,12 @@ jobs:
       - name: Install backend dependencies (all extras so pyright can resolve every adapter)
         working-directory: backend
         run: uv sync --frozen --all-extras
+      - name: Ruff lint
+        working-directory: backend
+        run: uv run ruff check .
+      - name: Ruff format check
+        working-directory: backend
+        run: uv run ruff format --check .
       - name: Pyright (strict)
         working-directory: backend
         run: uv run pyright
@@ -67,13 +43,17 @@ jobs:
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
+      - name: ESLint
+        working-directory: frontend
+        run: npm run lint
       - name: TypeScript check
         working-directory: frontend
         run: npm run typecheck
 
   test:
-    needs: typecheck
+    needs: quality
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -105,8 +85,9 @@ jobs:
         run: uv run pytest --cov=sovereign_rag --cov-fail-under=80 -m ""
 
   core-no-azure:
-    needs: typecheck
+    needs: quality
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       LLM_PROVIDER: openai_compatible
       OPENAI_COMPAT_BASE_URL: http://fake:8001/v1
@@ -142,6 +123,7 @@ jobs:
   build:
     needs: [test, core-no-azure]
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -164,7 +146,7 @@ jobs:
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
       - name: Trivy scan backend image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: sovereign-rag-api:ci
           format: table
@@ -172,7 +154,7 @@ jobs:
           exit-code: "1"
           ignore-unfixed: true
       - name: Trivy scan frontend image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: sovereign-rag-frontend:ci
           format: table
@@ -181,11 +163,11 @@ jobs:
           ignore-unfixed: true
 
   terraform:
-    needs: lint
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: No terraform yet (Phase 4) — pass as no-op
+      - name: No terraform yet (Phase 4), pass as no-op
         if: hashFiles('deploy/azure/**/*.tf') == ''
         run: echo "deploy/azure contains no .tf files yet; skipping terraform checks"
       - uses: hashicorp/setup-terraform@v3
