@@ -29,7 +29,10 @@ TEST_DATABASE_URL = os.environ.get(
     "TEST_DATABASE_URL", "postgresql://rag:rag@localhost:5432/rag_test"
 )
 
-_TRUNCATE_SQL = "TRUNCATE embedding_config, documents, chunks, conversations, messages CASCADE"
+_TRUNCATE_SQL = (
+    "TRUNCATE embedding_config, documents, chunks, document_permissions, "
+    "conversations, messages CASCADE"
+)
 
 _migrations_applied = False
 

@@ -195,12 +195,25 @@ class InMemoryVectorStore:
     filenames: optional document_id -> filename mapping used to fill
     SearchHit.filename (add_chunks never sees filenames); defaults to
     "<document_id>.txt".
+
+    ACL parity: `owners` and `permissions` mirror documents.owner_id and the
+    document_permissions table. A document with no recorded owner stays
+    visible to everyone, so tests that do not exercise the ACL need no setup.
     """
 
     def __init__(self) -> None:
         self._chunks: list[_StoredChunk] = []
         self._counter = 0
         self.filenames: dict[UUID, str] = {}
+        self.owners: dict[UUID, str] = {}
+        self.permissions: dict[UUID, set[str]] = {}
+
+    def _visible(self, document_id: UUID, user_id: str) -> bool:
+        owner = self.owners.get(document_id)
+        if owner is None or owner == user_id:
+            return True
+        granted = self.permissions.get(document_id, set())
+        return user_id in granted or "*" in granted
 
     async def add_chunks(self, document_id: UUID, chunks: Sequence[ChunkIn]) -> None:
         for chunk in chunks:
@@ -226,10 +239,11 @@ class InMemoryVectorStore:
         user_id: str,  # Phase 1: carried, not enforced -- mirrors PgVectorStore
         k: int = 8,
     ) -> list[SearchHit]:
-        vec_ranks = self._vector_leg(query_embedding)
-        fts_ranks = self._fts_leg(query_text)
+        visible = [c for c in self._chunks if self._visible(c.document_id, user_id)]
+        vec_ranks = self._vector_leg(visible, query_embedding)
+        fts_ranks = self._fts_leg(visible, query_text)
         fused: list[tuple[float, _StoredChunk, int | None, int | None]] = []
-        for chunk in self._chunks:
+        for chunk in visible:
             vec_rank = vec_ranks.get(chunk.chunk_id)
             fts_rank = fts_ranks.get(chunk.chunk_id)
             if vec_rank is None and fts_rank is None:
@@ -265,15 +279,17 @@ class InMemoryVectorStore:
             for score, chunk, vec_rank, fts_rank in fused[:k]
         ]
 
-    def _vector_leg(self, query_embedding: Sequence[float]) -> dict[UUID, int]:
+    def _vector_leg(
+        self, chunks: list[_StoredChunk], query_embedding: Sequence[float]
+    ) -> dict[UUID, int]:
         ranked = sorted(
-            self._chunks,
+            chunks,
             key=lambda chunk: (-_cosine(chunk.embedding, query_embedding), chunk.order),
         )
         top = ranked[:_CANDIDATES_PER_LEG]
         return {chunk.chunk_id: rank for rank, chunk in enumerate(top, start=1)}
 
-    def _fts_leg(self, query_text: str) -> dict[UUID, int]:
+    def _fts_leg(self, chunks: list[_StoredChunk], query_text: str) -> dict[UUID, int]:
         terms = {
             tok
             for tok in _WORD_RE.findall(query_text.lower())
@@ -282,7 +298,7 @@ class InMemoryVectorStore:
         if not terms:
             return {}
         scored: list[tuple[set[str], int, _StoredChunk]] = []
-        for chunk in self._chunks:
+        for chunk in chunks:
             tokens = _WORD_RE.findall(chunk.content.lower())
             present = terms & set(tokens)
             if present:
@@ -300,6 +316,8 @@ class InMemoryVectorStore:
     async def delete_document(self, document_id: UUID) -> None:
         self._chunks = [c for c in self._chunks if c.document_id != document_id]
         self.filenames.pop(document_id, None)
+        self.owners.pop(document_id, None)
+        self.permissions.pop(document_id, None)
 
     async def healthcheck(self) -> None:
         return None
