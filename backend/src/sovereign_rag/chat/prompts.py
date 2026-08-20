@@ -31,9 +31,9 @@ def _context_block(index: int, hit: SearchHit, redact: Callable[[str], str]) -> 
     """Format one hit as a numbered context block (filename, section, page, content)."""
     location = hit.filename
     if hit.section:
-        location += f" — {hit.section}"
+        location += f" - {hit.section}"
     if hit.page is not None:
-        location += f" — page {hit.page}"
+        location += f" - page {hit.page}"
     return f"[{index}] {location}:\n{redact(hit.content)}"
 
 

@@ -5,7 +5,7 @@
 Prerequisites: Python 3.12, [uv](https://docs.astral.sh/uv/), Node 22, Docker with Compose v2.
 
 ```bash
-# environment file first — compose refuses to load the project without it
+# environment file first: compose refuses to load the project without it
 cp .env.example .env
 
 # backend dependencies (dev group included by default; torch comes as CPU-only
@@ -26,7 +26,7 @@ docker compose up -d postgres
 cd backend
 uv run uvicorn sovereign_rag.main:app --reload
 
-# run the frontend dev server (from frontend/ — Vite proxies /api to :8000)
+# run the frontend dev server (from frontend/, where Vite proxies /api to :8000)
 cd ../frontend
 npm run dev
 ```
@@ -41,15 +41,15 @@ into `backend/`: `cp .env backend/.env`.
 
 ## Quality gates
 
-Every PR must pass all of these locally — CI runs the same commands.
+Every PR must pass all of these locally. CI runs the same commands.
 
 Backend (from `backend/`):
 
 ```bash
-uv run ruff check .            # lint      — fix with: uv run ruff check --fix .
-uv run ruff format --check .   # format    — fix with: uv run ruff format .
-uv run pyright                 # strict type check — 0 errors required
-uv run pytest --cov=sovereign_rag   # tests — total coverage must stay >= 80%
+uv run ruff check .            # lint      (fix with: uv run ruff check --fix .)
+uv run ruff format --check .   # format    (fix with: uv run ruff format .)
+uv run pyright                 # strict type check, 0 errors required
+uv run pytest --cov=sovereign_rag   # tests, total coverage must stay >= 80%
 ```
 
 Tests marked `integration` need a PostgreSQL with pgvector; they **skip cleanly** when the
@@ -67,8 +67,8 @@ uv run pytest -m integration
 Frontend (from `frontend/`):
 
 ```bash
-npm run lint         # eslint . — 0 problems required
-npm run typecheck    # tsc --noEmit — 0 errors required
+npm run lint         # eslint ., 0 problems required
+npm run typecheck    # tsc --noEmit, 0 errors required
 npm run build        # must succeed
 ```
 
@@ -93,12 +93,12 @@ a provider called `mistral_api`:
    final `case _:` branch reports the unhandled `"mistral_api"` case. The type checker is now
    your to-do list.
 
-2. **Write the adapter** — `backend/src/sovereign_rag/llm/mistral_api.py` (~80 lines). Use
+2. **Write the adapter.** `backend/src/sovereign_rag/llm/mistral_api.py` (~80 lines). Use
    `backend/src/sovereign_rag/llm/openai_compat.py` as a commented template. Your class must
-   structurally satisfy the `LLMClient` Protocol (`llm/base.py`) — no inheritance needed:
+   structurally satisfy the `LLMClient` Protocol (`llm/base.py`), with no inheritance needed:
 
    ```python
-   model: str   # e.g. "mistral-small-latest" — persisted as "{provider}/{model}"
+   model: str   # e.g. "mistral-small-latest", persisted as "{provider}/{model}"
 
    def stream_chat(
        self,
@@ -113,7 +113,7 @@ a provider called `mistral_api`:
 
    Contract: yield at least one chunk, terminate with a final chunk carrying
    `prompt_tokens` / `completion_tokens` when the provider reports them, and wrap EVERY
-   transport error in `ProviderError` — httpx/openai exceptions must never leak to callers.
+   transport error in `ProviderError`: httpx/openai exceptions must never leak to callers.
 
 3. **Add the factory branch.** In `backend/src/sovereign_rag/llm/__init__.py`, before the
    `case _:`:
@@ -139,7 +139,7 @@ a provider called `mistral_api`:
 
 If your provider needs new settings fields, add them to `Settings` (with a
 `check_provider_requirements` validation branch so misconfiguration fails at boot, not at first
-call) and mirror them in `.env.example` — `tests/test_env_example.py` fails otherwise.
+call) and mirror them in `.env.example`, or `tests/test_env_example.py` fails.
 
 ## PR checklist
 
@@ -149,5 +149,5 @@ call) and mirror them in `.env.example` — `tests/test_env_example.py` fails ot
 - [ ] `npm run lint` and `npm run typecheck` clean (if the frontend is touched)
 - [ ] `.env.example` updated for any new `Settings` field
 - [ ] Conventional, atomic commit messages
-- [ ] No process/spec/plan documents added — committed docs are only README.md, COMPLIANCE.md,
+- [ ] No process/spec/plan documents added; committed docs are only README.md, COMPLIANCE.md,
       ARCHITECTURE.md, CONTRIBUTING.md

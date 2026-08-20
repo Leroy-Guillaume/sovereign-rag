@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 
 -- Guard: the embedding model that built the index. Checked at boot; a mismatch
 -- with the config refuses to start with an explicit message (switching embedding
--- models invalidates the whole index — same warning in the README).
+-- models invalidates the whole index, same warning in the README).
 CREATE TABLE embedding_config (
     singleton   boolean PRIMARY KEY DEFAULT true CHECK (singleton),
     model       text    NOT NULL,

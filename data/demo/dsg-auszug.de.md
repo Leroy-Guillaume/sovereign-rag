@@ -1,8 +1,8 @@
-# Bundesgesetz über den Datenschutz (DSG) — Auszug
+# Bundesgesetz über den Datenschutz (DSG), Auszug
 
 > Source: https://www.fedlex.admin.ch/eli/cc/2022/491/de
-> SR 235.1 — Bundesgesetz vom 25. September 2020 über den Datenschutz (Stand am 1. September 2023)
-> Official Swiss legal text — not protected by copyright (art. 5 CopA)
+> SR 235.1: Bundesgesetz vom 25. September 2020 über den Datenschutz (Stand am 1. September 2023)
+> Official Swiss legal text, not protected by copyright (art. 5 CopA)
 > Fetched: 2026-07-13
 > Auszug: Artikel 1-8, 19 und 25
 

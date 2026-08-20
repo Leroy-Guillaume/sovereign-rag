@@ -158,7 +158,7 @@ export default function AdminView() {
                   Phase 2
                 </span>
               </div>
-              <div className="mt-3 text-2xl font-semibold text-neutral-600">—</div>
+              <div className="mt-3 text-2xl font-semibold text-neutral-600">n/a</div>
             </div>
           ))}
         </div>

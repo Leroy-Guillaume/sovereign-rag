@@ -1,7 +1,7 @@
 """Anti-drift guard: every Settings field must appear in the root .env.example.
 
 Extra keys (e.g. COMPOSE_PROFILES, read by docker compose itself) are allowed;
-missing keys are not — the env template can never lag behind the code.
+missing keys are not, so the env template can never lag behind the code.
 """
 
 from pathlib import Path
