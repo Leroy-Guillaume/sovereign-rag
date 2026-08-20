@@ -9,10 +9,13 @@ balancers cannot send API keys.
 
 import time
 
+import structlog
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 router = APIRouter()
+
+logger = structlog.get_logger(__name__)
 
 READYZ_TTL_SECONDS = 10.0
 
@@ -34,23 +37,29 @@ async def readyz(request: Request) -> JSONResponse:
     if cached is not None and now - cached[0] < READYZ_TTL_SECONDS:
         return JSONResponse(cached[1], status_code=cached[2])
 
+    # The probe is anonymous by design (orchestrators cannot authenticate),
+    # so it reports WHICH dependency failed but never the raw exception:
+    # connection strings, hostnames and provider payloads belong in the logs.
     checks: dict[str, str] = {}
     try:
         async with state.pool.connection() as conn:
             await conn.execute("SELECT 1")
         checks["database"] = "ok"
-    except Exception as exc:
-        checks["database"] = f"error: {exc}"
+    except Exception:
+        logger.warning("readyz_database_failed", exc_info=True)
+        checks["database"] = "error"
     try:
         await state.llm.healthcheck()
         checks["llm"] = "ok"
-    except Exception as exc:
-        checks["llm"] = f"error: {exc}"
+    except Exception:
+        logger.warning("readyz_llm_failed", exc_info=True)
+        checks["llm"] = "error"
     try:
         await state.embedder.healthcheck()
         checks["embeddings"] = "ok"
-    except Exception as exc:
-        checks["embeddings"] = f"error: {exc}"
+    except Exception:
+        logger.warning("readyz_embeddings_failed", exc_info=True)
+        checks["embeddings"] = "error"
 
     status_code = 200 if all(value == "ok" for value in checks.values()) else 503
     payload = {"checks": checks}

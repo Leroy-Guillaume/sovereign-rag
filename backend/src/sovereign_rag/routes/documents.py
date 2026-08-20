@@ -66,11 +66,22 @@ async def upload_document(request: Request, file: UploadFile, user: CurrentUser)
             status_code=422,
             detail=f"unsupported file extension {suffix!r}; allowed: pdf, docx, md, txt",
         )
-    data = await file.read()
     settings = request.app.state.settings
-    if len(data) > settings.max_upload_mb * 1024 * 1024:
+    limit = settings.max_upload_mb * 1024 * 1024
+    # Reject on the declared size BEFORE materializing the body: without this,
+    # an oversized upload is fully read into memory just to be refused, which
+    # is an invitation to OOM the process. A chunked request without a length
+    # still reaches the post-read check below.
+    declared = request.headers.get("content-length")
+    if declared is not None and declared.isdigit() and int(declared) > limit + 16 * 1024:
         raise HTTPException(
-            status_code=422,
+            status_code=413,
+            detail=f"request exceeds the upload limit of {settings.max_upload_mb} MB",
+        )
+    data = await file.read()
+    if len(data) > limit:
+        raise HTTPException(
+            status_code=413,
             detail=f"file exceeds the upload limit of {settings.max_upload_mb} MB",
         )
     try:
@@ -164,4 +175,7 @@ async def delete_document(request: Request, document_id: UUID, user: CurrentUser
     await request.app.state.store.delete_document(document_id)
     async with pool.connection() as conn:
         await conn.execute(_DELETE_DOCUMENT, {"id": document_id})
+    # Deletions shift the frequency band like ingestions do; same debounced,
+    # best-effort refresh so stale statistics cannot linger after a purge.
+    await request.app.state.ingestion.refresh_lexeme_stats()
     return Response(status_code=204)

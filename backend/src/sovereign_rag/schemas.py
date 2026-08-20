@@ -11,7 +11,9 @@ from pydantic import BaseModel, Field
 class PermissionIn(BaseModel):
     """Grant request: a user_id, or '*' for every authenticated user."""
 
-    principal: str = Field(min_length=1, max_length=200, pattern=r"^\S+$")
+    # No whitespace and no '/': the revoke route carries the principal as a
+    # path segment, so a slash would make the grant irrevocable over the API.
+    principal: str = Field(min_length=1, max_length=200, pattern=r"^[^\s/]+$")
 
 
 class PermissionOut(BaseModel):
@@ -70,4 +72,7 @@ class ChatRequest(BaseModel):
     """POST /api/chat request body."""
 
     conversation_id: UUID | None = None
-    message: str = Field(min_length=1)
+    # Bounded: an unbounded message reaches the embedding truncation fine but
+    # blows up the lexical tokenizer and the tsquery builder downstream, and
+    # nothing useful fits a question beyond this anyway.
+    message: str = Field(min_length=1, max_length=8000)
