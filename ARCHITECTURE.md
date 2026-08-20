@@ -191,13 +191,19 @@ remains a functional fallback for Ollama (degrading `think`).
 language of every document (a dependency) *and* of every query (unreliable on five words).
 
 **Decision.** One generated STORED column:
-`to_tsvector('french', content) || to_tsvector('german', content) || to_tsvector('english', content)`,
-mirrored at query time by an OR of three `websearch_to_tsquery` calls.
+`to_tsvector('french', content) || to_tsvector('german', content) || to_tsvector('english', content)`.
+The query side does NOT mirror it naively; see 3.13.
 
 **Consequences.** Zero application code, zero language-detection dependency, and an index that
-cannot desynchronize from the content. Accepted cost: a GIN index roughly twice as large and
-occasional cross-language stem noise, amortized by the vector leg of the fusion and measured in
-Phase 3. This is the most debatable choice in the design, and it is owned as such.
+cannot desynchronize from the content. Measured costs on a 9k-chunk FR/DE/EN legal corpus: +59%
+lexemes over a single config (114 vs 72 on a reference text), and each concept repeated at three
+artificially spread positions, which inflates `ts_rank_cd` (~+60% on identical text) by eroding
+the cover-density signal it relies on. The killer, though, sat on the query side: no config
+strips another language's stopwords, so feeding a raw French question to the three
+`websearch_to_tsquery` calls made `sont`, `les`, `de` mandatory lexemes under the german and
+english configs, and the AND conjunction matched nothing. On every sentence-shaped question the
+lexical leg returned 0 of 40 candidates; hybrid search was running on one leg. 3.13 records the
+fix. This remains the most debatable choice in the design, and it is owned as such.
 
 ### 3.8 RRF fused in SQL, inside the store
 
@@ -276,6 +282,37 @@ dashboard is SQL over these columns (plus `audit_log` and `message_feedback` onc
 **Consequences.** Zero new infrastructure, and the metrics are join-able with the audit trail by
 `request_id`, a property Prometheus counters cannot offer. Prometheus/Grafana is documented as
 the production evolution path once the system goes multi-instance.
+
+### 3.13 Query-term selection with a strict pass and a relaxed fallback
+
+**Context.** With the tri-config column of 3.7, mirroring the query through three
+`websearch_to_tsquery` calls silently killed the lexical leg (0/40 candidates on any
+sentence-shaped question: each config ANDs the other two languages' stopwords). Relaxing the
+whole query to OR was measured and rejected: on a 9k-chunk corpus with a 119-question stratified
+golden set it flooded the fusion with weak matches (MRR 0.878 -> 0.761 on the historical
+stratum), and no down-weighting recovered it, exactly as the RRF window arithmetic predicts at
+`rrf_k=60`.
+
+**Decision.** The store reduces the question to informative terms before building any tsquery,
+entirely in SQL (one round trip preserved): tokens that survive stopword filtering under ALL
+three configs (drops the cross-language stopword leak), minus a fixed stoplist of FR/DE/EN
+interrogatives and modals (measured: `quel` carried the highest IDF of an entire question, so a
+pure rarity gate would promote interrogatives instead of dropping them), minus terms whose every
+known lexeme sits above a document-frequency ceiling (15% of the corpus, from the `lexeme_df`
+materialized view; the band is exclusion-only, so absent or stale statistics widen the filter
+and can never silence the leg). The selected terms run as a strict AND per config first; only
+when the strict pass matches nothing does a relaxed OR fallback run, floored at 60% of its own
+best score: better zero lexical candidates than forty arbitrary ones. Fusion applies a
+configurable lexical weight (`RRF_WEIGHT_FTS`) and a per-document cap
+(`FUSION_PER_DOCUMENT_CAP`), because on a parallel multilingual corpus the top-k otherwise fills
+with near-identical chunks of one document (measured: 7 of 8).
+
+**Consequences.** On the stratified golden set, hit@8 rises from 90/119 to 97/119 and the
+lexical leg contributes to 60% of returned sources instead of 3%, with MRR up (+0.013); the
+rare-term stratum (acronyms, article numbers) reaches 17/17 at hit@8. Calibration on the same
+set kept the defaults `rrf_k=60`, `w_fts=1.0`: every lower weight, and `rrf_k=20`, dropped
+hit@8 back to 90. The term selection adds three cheap CTEs to the one query, and `lexeme_df` is
+refreshed opportunistically (after each ingestion, at boot), never on the query path.
 
 ## 4. Testing strategy
 
