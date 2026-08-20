@@ -144,6 +144,17 @@ class ChatService:
                 k=self._settings.retrieval_top_k,
             )
             retrieval_ms = int((time.perf_counter() - t0) * 1000)
+            # Per-leg contribution: the observability every fusion change is
+            # judged against. Cheap: the ranks are already on each hit.
+            logger.info(
+                "retrieval_legs",
+                hits=len(hits),
+                vec_only=sum(1 for h in hits if h.fts_rank is None),
+                fts_only=sum(1 for h in hits if h.vec_rank is None),
+                both=sum(1 for h in hits if h.vec_rank is not None and h.fts_rank is not None),
+                documents=len({h.document_id for h in hits}),
+                retrieval_ms=retrieval_ms,
+            )
             sources = hits_to_sources(hits)
 
             yield ChatEvent(type="start", data={"conversation_id": str(conv_id)})
