@@ -40,6 +40,7 @@ from .ingestion.service import IngestionService
 from .llm import get_llm_client
 from .llm.base import LLMClient
 from .reranking import get_reranker
+from .routes import admin as admin_routes
 from .routes import chat as chat_routes
 from .routes import documents as documents_routes
 from .routes import health as health_routes
@@ -284,6 +285,7 @@ def create_app(
     application.include_router(health_routes.router)
     application.include_router(documents_routes.router)
     application.include_router(chat_routes.router)
+    application.include_router(admin_routes.router)
 
     return application
 
