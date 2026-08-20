@@ -52,6 +52,8 @@ class Settings(BaseSettings):
     retrieval_top_k: int = 8
     retrieval_candidates: int = 40  # per-leg top-n before RRF fusion
     rrf_k: int = 60  # standard RRF constant (original paper)
+    rrf_weight_fts: float = 1.0  # weight of the lexical leg in the fusion (vector leg is 1.0)
+    fusion_per_document_cap: int = 3  # max chunks per document in the top-k; 0 disables the cap
     hnsw_ef_search: int = 80
 
     # --- Auth (Phase 1: multi API keys -> user_id) ---
@@ -94,6 +96,10 @@ class Settings(BaseSettings):
             raise ValueError(
                 "EMBEDDING_PROVIDER=local requires the local extra: uv sync --extra local"
             )
+        if not 0.0 <= self.rrf_weight_fts <= 2.0:
+            raise ValueError("RRF_WEIGHT_FTS must be between 0 and 2 (vector leg weight is 1)")
+        if self.fusion_per_document_cap < 0:
+            raise ValueError("FUSION_PER_DOCUMENT_CAP must be >= 0 (0 disables the cap)")
         if self.hnsw_ef_search < max(self.retrieval_candidates, self.retrieval_top_k):
             raise ValueError(
                 "HNSW_EF_SEARCH must be >= RETRIEVAL_CANDIDATES "
