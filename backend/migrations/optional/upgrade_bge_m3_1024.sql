@@ -7,13 +7,22 @@
 -- (env vars, image rebuild with the matching baked weights, re-upload) in the
 -- README's "Embedding model" section. Apply with:
 --
---   psql "$DATABASE_URL" -f backend/migrations/optional/upgrade_bge_m3_1024.sql
+--   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 \
+--        -f backend/migrations/optional/upgrade_bge_m3_1024.sql
+--
+-- (ON_ERROR_STOP matters: without it a failed statement prints an error but
+-- psql exits 0, and the REFRESH below would run against a half-applied
+-- schema.)
 --
 -- then restart the API: the boot guard re-registers the model from the
 -- environment, and the demo seed re-ingests data/demo automatically.
 BEGIN;
 
--- every vector and every chunk derived from the old space goes
+-- every vector and every chunk derived from the old space goes. CASCADE
+-- also empties document_permissions (introduced by 0003): grants attach to
+-- documents, and those documents are gone. The demo seed re-grants '*' on
+-- its corpus at the next boot; grants on YOUR OWN uploads must be re-created
+-- after re-ingestion.
 TRUNCATE documents CASCADE;
 
 -- the config row is deleted, not updated: the boot guard re-inserts it from

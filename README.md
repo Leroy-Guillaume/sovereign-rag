@@ -131,9 +131,11 @@ remains the default.
    `docker compose build --build-arg BAKED_EMBEDDING_MODEL=BAAI/bge-m3 api`
 3. Apply the shipped operator migration (destructive: embeddings cannot be converted, the
    corpus is truncated for re-ingestion):
-   `psql "$DATABASE_URL" -f backend/migrations/optional/upgrade_bge_m3_1024.sql`
+   `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/optional/upgrade_bge_m3_1024.sql`
 4. Restart the API. The boot guard re-registers the model from the environment, the demo
-   corpus re-seeds itself; re-upload your own documents.
+   corpus re-seeds itself; re-upload your own documents. Note that the truncation also
+   emptied `document_permissions`: sharing grants on your own uploads must be re-created
+   (the demo corpus re-grants itself automatically).
 
 ## Adding a vector store
 
