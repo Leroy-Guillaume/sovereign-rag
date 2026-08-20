@@ -102,13 +102,25 @@ QUERY_STOPLIST = [
     "according",
 ]
 
+# Per-document ACL, applied inside EACH leg before fusion (ARCHITECTURE 3.9):
+# a chunk is retrievable when the requester owns its document or holds a
+# permission row (their user_id or the '*' wildcard). Visible in the query,
+# unit-testable with two-principal leakage tests, explainable to an auditor.
+ACL_PREDICATE = """AND (
+      d.owner_id = %(user_id)s
+      OR EXISTS (
+        SELECT 1 FROM document_permissions perm
+        WHERE perm.document_id = d.id AND perm.principal IN (%(user_id)s, '*')
+      )
+    )"""
+
 # The frequency band is an EXCLUSION filter only: a term is dropped when every
 # lexeme it maps to is present in more than this share of the corpus (it cannot
 # discriminate). Unknown terms always pass: stale or missing statistics must
 # degrade the filter, never kill the whole lexical leg.
 MAX_DF_RATIO = 0.15
 
-HYBRID_SEARCH = """\
+HYBRID_SEARCH_TEMPLATE = """\
 WITH tokens AS (
   -- raw query words: lowercased, alnum-split, short words and interrogatives out
   SELECT DISTINCT tok
@@ -153,15 +165,14 @@ vec AS (
   SELECT c.id, row_number() OVER (ORDER BY c.embedding <=> %(qvec)s::vector) AS rnk
   FROM chunks c JOIN documents d ON d.id = c.document_id
   WHERE d.status = 'ready'
-    -- Phase 2: acl_predicate() appends an EXISTS filter on document_permissions
-    -- here, inside EACH leg, before fusion (never after).
+    {acl}
   ORDER BY c.embedding <=> %(qvec)s::vector LIMIT %(n)s
 ),
 fts_strict AS (
   SELECT c.id, row_number() OVER (ORDER BY ts_rank_cd(c.tsv, tsq.strict) DESC) AS rnk
   FROM chunks c JOIN documents d ON d.id = c.document_id, tsq
   WHERE d.status = 'ready'
-    -- Phase 2: same acl_predicate() -- applied in EACH leg, before fusion.
+    {acl}
     AND c.tsv @@ tsq.strict
   ORDER BY ts_rank_cd(c.tsv, tsq.strict) DESC LIMIT %(n)s
 ),
@@ -175,6 +186,7 @@ fts_relaxed AS (
            max(ts_rank_cd(c.tsv, tsq.relaxed)) OVER () AS rmax
     FROM chunks c JOIN documents d ON d.id = c.document_id, tsq
     WHERE d.status = 'ready'
+      {acl}
       AND c.tsv @@ tsq.relaxed
       AND NOT EXISTS (SELECT 1 FROM fts_strict)
     ORDER BY ts_rank_cd(c.tsv, tsq.relaxed) DESC LIMIT %(n)s
@@ -206,6 +218,8 @@ FROM (
 WHERE %(doc_cap)s <= 0 OR doc_rnk <= %(doc_cap)s
 ORDER BY score DESC LIMIT %(k)s
 """
+
+HYBRID_SEARCH = HYBRID_SEARCH_TEMPLATE.format(acl=ACL_PREDICATE)
 INSERT_CHUNK = """\
 INSERT INTO chunks (document_id, chunk_index, content, section, page, embedding)
 VALUES (%(document_id)s, %(chunk_index)s, %(content)s, %(section)s, %(page)s, %(embedding)s)
@@ -269,11 +283,12 @@ class PgVectorStore:
         k: int = 8,
     ) -> list[SearchHit]:
         """One transaction: SET LOCAL hnsw.ef_search, then the fused hybrid query."""
-        del user_id  # Phase 1: carried, not enforced -- see the VectorStore docstring.
         async with self._pool.connection() as conn:
             await register_vector_async(conn)
             async with conn.transaction():
-                rows = await self._search_in_tx(conn, query_text, query_embedding, k=k)
+                rows = await self._search_in_tx(
+                    conn, query_text, query_embedding, user_id=user_id, k=k
+                )
         return [
             SearchHit(
                 chunk_id=row["id"],
@@ -295,6 +310,7 @@ class PgVectorStore:
         query_text: str,
         query_embedding: Sequence[float],
         *,
+        user_id: str,
         k: int,
     ) -> list[dict[str, Any]]:
         """Run SET LOCAL + the hybrid query. Requires an open transaction on conn
@@ -307,6 +323,7 @@ class PgVectorStore:
                 {
                     "q": query_text,
                     "qvec": Vector(list(query_embedding)),
+                    "user_id": user_id,
                     "n": self._candidates,
                     "rrf_k": self._rrf_k,
                     "w_fts": self._weight_fts,

@@ -60,6 +60,18 @@ class MakeDocument(Protocol):
     def __call__(self) -> Awaitable[UUID]: ...
 
 
+class MakePrivateDocument(Protocol):
+    """Create a ready document owned by `owner`, with no permission rows."""
+
+    def __call__(self, owner: str) -> Awaitable[UUID]: ...
+
+
+class Grant(Protocol):
+    """Grant read access on a document to a principal ('*' = everyone)."""
+
+    def __call__(self, document_id: UUID, principal: str) -> Awaitable[None]: ...
+
+
 class VectorStoreContract:
     """Behavioural contract shared by every VectorStore implementation.
 
@@ -190,6 +202,45 @@ class VectorStoreContract:
         assert matching[0].fts_rank == 1
         assert matching[0].score == pytest.approx(1 / (60 + 1))
 
+    async def test_two_principal_leakage(
+        self,
+        store: VectorStore,
+        new_private_document: MakePrivateDocument,
+    ) -> None:
+        # The core ACL guarantee: bob's private document is invisible to alice
+        # through EVERY leg (the chunk matches the query lexically and is the
+        # vector nearest-neighbour), while bob keeps full access.
+        bob_doc = await new_private_document("bob")
+        await store.add_chunks(bob_doc, [ChunkIn(0, "encryption secret clause", basis(0))])
+
+        assert await store.hybrid_search("encryption", basis(0), user_id="alice", k=8) == []
+        bob_hits = await store.hybrid_search("encryption", basis(0), user_id="bob", k=8)
+        assert [hit.content for hit in bob_hits] == ["encryption secret clause"]
+
+    async def test_grants_open_access_to_the_named_principal_or_everyone(
+        self,
+        store: VectorStore,
+        new_private_document: MakePrivateDocument,
+        grant: Grant,
+    ) -> None:
+        named = await new_private_document("bob")
+        await store.add_chunks(named, [ChunkIn(0, "encryption named grant", basis(0))])
+        starred = await new_private_document("bob")
+        await store.add_chunks(starred, [ChunkIn(0, "encryption star grant", basis(1))])
+        await grant(named, "alice")
+        await grant(starred, "*")
+
+        alice = {
+            h.content
+            for h in await store.hybrid_search("encryption", basis(0), user_id="alice", k=8)
+        }
+        carol = {
+            h.content
+            for h in await store.hybrid_search("encryption", basis(0), user_id="carol", k=8)
+        }
+        assert alice == {"encryption named grant", "encryption star grant"}
+        assert carol == {"encryption star grant"}, "a named grant must not leak to third parties"
+
     async def test_french_german_english_queries_each_hit(
         self, store: VectorStore, new_document: MakeDocument
     ) -> None:
@@ -246,21 +297,62 @@ class TestInMemoryVectorStoreContract(VectorStoreContract):
 
         return _new
 
+    @pytest.fixture
+    def new_private_document(self, store: InMemoryVectorStore) -> MakePrivateDocument:
+        async def _new(owner: str) -> UUID:
+            doc_id = uuid4()
+            store.owners[doc_id] = owner
+            return doc_id
+
+        return _new
+
+    @pytest.fixture
+    def grant(self, store: InMemoryVectorStore) -> Grant:
+        async def _grant(document_id: UUID, principal: str) -> None:
+            store.permissions.setdefault(document_id, set()).add(principal)
+
+        return _grant
+
 
 INSERT_DOCUMENT = """\
 INSERT INTO documents (id, filename, content_type, sha256, size_bytes, status, owner_id)
-VALUES (%(id)s, %(filename)s, 'txt', %(sha256)s, 42, %(status)s, 'alice')
+VALUES (%(id)s, %(filename)s, 'txt', %(sha256)s, 42, %(status)s, %(owner)s)
+"""
+
+INSERT_PERMISSION = """\
+INSERT INTO document_permissions (document_id, principal, granted_by)
+VALUES (%(document_id)s, %(principal)s, 'contract-test')
 """
 
 
-async def _insert_document(pool: AsyncConnectionPool, *, filename: str, status: str) -> UUID:
-    """Insert a documents row directly; the ingestion service does not exist yet."""
+async def _insert_document(
+    pool: AsyncConnectionPool,
+    *,
+    filename: str,
+    status: str,
+    owner: str = "alice",
+    share_all: bool = True,
+) -> UUID:
+    """Insert a documents row directly; the ingestion service does not exist yet.
+
+    share_all mirrors Phase 1 visibility (a '*' permission row) so the legacy
+    contract fixtures keep passing whichever user_id a test searches with; the
+    ACL tests insert private documents by turning it off.
+    """
     doc_id = uuid4()
     async with pool.connection() as conn:
         await conn.execute(
             INSERT_DOCUMENT,
-            {"id": doc_id, "filename": filename, "sha256": uuid4().hex, "status": status},
+            {
+                "id": doc_id,
+                "filename": filename,
+                "sha256": uuid4().hex,
+                "status": status,
+                "owner": owner,
+            },
         )
+        if share_all:
+            await conn.execute(INSERT_PERMISSION, {"document_id": doc_id, "principal": "*"})
     return doc_id
 
 
@@ -278,6 +370,25 @@ class TestPgVectorStoreContract(VectorStoreContract):
             return await _insert_document(pg, filename="doc.txt", status="ready")
 
         return _new
+
+    @pytest.fixture
+    async def new_private_document(self, pg: AsyncConnectionPool) -> MakePrivateDocument:
+        async def _new(owner: str) -> UUID:
+            return await _insert_document(
+                pg, filename="private.txt", status="ready", owner=owner, share_all=False
+            )
+
+        return _new
+
+    @pytest.fixture
+    async def grant(self, pg: AsyncConnectionPool) -> Grant:
+        async def _grant(document_id: UUID, principal: str) -> None:
+            async with pg.connection() as conn:
+                await conn.execute(
+                    INSERT_PERMISSION, {"document_id": document_id, "principal": principal}
+                )
+
+        return _grant
 
     async def test_processing_document_excluded_from_both_legs(
         self, store: PgVectorStore, pg: AsyncConnectionPool
@@ -361,7 +472,7 @@ class TestPgVectorStoreContract(VectorStoreContract):
             await register_vector_async(conn)
             async with conn.transaction():
                 rows = await store._search_in_tx(  # pyright: ignore[reportPrivateUsage]
-                    conn, "encryption", basis(0), k=8
+                    conn, "encryption", basis(0), user_id="alice", k=8
                 )
                 cur = await conn.execute("SHOW hnsw.ef_search")
                 shown = await cur.fetchone()
