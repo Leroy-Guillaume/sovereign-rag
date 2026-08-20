@@ -21,6 +21,7 @@ from ..config import Settings
 from ..embeddings.base import EmbeddingClient
 from ..errors import ProviderError
 from ..llm.base import ChatMessage, LLMClient
+from ..reranking.base import Reranker
 from ..store.base import VectorStore
 from .prompts import build_messages, hits_to_sources
 
@@ -99,12 +100,14 @@ class ChatService:
         embedder: EmbeddingClient,
         store: VectorStore,
         settings: Settings,
+        reranker: Reranker | None = None,
     ) -> None:
         self._pool = pool
         self._llm = llm
         self._embedder = embedder
         self._store = store
         self._settings = settings
+        self._reranker = reranker
 
     async def stream_reply(
         self, user: User, conversation_id: UUID | None, message: str
@@ -137,12 +140,24 @@ class ChatService:
         try:
             t0 = time.perf_counter()
             query_embedding = await self._embedder.embed_query(message)
+            # Recall-then-precision: with a reranker the fused query over-fetches
+            # a candidate pool, the cross-encoder re-scores it and keeps top_k.
+            pool_k = (
+                self._settings.reranker_candidates
+                if self._reranker is not None
+                else self._settings.retrieval_top_k
+            )
             hits = await self._store.hybrid_search(
                 message,
                 query_embedding,
                 user_id=user.id,
-                k=self._settings.retrieval_top_k,
+                k=pool_k,
             )
+            rerank_ms: int | None = None
+            if self._reranker is not None:
+                t1 = time.perf_counter()
+                hits = await self._reranker.rerank(message, hits, k=self._settings.retrieval_top_k)
+                rerank_ms = int((time.perf_counter() - t1) * 1000)
             retrieval_ms = int((time.perf_counter() - t0) * 1000)
             # Per-leg contribution: the observability every fusion change is
             # judged against. Cheap: the ranks are already on each hit.
@@ -153,6 +168,8 @@ class ChatService:
                 fts_only=sum(1 for h in hits if h.vec_rank is None),
                 both=sum(1 for h in hits if h.vec_rank is not None and h.fts_rank is not None),
                 documents=len({h.document_id for h in hits}),
+                reranked=self._reranker is not None,
+                rerank_ms=rerank_ms,
                 retrieval_ms=retrieval_ms,
             )
             sources = hits_to_sources(hits)

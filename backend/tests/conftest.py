@@ -56,6 +56,10 @@ async def pg(request: pytest.FixtureRequest) -> AsyncIterator[AsyncConnectionPoo
     await pool.open(wait=True)
     async with pool.connection() as conn:
         await conn.execute(_TRUNCATE_SQL)
+        # The frequency-band statistics must match the (now empty) tables:
+        # a stale snapshot left by another test's refresh would ban terms of
+        # this test's corpus and silence the lexical leg non-deterministically.
+        await conn.execute("REFRESH MATERIALIZED VIEW lexeme_df")
     try:
         yield pool
     finally:

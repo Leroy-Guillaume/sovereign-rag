@@ -17,6 +17,15 @@ RUN uv sync --frozen --no-dev --extra local --no-install-project
 # Placed before the source COPY so editing src/ never re-downloads the weights.
 RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('intfloat/multilingual-e5-small')"
 
+# Same treatment for the reranker cross-encoder: only the files the adapter
+# loads (patterns mirrored from reranking/local.py SNAPSHOT_PATTERNS -- keep
+# the two in sync), so the torch weights and the eight other ONNX exports of
+# the model repository never enter the image.
+RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "\
+from huggingface_hub import snapshot_download; \
+snapshot_download('cross-encoder/mmarco-mMiniLMv2-L12-H384-v1', allow_patterns=[\
+'config.json', 'tokenizer*', 'special_tokens_map.json', 'sentencepiece*', 'onnx/model_O3.onnx'])"
+
 # Project layer: sources and migrations, then install the project itself.
 COPY src ./src
 COPY migrations ./migrations

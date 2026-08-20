@@ -56,6 +56,11 @@ class Settings(BaseSettings):
     fusion_per_document_cap: int = 3  # max chunks per document in the top-k; 0 disables the cap
     hnsw_ef_search: int = 80
 
+    # --- Reranking (recall-then-precision; "none" is the measured control arm) ---
+    reranker_provider: Literal["none", "local"] = "none"
+    reranker_model: str = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+    reranker_candidates: int = 40  # fused pool size handed to the reranker
+
     # --- Auth (Phase 1: multi API keys -> user_id) ---
     auth_api_keys: dict[str, str] = {}  # JSON: {"sk-demo-alice":"alice","sk-demo-bob":"bob"}
     auth_admin_users: set[str] = set()  # JSON: ["alice"]
@@ -95,6 +100,21 @@ class Settings(BaseSettings):
         ):
             raise ValueError(
                 "EMBEDDING_PROVIDER=local requires the local extra: uv sync --extra local"
+            )
+        if (
+            self.reranker_provider == "local"
+            and importlib.util.find_spec("sentence_transformers") is None
+        ):
+            raise ValueError(
+                "RERANKER_PROVIDER=local requires the local extra: uv sync --extra local"
+            )
+        if self.reranker_provider != "none" and not (
+            self.retrieval_top_k <= self.reranker_candidates <= self.retrieval_candidates
+        ):
+            raise ValueError(
+                "RERANKER_CANDIDATES must lie between RETRIEVAL_TOP_K and "
+                "RETRIEVAL_CANDIDATES (the reranker can only reorder the pool "
+                "the fused query hands it)"
             )
         if not 0.0 <= self.rrf_weight_fts <= 2.0:
             raise ValueError("RRF_WEIGHT_FTS must be between 0 and 2 (vector leg weight is 1)")

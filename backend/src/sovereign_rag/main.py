@@ -39,6 +39,7 @@ from .errors import AuthError, ConfigError, ExtractionError, ProviderError
 from .ingestion.service import IngestionService
 from .llm import get_llm_client
 from .llm.base import LLMClient
+from .reranking import get_reranker
 from .routes import chat as chat_routes
 from .routes import documents as documents_routes
 from .routes import health as health_routes
@@ -201,12 +202,16 @@ def create_app(
                 store=active_store,
                 settings=app_settings,
             )
+            reranker = get_reranker(app_settings)
+            if reranker is not None:
+                logger.info("reranker ready", model=reranker.model)
             chat_service = ChatService(
                 pool=active_pool,
                 llm=active_llm,
                 embedder=active_embedder,
                 store=active_store,
                 settings=app_settings,
+                reranker=reranker,
             )
 
             started_app.state.llm = active_llm

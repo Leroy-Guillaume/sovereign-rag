@@ -60,6 +60,10 @@ cp .env.example .env
 docker compose up --build
 ```
 
+Prebuilt images are also published to GHCR on every merge to main
+(`ghcr.io/leroy-guillaume/sovereign-rag-api` and `-frontend`, tagged `latest`
+and by commit sha).
+
 Wait for the model pull to finish (first boot only), then:
 
 1. Open http://localhost:8080
@@ -92,6 +96,17 @@ variable to disable it when using an external LLM.
 
 Azure OpenAI with an API key works with the core install. Only keyless auth (managed identity,
 Phase 4) needs the extra: `uv sync --extra azure`.
+
+## Reranking
+
+The compose stack enables a cross-encoder reranking stage
+(`RERANKER_PROVIDER=local`): hybrid search over-fetches 40 fused candidates
+and `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1`, running in-process over ONNX
+on CPU, keeps the 8 best. Measured on the evaluation corpus: hit@1 +6 points,
+MRR 0.675 -> 0.717, for a median 144 ms per query. The weights are baked into
+the API image, so the local profile stays fully offline. Set
+`RERANKER_PROVIDER=none` to serve the fused order directly (the control arm
+worth re-measuring against after any corpus change).
 
 ## Embedding model
 

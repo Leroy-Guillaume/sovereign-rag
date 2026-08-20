@@ -13,7 +13,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-local = ["sentence-transformers>=3.2", "torch>=2.2"]   # pulls torch -- see the CPU index below
+local = [
+    "sentence-transformers>=3.2",
+    "torch>=2.2",                # pulls torch -- see the CPU index below
+    "onnxruntime>=1.20",   # the reranker drives the ONNX session directly (no optimum:
+    "transformers>=5.5",   # every optimum flavour pins transformers<4.58, which carries
+                           # CVE-2026-4372 and CVE-2026-5241, both fixed in the 5.x line)
+]
 azure = ["azure-identity>=1.19"]         # ONLY keyless auth (Entra / managed identity)
 
 [dependency-groups]
