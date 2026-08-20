@@ -72,6 +72,14 @@ class IngestionService:
         self._store = store
         self._settings = settings
         self._tasks: set[asyncio.Task[None]] = set()
+        # Embedding is the CPU-heavy stage of the pipeline. Unbounded task
+        # concurrency makes N local models fight over the same cores and
+        # collapses aggregate throughput (measured on a 30-document CPU
+        # ingestion: zero documents completed in 25 minutes concurrently; run
+        # one at a time, the largest document finished in 111 s). The
+        # semaphore serializes the embedding stage only: extraction, chunking
+        # and inserts still overlap freely across documents.
+        self._embed_slots = asyncio.Semaphore(settings.ingestion_concurrency)
 
     async def ingest_upload(
         self, *, filename: str, data: bytes, content_type: str, owner_id: str
@@ -125,19 +133,20 @@ class IngestionService:
                 overlap=self._settings.chunk_overlap,
             )
             chunks: list[ChunkIn] = []
-            for start in range(0, len(drafts), _EMBED_BATCH_SIZE):
-                batch = drafts[start : start + _EMBED_BATCH_SIZE]
-                vectors = await self._embedder.embed_documents([d.content for d in batch])
-                chunks.extend(
-                    ChunkIn(
-                        chunk_index=draft.chunk_index,
-                        content=draft.content,
-                        embedding=vector,
-                        section=draft.section,
-                        page=draft.page,
+            async with self._embed_slots:
+                for start in range(0, len(drafts), _EMBED_BATCH_SIZE):
+                    batch = drafts[start : start + _EMBED_BATCH_SIZE]
+                    vectors = await self._embedder.embed_documents([d.content for d in batch])
+                    chunks.extend(
+                        ChunkIn(
+                            chunk_index=draft.chunk_index,
+                            content=draft.content,
+                            embedding=vector,
+                            section=draft.section,
+                            page=draft.page,
+                        )
+                        for draft, vector in zip(batch, vectors, strict=True)
                     )
-                    for draft, vector in zip(batch, vectors, strict=True)
-                )
             await self._store.add_chunks(document_id, chunks)
             async with self._pool.connection() as conn:
                 await conn.execute(_MARK_READY, {"id": document_id, "meta": Jsonb(extracted.meta)})
