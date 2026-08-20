@@ -17,6 +17,13 @@ RUN uv sync --frozen --no-dev --extra local --no-install-project
 # Placed before the source COPY so editing src/ never re-downloads the weights.
 RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('intfloat/multilingual-e5-small')"
 
+# Same treatment for the reranker cross-encoder (ONNX graph-optimized fp32
+# export, CPU provider pinned -- see reranking/local.py for why).
+RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "\
+from sentence_transformers.cross_encoder import CrossEncoder; \
+CrossEncoder('cross-encoder/mmarco-mMiniLMv2-L12-H384-v1', backend='onnx', \
+model_kwargs={'provider': 'CPUExecutionProvider', 'file_name': 'onnx/model_O3.onnx'})"
+
 # Project layer: sources and migrations, then install the project itself.
 COPY src ./src
 COPY migrations ./migrations
