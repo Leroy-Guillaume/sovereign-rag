@@ -24,6 +24,8 @@ def get_vector_store(settings: Settings, pool: AsyncConnectionPool) -> VectorSto
                 pool,
                 candidates=settings.retrieval_candidates,
                 rrf_k=settings.rrf_k,
+                weight_fts=settings.rrf_weight_fts,
+                per_document_cap=settings.fusion_per_document_cap,
                 ef_search=settings.hnsw_ef_search,
             )
         case _:

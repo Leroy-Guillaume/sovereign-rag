@@ -13,6 +13,7 @@ exactly 1/(60+vec_rank) + 1/(60+fts_rank), a missing leg contributing 0.
 from __future__ import annotations
 
 import math
+from collections import Counter
 from collections.abc import Awaitable
 from typing import Protocol
 from uuid import UUID, uuid4
@@ -92,17 +93,60 @@ class VectorStoreContract:
         assert hits[2].score == pytest.approx(1 / (60 + 3))
 
     async def test_k_is_respected(self, store: VectorStore, new_document: MakeDocument) -> None:
-        doc_id = await new_document()
-        await store.add_chunks(
-            doc_id,
-            [
-                ChunkIn(i, f"encryption note {i}", blend(0, i + 1, 10.0 - i, 1.0 + i))
-                for i in range(5)
-            ],
-        )
+        # One chunk per document so the per-document cap never interferes:
+        # this test is about k, nothing else.
+        for i in range(5):
+            doc_id = await new_document()
+            await store.add_chunks(
+                doc_id,
+                [ChunkIn(0, f"encryption note {i}", blend(0, i + 1, 10.0 - i, 1.0 + i))],
+            )
 
         assert len(await store.hybrid_search("encryption", basis(0), user_id="a", k=3)) == 3
         assert len(await store.hybrid_search("encryption", basis(0), user_id="a", k=8)) == 5
+
+    async def test_per_document_cap_diversifies_results(
+        self, store: VectorStore, new_document: MakeDocument
+    ) -> None:
+        # Five near-identical chunks in one document, one relevant chunk in a
+        # second document: the cap (default 3) must leave room for the second
+        # document instead of letting the first flood the top-k.
+        flood_id = await new_document()
+        await store.add_chunks(
+            flood_id,
+            [
+                ChunkIn(i, f"encryption policy clause {i}", blend(0, i + 1, 20.0, 1.0))
+                for i in range(5)
+            ],
+        )
+        other_id = await new_document()
+        await store.add_chunks(other_id, [ChunkIn(0, "encryption addendum", blend(0, 9, 8.0, 6.0))])
+
+        hits = await store.hybrid_search("encryption", basis(0), user_id="alice", k=8)
+
+        per_doc = Counter(hit.document_id for hit in hits)
+        assert per_doc[flood_id] == 3, "the flooding document must be capped at 3 chunks"
+        assert per_doc[other_id] == 1, "the capped slots must go to the other document"
+
+    async def test_sentence_question_still_reaches_fts(
+        self, store: VectorStore, new_document: MakeDocument
+    ) -> None:
+        # A question phrased as a full sentence must still produce lexical
+        # candidates: the informative terms are extracted and, when no chunk
+        # holds all of them, the relaxed any-term fallback engages. This is
+        # the exact scenario the raw tri-config AND query matched nothing on.
+        doc_id = await new_document()
+        await store.add_chunks(
+            doc_id,
+            [ChunkIn(0, "le chiffrement des sauvegardes est obligatoire", basis(5))],
+        )
+
+        hits = await store.hybrid_search(
+            "comment fonctionne le chiffrement pour les sauvegardes ?", basis(0), user_id="a", k=8
+        )
+
+        assert hits, "sentence-shaped query returned no hits"
+        assert hits[0].fts_rank == 1, "the lexical leg did not surface the matching chunk"
 
     async def test_vector_only_hit_has_no_fts_rank(
         self, store: VectorStore, new_document: MakeDocument
