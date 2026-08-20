@@ -49,6 +49,19 @@ async def migrated_pool() -> AsyncIterator[AsyncConnectionPool]:
         await pool.close()
 
 
+def test_optional_migrations_are_never_picked_up() -> None:
+    """migrations/optional/ holds operator-applied upgrades; the runner's glob
+    is non-recursive by design, so nothing under a subdirectory may ever run
+    unattended. This pins that contract against a future glob change."""
+    from sovereign_rag.db import MIGRATIONS_DIR
+
+    optional = MIGRATIONS_DIR / "optional"
+    assert optional.is_dir(), "the shipped optional upgrade directory must exist"
+    assert any(optional.glob("*.sql")), "it must actually ship at least one upgrade"
+    picked = {path.name for path in MIGRATIONS_DIR.glob("*.sql")}
+    assert not {path.name for path in optional.glob("*.sql")} & picked
+
+
 async def test_apply_migrations_twice_is_idempotent(
     migrated_pool: AsyncConnectionPool,
 ) -> None:

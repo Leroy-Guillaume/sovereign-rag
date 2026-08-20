@@ -15,7 +15,11 @@ RUN uv sync --frozen --no-dev --extra local --no-install-project
 # Bake the embedding model into an image layer: no Hugging Face download at
 # runtime, the container starts fully offline (frozen model, see README).
 # Placed before the source COPY so editing src/ never re-downloads the weights.
-RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('intfloat/multilingual-e5-small')"
+# The model is a build argument so an operator upgrading embeddings (see the
+# README's bge-m3 walkthrough) rebuilds with the matching weights baked in:
+#   docker compose build --build-arg BAKED_EMBEDDING_MODEL=BAAI/bge-m3 api
+ARG BAKED_EMBEDDING_MODEL=intfloat/multilingual-e5-small
+RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('${BAKED_EMBEDDING_MODEL}')"
 
 # Same treatment for the reranker cross-encoder: only the files the adapter
 # loads (patterns mirrored from reranking/local.py SNAPSHOT_PATTERNS -- keep
