@@ -60,6 +60,10 @@ cp .env.example .env
 docker compose up --build
 ```
 
+Prebuilt images are also published to GHCR on every merge to main
+(`ghcr.io/leroy-guillaume/sovereign-rag-api` and `-frontend`, tagged `latest`
+and by commit sha).
+
 Wait for the model pull to finish (first boot only), then:
 
 1. Open http://localhost:8080
