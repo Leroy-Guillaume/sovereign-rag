@@ -8,7 +8,7 @@ RUN npm run build
 
 # --- runtime stage --------------------------------------------------------------
 # nginx-unprivileged: runs as uid 101, listens on 8080, no root anywhere.
-FROM nginxinc/nginx-unprivileged:1.27-alpine
+FROM nginxinc/nginx-unprivileged:1.31-alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8080
