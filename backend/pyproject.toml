@@ -13,7 +13,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-local = ["sentence-transformers>=3.2", "torch>=2.2"]   # pulls torch -- see the CPU index below
+local = [
+    "sentence-transformers>=3.2",
+    "torch>=2.2",                # pulls torch -- see the CPU index below
+    "optimum[onnxruntime]>=1.23",  # ONNX backend for the cross-encoder reranker
+]
 azure = ["azure-identity>=1.19"]         # ONLY keyless auth (Entra / managed identity)
 
 [dependency-groups]
