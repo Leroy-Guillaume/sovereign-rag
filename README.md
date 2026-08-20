@@ -118,15 +118,22 @@ worth re-measuring against after any corpus change).
 > match what the index was built with (the `embedding_config` table), and each document is stamped
 > with the model that embedded it.
 
-**Upgrading to `BAAI/bge-m3`** (better quality, 8k context window, but ~2.3 GB and a slower first boot):
+**Upgrading to `BAAI/bge-m3`** (1024 dimensions, 8k context window). Measured on a 9k-chunk
+FR/DE/EN legal corpus with a 119-question stratified golden set, combined with the reranker:
+hit@8 100/119 -> 114/119, MRR 0.717 -> 0.784, and the cross-lingual stratum (question in one
+language, evidence in another) goes from MRR 0.15 to 0.84. The costs: ~2.3 GB of extra image,
+and noticeably slower CPU embedding (ingestion and per-query), which is why the small model
+remains the default.
 
-1. Set three env vars: `EMBEDDING_PROVIDER=local`, `EMBEDDING_MODEL=BAAI/bge-m3`,
-   `EMBEDDING_DIMENSIONS=1024`.
-2. Add the next numbered migration (e.g. `backend/migrations/0002_upgrade_bge_m3.sql`) that
-   changes `chunks.embedding` to `vector(1024)`, recreates the HNSW index, and updates the
-   `embedding_config` row.
-3. Re-ingest every document: embeddings cannot be converted. Delete and re-upload (or truncate
-   `chunks` and `documents` and re-run the seed/uploads).
+1. Set two env vars: `EMBEDDING_MODEL=BAAI/bge-m3`, `EMBEDDING_DIMENSIONS=1024`.
+2. Rebuild the API image with the matching weights baked in (the image is offline at runtime,
+   so the new model must be in the layer):
+   `docker compose build --build-arg BAKED_EMBEDDING_MODEL=BAAI/bge-m3 api`
+3. Apply the shipped operator migration (destructive: embeddings cannot be converted, the
+   corpus is truncated for re-ingestion):
+   `psql "$DATABASE_URL" -f backend/migrations/optional/upgrade_bge_m3_1024.sql`
+4. Restart the API. The boot guard re-registers the model from the environment, the demo
+   corpus re-seeds itself; re-upload your own documents.
 
 ## Adding a vector store
 
