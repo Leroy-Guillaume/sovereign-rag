@@ -3,10 +3,11 @@
 Both strategies share the same recursive packing: split text into paragraphs,
 split oversized paragraphs into sentences, hard-cut oversized sentences, then
 greedily pack units into chunks of at most `size` characters. Consecutive
-chunks overlap: each new chunk starts with the last `overlap` characters of
-the previous one (a verbatim tail, glued without a separator), which bounds
-every chunk at `size + overlap` characters plus the optional markdown section
-prefix line.
+chunks overlap: each new chunk starts with a tail of up to `overlap` characters
+of the previous one, trimmed to a word boundary and joined with a newline (a
+raw character cut would fabricate half-words that pollute both the embedding
+and the generated tsvector). Every chunk stays within `size + overlap + 1`
+characters plus the optional section prefix line.
 """
 
 from __future__ import annotations
@@ -54,8 +55,28 @@ def _atomic_units(text: str, size: int) -> list[str]:
     return units
 
 
+def _overlap_tail(text: str, overlap: int) -> str:
+    """Last `overlap` characters of `text`, trimmed to start on a word boundary.
+
+    A cut landing inside a word drops the leading half-word instead of keeping
+    it: 'protection des donnees'[-11:] is 's donnees', which would index the
+    non-word lexeme 's' and embed garbage.
+    """
+    if overlap <= 0 or not text:
+        return ""
+    if len(text) <= overlap:
+        return text
+    tail = text[-overlap:]
+    if not text[-overlap - 1].isspace() and not tail[0].isspace():
+        cut = re.search(r"\s", tail)
+        if cut is None:
+            return ""
+        tail = tail[cut.end() :]
+    return tail.strip()
+
+
 def _pack(units: list[str], size: int, overlap: int) -> list[str]:
-    """Greedily pack units, carrying a character-level tail between chunks."""
+    """Greedily pack units, carrying a word-aligned tail between chunks."""
     chunks: list[str] = []
     current = ""
     for unit in units:
@@ -66,8 +87,8 @@ def _pack(units: list[str], size: int, overlap: int) -> list[str]:
             current = f"{current}\n{unit}"
             continue
         chunks.append(current)
-        tail = current[-overlap:] if overlap > 0 else ""
-        current = tail + unit
+        tail = _overlap_tail(current, overlap)
+        current = f"{tail}\n{unit}" if tail else unit
     if current:
         chunks.append(current)
     return chunks
@@ -93,7 +114,15 @@ def _split_markdown(doc: ExtractedDoc, size: int, overlap: int) -> list[ChunkDra
 
 
 def _split_plain(doc: ExtractedDoc, size: int, overlap: int) -> list[ChunkDraft]:
-    """Pack across fragments, keeping section/page of the first fragment of each chunk."""
+    """Pack across fragments, keeping section/page of the first fragment of each chunk.
+
+    Like the markdown splitter, each chunk's content is prefixed with a context
+    header line (the section when the format provides one, else the document
+    title from its metadata). tsv is generated from content alone, so without
+    this line PDF/DOCX/TXT chunks carry neither title nor article number into
+    the lexical index, while markdown chunks do.
+    """
+    title = doc.meta.get("title")
     units: list[tuple[str, str | None, int | None]] = []
     for fragment in doc.fragments:
         units.extend(
@@ -106,10 +135,11 @@ def _split_plain(doc: ExtractedDoc, size: int, overlap: int) -> list[ChunkDraft]
     current_page: int | None = None
 
     def flush() -> None:
+        header = current_section or title
         drafts.append(
             ChunkDraft(
                 chunk_index=len(drafts),
-                content=current,
+                content=f"{header}\n{current}" if header else current,
                 section=current_section,
                 page=current_page,
             )
@@ -123,8 +153,8 @@ def _split_plain(doc: ExtractedDoc, size: int, overlap: int) -> list[ChunkDraft]
             current = f"{current}\n{text}"
             continue
         flush()
-        tail = current[-overlap:] if overlap > 0 else ""
-        current = tail + text
+        tail = _overlap_tail(current, overlap)
+        current = f"{tail}\n{text}" if tail else text
         current_section, current_page = section, page
     if current:
         flush()

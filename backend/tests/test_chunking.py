@@ -34,7 +34,46 @@ def test_consecutive_chunks_share_overlap() -> None:
     assert len(chunks) >= 3
     for previous, current in zip(chunks, chunks[1:], strict=False):  # noqa: RUF007
         if len(previous.content) >= 50:  # previous chunk long enough to donate a tail
-            assert current.content.startswith(previous.content[-50:])
+            tail = current.content.split("\n", 1)[0]
+            # the carried tail is a word-aligned suffix of the previous chunk...
+            assert tail
+            assert previous.content.endswith(tail)
+            boundary = previous.content[-len(tail) - 1]
+            assert boundary.isspace(), "tail must start on a word boundary"
+            # ...and never longer than the configured overlap
+            assert len(tail) <= 50
+
+
+def test_overlap_never_fabricates_half_words() -> None:
+    """A tail cut inside a word must drop the half-word, not index it."""
+    doc = ExtractedDoc(fragments=[Fragment(text=LOREM * 10)], meta={})
+    chunks = chunk_fragments(doc, content_type="txt", size=200, overlap=50)
+    vocabulary = set(LOREM.replace(".", "").lower().split())
+    for chunk in chunks[1:]:
+        first_word = chunk.content.split(None, 1)[0].strip(".").lower()
+        assert first_word in vocabulary, f"fabricated half-word {first_word!r}"
+
+
+def test_plain_chunks_carry_a_context_header() -> None:
+    """PDF/DOCX/TXT chunks must carry section or title in their indexed text."""
+    with_sections = ExtractedDoc(
+        fragments=[Fragment(text="Scope of the policy.", section="Chapter 1")],
+        meta={"title": "Security Policy"},
+    )
+    chunks = chunk_fragments(with_sections, content_type="docx", size=1200, overlap=200)
+    assert chunks[0].content == "Chapter 1\nScope of the policy."
+
+    title_only = ExtractedDoc(
+        fragments=[Fragment(text="Scanned paragraph.", page=3)],
+        meta={"title": "ISO 27001 overview"},
+    )
+    chunks = chunk_fragments(title_only, content_type="pdf", size=1200, overlap=200)
+    assert chunks[0].content == "ISO 27001 overview\nScanned paragraph."
+    assert chunks[0].page == 3
+
+    bare = ExtractedDoc(fragments=[Fragment(text="No metadata at all.")], meta={})
+    chunks = chunk_fragments(bare, content_type="txt", size=1200, overlap=200)
+    assert chunks[0].content == "No metadata at all."
 
 
 def test_chunk_index_contiguous_from_zero() -> None:
