@@ -226,9 +226,11 @@ requires per-transaction role or setting switches and makes isolation tests indi
 decision is taken now because it freezes the `hybrid_search` signature: it accepts `user_id`
 from Phase 1 (carried, not yet enforced, but documented in the Protocol and in COMPLIANCE.md).
 
-**Decision.** A single helper, `acl_predicate()`, generates an `EXISTS (...)` fragment against
-`document_permissions`, applied in each retrieval leg (Roadmap, Phase 2; the two CTEs already
-carry the insertion-point comments).
+**Decision.** A single SQL fragment (`ACL_PREDICATE` in the pgvector store) gates every
+retrieval leg and the listing surface on the same rule: the requester owns the document, or a
+`document_permissions` row grants their user_id or the `*` wildcard. Uploads start private;
+sharing is an explicit owner/admin action over the permissions endpoints; the demo seed and the
+Phase 1 backfill grant `*`, preserving the visibility corpora were ingested under.
 
 **Consequences.** The access rule is visible in the query, unit-testable with two-principal
 leakage tests, and explainable to an auditor who does not know PostgreSQL internals. RLS remains
@@ -246,7 +248,11 @@ with document status (`processing` / `ready` / `failed`) persisted in the databa
 boot-time sweep that marks interrupted jobs as `failed`.
 
 **Consequences.** A restart kills in-flight jobs, mitigated by the sweep and by trivial
-re-upload (ingestion is idempotent by sha256). Heavy embedding work runs in threads to keep the
+re-upload (ingestion is idempotent by sha256). With per-document ACL, the global sha256 dedupe
+gains one sharp edge, handled explicitly: identical bytes already owned by a document the
+requester cannot see answer 409 instead of returning the foreign row (a leak) or silently
+granting access (share-by-hash-probing). The residual content-hash existence oracle is accepted
+at pilot scale and per-owner dedupe is the evolution if it ever matters. Heavy embedding work runs in threads to keep the
 event loop responsive. The evolution path is localized: a `jobs` table plus a separate worker
 process, with no schema change to the Phase 1 tables.
 
@@ -369,7 +375,7 @@ out-of-domain, so any model change goes through the same benchmark before shippi
 | Area | Phase 1 | Evolution | Mechanism already in place |
 |---|---|---|---|
 | Authentication | API keys from environment | OIDC (Phase 2), Entra ID (Phase 4) | `Authenticator` Protocol; `user_id` is an opaque stable identifier, never an email |
-| Authorization | All authenticated users search all documents | Per-document ACL (Phase 2) | `hybrid_search` already takes `user_id`; predicate slots into each CTE; additive `0003_acl.sql` |
+| Authorization | Per-document ACL: owner + explicit grants (named or `*`), enforced in every retrieval leg and on listing | Group principals, folder-level grants | `document_permissions` is additive; a group expansion only widens the predicate's `IN` set |
 | Audit | Source snapshots + `request_id` on messages | Append-only `audit_log` + export (Phase 2) | `request_id` propagated by middleware since Phase 1; additive `0002_audit.sql` |
 | Ingestion | In-process `asyncio` task | `jobs` table + worker process | Statuses already persisted in the database; boot sweep already handles interruption |
 | Vector store | pgvector | Qdrant / Azure AI Search adapter | `VectorStore` Protocol + contract suite; README guide |
