@@ -6,7 +6,7 @@ import logging
 import os
 from collections.abc import AsyncIterator, Callable, Sequence
 from contextlib import AbstractAsyncContextManager
-from typing import Any
+from typing import Any, cast
 from uuid import UUID, uuid4
 
 import httpx
@@ -14,7 +14,7 @@ import psycopg
 import pytest
 from psycopg_pool import AsyncConnectionPool
 
-from fakes import FakeEmbedding, FakeLLM, InMemoryVectorStore, make_settings
+from fakes import FakeEmbedding, FakeLLM, FakeReranker, InMemoryVectorStore, make_settings
 from sovereign_rag.auth import User
 from sovereign_rag.chat.prompts import NO_CONTEXT_INSTRUCTION, build_messages, hits_to_sources
 from sovereign_rag.chat.service import ChatEvent, ChatService
@@ -304,6 +304,52 @@ class GatedLLM:
 
     async def healthcheck(self) -> None:
         return None
+
+
+@pytest.mark.integration
+async def test_reranker_widens_the_pool_and_reorders_sources(
+    pg: AsyncConnectionPool,
+) -> None:
+    """With a reranker the fused query over-fetches RERANKER_CANDIDATES and the
+    sources event carries the reranked order, trimmed back to top_k."""
+    store = InMemoryVectorStore()
+    embedder = FakeEmbedding()
+    # one document per chunk: the in-memory per-document cap must not shrink
+    # the pool this test is about
+    for i in range(5):
+        doc_id = uuid4()
+        store.filenames[doc_id] = f"policy-{i}.md"
+        content = f"nlpd rule {i}"
+        await store.add_chunks(doc_id, [ChunkIn(0, content, await embedder.embed_query(content))])
+    reranker = FakeReranker()
+    service = ChatService(
+        pool=pg,
+        llm=FakeLLM(),
+        embedder=embedder,
+        store=store,
+        settings=make_settings(
+            database_url=TEST_DATABASE_URL,
+            retrieval_top_k=2,
+            reranker_candidates=4,
+        ),
+        reranker=reranker,
+    )
+    user = User(id="alice", roles=frozenset())
+
+    events = [e async for e in service.stream_reply(user, None, "nlpd rule")]
+
+    sources = cast(list[dict[str, Any]], next(e for e in events if e.type == "sources").data)
+    assert len(sources) == 2, "reranked results must be trimmed back to top_k"
+    [(query, pool, k)] = reranker.calls
+    assert query == "nlpd rule"
+    assert pool == 4, "the fused query must over-fetch reranker_candidates"
+    assert k == 2
+    fused = await store.hybrid_search(
+        "nlpd rule", await embedder.embed_query("nlpd rule"), user_id="alice", k=4
+    )
+    assert [s["chunk_id"] for s in sources] == [str(h.chunk_id) for h in reversed(fused)][:2], (
+        "sources must follow the reranker's order, not the fused order"
+    )
 
 
 @pytest.mark.integration

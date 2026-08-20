@@ -305,6 +305,20 @@ class InMemoryVectorStore:
         return None
 
 
+class FakeReranker:
+    """Reranker double: reverses the pool (a visible, deterministic reorder)
+    and records every call so tests can assert the pool size handed over."""
+
+    model = "fake-reranker"
+
+    def __init__(self) -> None:
+        self.calls: list[tuple[str, int, int]] = []  # (query, pool_size, k)
+
+    async def rerank(self, query: str, hits: Sequence[SearchHit], *, k: int) -> list[SearchHit]:
+        self.calls.append((query, len(hits), k))
+        return list(reversed(list(hits)))[:k]
+
+
 class FakeCursor:
     """Cursor stand-in: serves the canned rows given to FakePool."""
 
