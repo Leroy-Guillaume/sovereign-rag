@@ -247,8 +247,12 @@ were already ingested, by sha256 idempotency); processing runs in an `asyncio.cr
 with document status (`processing` / `ready` / `failed`) persisted in the database and a
 boot-time sweep that marks interrupted jobs as `failed`.
 
-**Consequences.** A restart kills in-flight jobs, mitigated by the sweep and by trivial
-re-upload (ingestion is idempotent by sha256). With per-document ACL, the global sha256 dedupe
+**Consequences.** A restart kills in-flight jobs, mitigated by the sweep and by re-upload:
+the dedupe treats a failed row as reclaimable, not canonical (re-uploading the same bytes
+atomically flips it back to processing, purges any stale chunks and reruns the pipeline),
+because the boot sweep MANUFACTURES failed rows on every interrupted ingestion and a
+failed-forever hash would deny that content permanently. Concurrent identical uploads that
+race past the dedupe read resolve through the unique constraint into an ordinary dedupe hit. With per-document ACL, the global sha256 dedupe
 gains one sharp edge, handled explicitly: identical bytes already owned by a document the
 requester cannot see answer 409 instead of returning the foreign row (a leak) or silently
 granting access (share-by-hash-probing). The residual content-hash existence oracle is accepted
@@ -318,7 +322,12 @@ lexical leg contributes to 60% of returned sources instead of 3%, with MRR up (+
 rare-term stratum (acronyms, article numbers) reaches 17/17 at hit@8. Calibration on the same
 set kept the defaults `rrf_k=60`, `w_fts=1.0`: every lower weight, and `rrf_k=20`, dropped
 hit@8 back to 90. The term selection adds three cheap CTEs to the one query, and `lexeme_df` is
-refreshed opportunistically (after each ingestion, at boot), never on the query path.
+refreshed opportunistically (debounced, after ingestions and deletions and at boot), never on
+the query path. One granularity choice is deliberate: the frequency statistics are
+corpus-global, not per-visibility. A term's commonness in documents a user cannot read still
+shapes which of their query terms are kept, which is a (coarse: ndoc counts only) side channel
+accepted in exchange for statistics that stay one materialized view; per-principal statistics
+would need one snapshot per user.
 
 ### 3.14 In-process cross-encoder reranking over the fused pool
 

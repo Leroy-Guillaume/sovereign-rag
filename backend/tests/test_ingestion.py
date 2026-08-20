@@ -136,7 +136,7 @@ async def test_upload_oversize_rejected(pg: Any, api_client: Any) -> None:
         store=InMemoryVectorStore(),
     ) as client:
         response = await _upload(client, "big.txt", b"x" * (1024 * 1024 + 1), ALICE)
-        assert response.status_code == 422
+        assert response.status_code == 413
 
 
 async def test_failing_embedder_marks_document_failed(pg: Any, api_client: Any) -> None:
@@ -239,3 +239,42 @@ async def test_embedding_stage_is_serialized_across_documents() -> None:
     embedder.release.set()
     await asyncio.gather(*tasks)
     assert embedder.peak == 1
+
+
+async def test_reupload_reclaims_a_failed_document(pg: Any, api_client: Any) -> None:
+    """A failed row must not become canonical: re-uploading the same bytes
+    reruns the pipeline instead of answering 200-deduplicated forever."""
+    exploding = _ExplodingEmbedding()
+    async with api_client(
+        settings=_settings(),
+        llm=FakeLLM(),
+        embedder=exploding,
+        store=InMemoryVectorStore(),
+    ) as client:
+        assert (await _upload(client, "notes.md", _MD, ALICE)).status_code == 202
+        await _app_of(client).state.ingestion.wait_idle()
+        assert (await client.get("/api/documents", headers=ALICE)).json()[0]["status"] == "failed"
+
+        # the provider recovers; the identical re-upload must reprocess
+        _app_of(client).state.ingestion._embedder = FakeEmbedding()  # pyright: ignore[reportPrivateUsage]
+        response = await _upload(client, "notes.md", _MD, ALICE)
+        assert response.status_code == 202, "a reclaimed failed row must reprocess, not dedupe"
+        assert response.json()["deduplicated"] is False
+        await _app_of(client).state.ingestion.wait_idle()
+        doc = (await client.get("/api/documents", headers=ALICE)).json()[0]
+        assert doc["status"] == "ready"
+        assert doc["error"] is None
+
+
+async def test_lexeme_refresh_never_leaks_autocommit_into_the_pool(pg: Any) -> None:
+    """The CONCURRENTLY refresh needs autocommit; it must run on a dedicated
+    connection, because flipping the mode on a pooled one would strip every
+    later borrower of its implicit transaction."""
+    from sovereign_rag.ingestion.service import IngestionService
+
+    service = IngestionService(
+        pool=pg, embedder=FakeEmbedding(), store=InMemoryVectorStore(), settings=_settings()
+    )
+    await service.refresh_lexeme_stats(force=True)
+    async with pg.connection() as conn:
+        assert conn.autocommit is False, "a pooled connection came back in autocommit mode"
