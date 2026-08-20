@@ -110,10 +110,10 @@ based on which official document, and when.
 - **Multi-stage builds, slim non-root images.** The API image builds with uv in a builder stage
   and runs on `python:3.12-slim` as a dedicated non-root user (uid 1000); the frontend serves
   its static build from `nginxinc/nginx-unprivileged` (uid 101, port 8080, no root anywhere).
-- **Offline by construction.** The embedding model weights are baked into an API image layer at
-  build time (`HF_HOME`), so the container never contacts Hugging Face at runtime. The cost is
-  an API image of roughly 2 GB (CPU-only torch wheels plus the model); the frontend image is
-  under 50 MB.
+- **Offline by construction.** The embedding model and the reranker cross-encoder are baked
+  into API image layers at build time (`HF_HOME`), so the container never contacts Hugging Face
+  at runtime. The cost is an API image of roughly 3 GB (CPU-only torch wheels plus the two
+  models); the frontend image is under 50 MB.
 - **Vulnerability gate.** Trivy scans both images in CI and fails the pipeline on any CRITICAL
   or HIGH finding with an available fix (`ignore-unfixed`).
 - **Pinned dependencies.** `uv.lock` (backend) and `package-lock.json` (frontend) are committed;

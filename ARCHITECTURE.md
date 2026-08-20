@@ -314,6 +314,34 @@ set kept the defaults `rrf_k=60`, `w_fts=1.0`: every lower weight, and `rrf_k=20
 hit@8 back to 90. The term selection adds three cheap CTEs to the one query, and `lexeme_df` is
 refreshed opportunistically (after each ingestion, at boot), never on the query path.
 
+### 3.14 In-process cross-encoder reranking over the fused pool
+
+**Context.** RRF ranks by leg agreement, not by joint query-passage relevance: the fused order
+is good at recall and mediocre at precision. Cross-encoder rerankers are the largest single
+quality lever in the retrieval literature, but the common deployment paths violate this
+project's constraints: rerank-as-a-service adds a stateful dependency, Ollama does not expose
+classification heads, and the llama.cpp `/v1/rerank` route returns degenerate scores for these
+models.
+
+**Decision.** An optional precision stage behind a `Reranker` Protocol, selected like every
+other provider (`RERANKER_PROVIDER`, `none` by default so the core profile boots without the
+local extra; the shipped compose stack enables `local`). The local adapter runs
+`cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` in-process over ONNX Runtime, with two measured,
+non-negotiable choices: the execution provider is pinned to `CPUExecutionProvider` (the CoreML
+provider onnxruntime picks by default on Apple Silicon crashes some rerankers and slows
+others), and the graph-optimized fp32 export is used instead of int8 (dynamic int8 is slower
+than fp32-O3 on ARM; the published 3x speedups are AVX512-VNNI numbers). With a reranker
+active, the chat service over-fetches `RERANKER_CANDIDATES` (40) fused candidates and the
+cross-encoder keeps the top 8; the weights are baked into the image like the embedding model,
+so the offline guarantee of the local profile is unchanged.
+
+**Consequences.** On the stratified golden set (119 questions, 9k-chunk corpus): hit@1 71 ->
+78, hit@8 97 -> 100, MRR 0.675 -> 0.717, with a measured median latency of 144 ms per query
+(max 407 ms) on CPU. The reranker is bounded by the pool it is given: it cannot recover what
+the fused query missed, which is why the lexical-leg work of 3.13 precedes it and why
+`RERANKER_PROVIDER=none` remains the measured control arm. A reranker can also degrade
+out-of-domain, so any model change goes through the same benchmark before shipping.
+
 ## 4. Testing strategy
 
 - **Contract suites per Protocol.** `backend/tests/contract/` holds one parametrized suite per
