@@ -1,16 +1,19 @@
 """Integration tests for the ingestion pipeline and the /api/documents endpoints."""
 
+import asyncio
 import os
 import uuid
 from collections.abc import Sequence
 from typing import Any, cast
+from uuid import uuid4
 
 import httpx
 import pytest
 
-from fakes import FakeEmbedding, FakeLLM, InMemoryVectorStore, make_settings
+from fakes import FakeEmbedding, FakeLLM, FakePool, InMemoryVectorStore, make_settings
 from sovereign_rag.config import Settings
 from sovereign_rag.errors import ProviderError
+from sovereign_rag.ingestion.service import IngestionService
 
 pytestmark = pytest.mark.integration
 
@@ -187,3 +190,52 @@ async def test_delete_unknown_document_returns_404(pg: Any, api_client: Any) -> 
     ) as client:
         response = await client.delete(f"/api/documents/{uuid.uuid4()}", headers=ADMIN)
         assert response.status_code == 404
+
+
+# --- embedding concurrency ---------------------------------------------------
+
+
+class _GatedEmbedding:
+    """Embedder double that blocks until released, recording peak concurrency."""
+
+    model = "intfloat/multilingual-e5-small"
+    dimensions = 4
+
+    def __init__(self) -> None:
+        self.release = asyncio.Event()
+        self.active = 0
+        self.peak = 0
+
+    async def embed_documents(self, texts: Sequence[str]) -> list[list[float]]:
+        self.active += 1
+        self.peak = max(self.peak, self.active)
+        await self.release.wait()
+        self.active -= 1
+        return [[0.1, 0.2, 0.3, 0.4] for _ in texts]
+
+    async def embed_query(self, text: str) -> list[float]:
+        return [0.1, 0.2, 0.3, 0.4]
+
+
+async def test_embedding_stage_is_serialized_across_documents() -> None:
+    """Three simultaneous uploads must embed one at a time (default concurrency)."""
+    embedder = _GatedEmbedding()
+    row = (uuid4(), "a.md", "md", 3, "processing", None, "alice", None)
+    service = IngestionService(
+        pool=cast(Any, FakePool([row])),
+        embedder=cast(Any, embedder),
+        store=InMemoryVectorStore(),
+        settings=make_settings(),
+    )
+    docs = [(uuid4(), f"document {i} body".encode()) for i in range(3)]
+    tasks = [
+        asyncio.create_task(service._process(doc_id, data, "txt"))  # pyright: ignore[reportPrivateUsage]
+        for doc_id, data in docs
+    ]
+    # let every task reach the embedding stage (or the semaphore in front of it)
+    for _ in range(20):
+        await asyncio.sleep(0)
+    assert embedder.peak == 1, "embedding must not run for two documents at once"
+    embedder.release.set()
+    await asyncio.gather(*tasks)
+    assert embedder.peak == 1

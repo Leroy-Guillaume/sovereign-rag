@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     vector_store: Literal["pgvector"] = "pgvector"
     chunk_size: int = 1200  # characters (~300 tokens)
     chunk_overlap: int = 200
+    ingestion_concurrency: int = 1  # documents embedding at once; local CPU models thrash above 1
     retrieval_top_k: int = 8
     retrieval_candidates: int = 40  # per-leg top-n before RRF fusion
     rrf_k: int = 60  # standard RRF constant (original paper)
@@ -116,6 +117,8 @@ class Settings(BaseSettings):
                 "RETRIEVAL_CANDIDATES (the reranker can only reorder the pool "
                 "the fused query hands it)"
             )
+        if self.ingestion_concurrency < 1:
+            raise ValueError("INGESTION_CONCURRENCY must be >= 1")
         if not 0.0 <= self.rrf_weight_fts <= 2.0:
             raise ValueError("RRF_WEIGHT_FTS must be between 0 and 2 (vector leg weight is 1)")
         if self.fusion_per_document_cap < 0:
