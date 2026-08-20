@@ -15,9 +15,10 @@ deliberate and measured on Apple Silicon / ARM:
 
 import asyncio
 import math
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import replace
-from typing import Any
+from pathlib import Path
+from typing import Any, cast
 
 from sovereign_rag.config import Settings
 from sovereign_rag.errors import ConfigError
@@ -33,16 +34,34 @@ class LocalCrossEncoderReranker:
 
     def __init__(self, settings: Settings) -> None:
         try:
+            # huggingface_hub's signature is partially untyped under strict
+            # mode; the module-level import stays, only the symbol is fetched
+            # dynamically and given the narrow type this adapter relies on.
+            import huggingface_hub
             from sentence_transformers.cross_encoder import CrossEncoder
+
+            snapshot_download = cast(
+                "Callable[[str], str]",
+                huggingface_hub.snapshot_download,  # pyright: ignore[reportUnknownMemberType]
+            )
         except ImportError as exc:
             raise ConfigError(
                 "RERANKER_PROVIDER=local requires the local extra: uv sync --extra local"
             ) from exc
         self.model: str = settings.reranker_model
-        # Loads the weights (downloads them on first use); one tiny predict
-        # warms the ONNX session so the first real query does not pay it.
+        source = settings.reranker_model
+        if not Path(source).is_dir():
+            # Resolve the hub id to a local snapshot BEFORE handing it to the
+            # ONNX loader: optimum lists the remote repo tree to locate its
+            # file even when every weight sits in the cache, which crashes
+            # under HF_HUB_OFFLINE=1 (the baked image). snapshot_download
+            # serves straight from the cache in offline mode and downloads on
+            # first use otherwise, like the embedding adapter's loader.
+            source = snapshot_download(source)
+        # Loads the weights; one tiny predict warms the ONNX session so the
+        # first real query does not pay it.
         self._ce: Any = CrossEncoder(
-            settings.reranker_model,
+            source,
             backend="onnx",
             model_kwargs={
                 "provider": "CPUExecutionProvider",

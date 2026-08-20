@@ -28,13 +28,27 @@ def test_factory_none_returns_no_reranker() -> None:
     assert get_reranker(make_settings(reranker_provider="none")) is None
 
 
+def _stub_snapshot(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The adapter resolves hub ids to a local snapshot; never touch the network."""
+    import huggingface_hub
+
+    def fake_snapshot(model: str) -> str:
+        return f"/snapshots/{model}"
+
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", fake_snapshot)
+
+
 def test_factory_local_builds_the_cross_encoder(monkeypatch: pytest.MonkeyPatch) -> None:
     install_stub_sentence_transformers(monkeypatch)
+    _stub_snapshot(monkeypatch)
     reranker = get_reranker(make_settings(reranker_provider="local"))
     assert reranker is not None
     assert reranker.model == "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
     stub = StubCrossEncoder.last_instance
     assert stub is not None
+    # loaded from the resolved local snapshot, never from the raw hub id
+    # (the ONNX loader lists the remote repo otherwise, breaking offline boot)
+    assert stub.model_name == "/snapshots/cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
     # the measured ONNX choices are pinned in the constructor, not left to defaults
     assert stub.kwargs["backend"] == "onnx"
     assert stub.kwargs["model_kwargs"]["provider"] == "CPUExecutionProvider"
@@ -47,6 +61,7 @@ async def test_rerank_reorders_by_relevance_and_trims_to_k(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     install_stub_sentence_transformers(monkeypatch)
+    _stub_snapshot(monkeypatch)
     reranker = get_reranker(make_settings(reranker_provider="local"))
     assert reranker is not None
     hits = [
@@ -67,6 +82,7 @@ async def test_rerank_reorders_by_relevance_and_trims_to_k(
 
 async def test_rerank_empty_pool_short_circuits(monkeypatch: pytest.MonkeyPatch) -> None:
     install_stub_sentence_transformers(monkeypatch)
+    _stub_snapshot(monkeypatch)
     reranker = get_reranker(make_settings(reranker_provider="local"))
     assert reranker is not None
     stub = StubCrossEncoder.last_instance
