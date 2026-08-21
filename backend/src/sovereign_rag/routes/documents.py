@@ -17,21 +17,28 @@ router = APIRouter(prefix="/api/documents", tags=["documents"])
 
 _EXTENSION_TO_TYPE = {".pdf": "pdf", ".docx": "docx", ".md": "md", ".txt": "txt"}
 
+# chunk_count is a correlated subquery on purpose: the listing is small (one
+# row per document) and chunks(document_id) is indexed, so this stays cheap
+# while giving the admin table its "ready - N passages" column.
 _LIST_DOCUMENTS_ADMIN = """\
-SELECT id, filename, content_type, size_bytes, status, error, owner_id, created_at
-FROM documents
-ORDER BY created_at DESC
+SELECT d.id, d.filename, d.content_type, d.size_bytes, d.status, d.error, d.owner_id,
+       d.created_at,
+       (SELECT count(*) FROM chunks c WHERE c.document_id = d.id) AS chunk_count
+FROM documents d
+ORDER BY d.created_at DESC
 """
 
 # Same visibility rule as retrieval (owner, named grant, or the '*' wildcard):
 # what a user cannot search, they must not see listed either.
 _LIST_DOCUMENTS_VISIBLE = """\
-SELECT id, filename, content_type, size_bytes, status, error, owner_id, created_at
+SELECT d.id, d.filename, d.content_type, d.size_bytes, d.status, d.error, d.owner_id,
+       d.created_at,
+       (SELECT count(*) FROM chunks c WHERE c.document_id = d.id) AS chunk_count
 FROM documents d
 WHERE d.owner_id = %(user_id)s
    OR EXISTS (SELECT 1 FROM document_permissions p
               WHERE p.document_id = d.id AND p.principal IN (%(user_id)s, '*'))
-ORDER BY created_at DESC
+ORDER BY d.created_at DESC
 """
 
 _GET_DOCUMENT_OWNER = "SELECT owner_id FROM documents WHERE id = %(id)s"
