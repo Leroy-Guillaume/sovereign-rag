@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useSearchParams } from "react-router";
 import HeroDemo from "../components/HeroDemo";
+import { staticLanding } from "../lib/env";
 import { LANDING_COPY, LANGS, LANG_STORAGE, type Lang } from "./landingCopy";
 
 const REPO_URL = "https://github.com/Leroy-Guillaume/sovereign-rag";
@@ -71,12 +72,23 @@ export default function LandingView() {
             >
               GitHub
             </a>
-            <Link
-              to="/chat"
-              className="rounded-full bg-accent px-3.5 py-1.5 text-[12px] font-medium text-white transition hover:brightness-110"
-            >
-              {t.openApp}
-            </Link>
+            {staticLanding ? (
+              <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full bg-accent px-3.5 py-1.5 text-[12px] font-medium text-white transition hover:brightness-110"
+              >
+                {t.openApp}
+              </a>
+            ) : (
+              <Link
+                to="/chat"
+                className="rounded-full bg-accent px-3.5 py-1.5 text-[12px] font-medium text-white transition hover:brightness-110"
+              >
+                {t.openApp}
+              </Link>
+            )}
           </div>
         </div>
       </nav>

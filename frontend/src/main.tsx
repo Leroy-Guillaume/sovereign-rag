@@ -10,18 +10,24 @@ import ChatView from "./views/ChatView";
 import LandingView from "./views/LandingView";
 import "./index.css";
 
-const router = createBrowserRouter([
-  // The landing is public: it must render without an API key, so it lives
-  // outside the App shell (which owns the key modal).
-  { path: "/", element: <LandingView /> },
-  {
-    element: <App />,
-    children: [
-      { path: "chat", element: <ChatView /> },
-      { path: "admin", element: <AdminView /> },
-    ],
-  },
-]);
+// "/" locally; "/<repo>/" when built for GitHub Pages (--base flag).
+const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+
+const router = createBrowserRouter(
+  [
+    // The landing is public: it must render without an API key, so it lives
+    // outside the App shell (which owns the key modal).
+    { path: "/", element: <LandingView /> },
+    {
+      element: <App />,
+      children: [
+        { path: "chat", element: <ChatView /> },
+        { path: "admin", element: <AdminView /> },
+      ],
+    },
+  ],
+  { basename },
+);
 
 const rootElement = document.getElementById("root");
 if (rootElement === null) {
