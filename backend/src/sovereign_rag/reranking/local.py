@@ -38,6 +38,8 @@ from sovereign_rag.store.base import SearchHit
 # torch weights (bge-reranker-v2-m3) fall back to a plain transformers
 # forward pass on the same tokenizer/scoring path, so switching models stays
 # one setting, not one adapter.
+# model_O3.onnx plus its optional external-data sibling (graphs over
+# protobuf's 2 GB cap store their weights in a companion file).
 MODEL_FILE = "onnx/model_O3.onnx"
 _COMMON_PATTERNS = [
     "config.json",
@@ -45,7 +47,7 @@ _COMMON_PATTERNS = [
     "special_tokens_map.json",
     "sentencepiece*",
 ]
-SNAPSHOT_PATTERNS = [*_COMMON_PATTERNS, MODEL_FILE]
+SNAPSHOT_PATTERNS = [*_COMMON_PATTERNS, MODEL_FILE + "*"]
 TORCH_SNAPSHOT_PATTERNS = [*_COMMON_PATTERNS, "*.safetensors"]
 
 
