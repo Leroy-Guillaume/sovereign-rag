@@ -116,11 +116,14 @@ stratified set):
 
 | Model | MRR | multi-hop stratum | CPU latency / query |
 | --- | --- | --- | --- |
-| `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` (default) | 0.770 | 0.72 | ~0.4 s |
-| `BAAI/bge-reranker-v2-m3` | 0.820 | 0.91 | ~2 s |
+| `BAAI/bge-reranker-v2-m3` (default) | 0.820 | 0.91 | ~2 s |
+| `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | 0.770 | 0.72 | ~0.4 s |
 
-The default favors latency; flip one variable when precision is worth two
-seconds.
+The default is the quality winner; flip to the small model when latency
+matters more than precision. Both figures are ARM CPU (torch path); for x86
+deployments, `backend/scripts/export_reranker_onnx.py` generates an ONNX
+export worth measuring there (on ARM it measured slower than torch, which is
+why the image does not bake it).
 
 ## Embedding model
 

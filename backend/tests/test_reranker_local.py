@@ -115,7 +115,7 @@ def test_factory_local_builds_the_onnx_session(
     _install(monkeypatch, tmp_path)
     reranker = get_reranker(make_settings(reranker_provider="local"))
     assert reranker is not None
-    assert reranker.model == "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+    assert reranker.model == "BAAI/bge-reranker-v2-m3"
     [session] = _StubSession.created
     # the measured ONNX choices are pinned in the constructor, not left to defaults
     assert session.providers == ["CPUExecutionProvider"]
@@ -216,9 +216,7 @@ async def test_missing_onnx_export_falls_back_to_torch(
     )
     monkeypatch.setattr(onnxruntime, "InferenceSession", fail_session)
 
-    reranker = get_reranker(
-        make_settings(reranker_provider="local", reranker_model="BAAI/bge-reranker-v2-m3")
-    )
+    reranker = get_reranker(make_settings(reranker_provider="local"))
     assert reranker is not None
     # both snapshot passes happened: onnx first, then the torch weights
     assert requested == [SNAPSHOT_PATTERNS, TORCH_SNAPSHOT_PATTERNS]

@@ -59,7 +59,7 @@ class Settings(BaseSettings):
 
     # --- Reranking (recall-then-precision; "none" is the measured control arm) ---
     reranker_provider: Literal["none", "local"] = "none"
-    reranker_model: str = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+    reranker_model: str = "BAAI/bge-reranker-v2-m3"
     reranker_candidates: int = 40  # fused pool size handed to the reranker
 
     # --- Auth (Phase 1: multi API keys -> user_id) ---

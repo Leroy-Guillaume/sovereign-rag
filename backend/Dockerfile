@@ -21,14 +21,18 @@ RUN uv sync --frozen --no-dev --extra local --no-install-project
 ARG BAKED_EMBEDDING_MODEL=intfloat/multilingual-e5-small
 RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('${BAKED_EMBEDDING_MODEL}')"
 
-# Same treatment for the reranker cross-encoder: only the files the adapter
-# loads (patterns mirrored from reranking/local.py SNAPSHOT_PATTERNS -- keep
-# the two in sync), so the torch weights and the eight other ONNX exports of
-# the model repository never enter the image.
+# Same treatment for the reranker: only the files the adapter loads, with the
+# adapter's own resolution order (ONNX export if published, torch weights
+# otherwise; patterns mirrored from reranking/local.py -- keep in sync). The
+# model is a build argument like the embedding model: switching rerankers
+# means rebuilding with the matching weights baked in.
+ARG BAKED_RERANKER_MODEL=BAAI/bge-reranker-v2-m3
 RUN HF_HOME=/opt/hf-cache .venv/bin/python -c "\
-from huggingface_hub import snapshot_download; \
-snapshot_download('cross-encoder/mmarco-mMiniLMv2-L12-H384-v1', allow_patterns=[\
-'config.json', 'tokenizer*', 'special_tokens_map.json', 'sentencepiece*', 'onnx/model_O3.onnx'])"
+from huggingface_hub import snapshot_download; from pathlib import Path; \
+common = ['config.json', 'tokenizer*', 'special_tokens_map.json', 'sentencepiece*']; \
+p = snapshot_download('${BAKED_RERANKER_MODEL}', allow_patterns=[*common, 'onnx/model_O3.onnx']); \
+(Path(p) / 'onnx/model_O3.onnx').is_file() or \
+snapshot_download('${BAKED_RERANKER_MODEL}', allow_patterns=[*common, '*.safetensors'])"
 
 # Project layer: sources and migrations, then install the project itself.
 COPY src ./src
