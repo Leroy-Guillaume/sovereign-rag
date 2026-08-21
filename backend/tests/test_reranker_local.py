@@ -15,7 +15,11 @@ import pytest
 from embedding_stubs import install_stub_sentence_transformers
 from fakes import make_settings
 from sovereign_rag.reranking import get_reranker
-from sovereign_rag.reranking.local import MODEL_FILE, SNAPSHOT_PATTERNS
+from sovereign_rag.reranking.local import (
+    MODEL_FILE,
+    SNAPSHOT_PATTERNS,
+    TORCH_SNAPSHOT_PATTERNS,
+)
 from sovereign_rag.store.base import SearchHit
 
 
@@ -75,10 +79,11 @@ def _install(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
 
     snapshot = tmp_path / "snapshot"
     (snapshot / "onnx").mkdir(parents=True, exist_ok=True)
+    (snapshot / "onnx" / "model_O3.onnx").write_bytes(b"stub")
     pairs_box: list[tuple[str, str]] = []
 
     def fake_snapshot(model: str, allow_patterns: list[str]) -> str:
-        assert allow_patterns == SNAPSHOT_PATTERNS
+        assert allow_patterns in (SNAPSHOT_PATTERNS, TORCH_SNAPSHOT_PATTERNS)
         return str(snapshot)
 
     def fake_tokenize(queries: list[str], passages: list[str], **kwargs: Any) -> dict[str, Any]:
@@ -110,7 +115,7 @@ def test_factory_local_builds_the_onnx_session(
     _install(monkeypatch, tmp_path)
     reranker = get_reranker(make_settings(reranker_provider="local"))
     assert reranker is not None
-    assert reranker.model == "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+    assert reranker.model == "BAAI/bge-reranker-v2-m3"
     [session] = _StubSession.created
     # the measured ONNX choices are pinned in the constructor, not left to defaults
     assert session.providers == ["CPUExecutionProvider"]
@@ -152,3 +157,72 @@ async def test_rerank_empty_pool_short_circuits(
 
     assert await reranker.rerank("anything", [], k=8) == []
     assert session.run_calls == warmup_calls  # no model call for an empty pool
+
+
+async def test_missing_onnx_export_falls_back_to_torch(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A model without a published ONNX export (bge-reranker-v2-m3) must load
+    through the transformers path, on the same tokenizer and scoring code."""
+    install_stub_sentence_transformers(monkeypatch)
+    import huggingface_hub
+    import onnxruntime  # pyright: ignore[reportMissingTypeStubs]
+    import transformers
+
+    snapshot = tmp_path / "torch-only"
+    snapshot.mkdir()
+    requested: list[list[str]] = []
+
+    def fake_snapshot(model: str, allow_patterns: list[str]) -> str:
+        requested.append(list(allow_patterns))
+        return str(snapshot)  # never contains onnx/model_O3.onnx
+
+    class _TorchLogits:
+        def __init__(self, n: int) -> None:
+            self.logits = [[float(i)] for i in range(n)]
+
+    class _StubTorchModel:
+        loaded: ClassVar[list[str]] = []
+
+        @staticmethod
+        def from_pretrained(source: str) -> "_StubTorchModel":
+            _StubTorchModel.loaded.append(source)
+            return _StubTorchModel()
+
+        def eval(self) -> None:
+            return None
+
+        def __call__(self, **encoded: Any) -> _TorchLogits:
+            return _TorchLogits(len(encoded["input_ids"]))
+
+    def fake_tokenize(queries: list[str], passages: list[str], **kwargs: Any) -> dict[str, Any]:
+        assert kwargs["return_tensors"] == "pt", "the torch path must tokenize to tensors"
+        return {"input_ids": [[0]] * len(queries), "attention_mask": [[1]] * len(queries)}
+
+    def fail_session(path: str, providers: list[str]) -> None:
+        raise AssertionError("the ONNX session must not be built without an export")
+
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", fake_snapshot)
+
+    def fake_from_pretrained(source: str) -> Any:
+        del source
+        return fake_tokenize
+
+    monkeypatch.setattr(
+        transformers.AutoTokenizer, "from_pretrained", staticmethod(fake_from_pretrained)
+    )
+    monkeypatch.setattr(
+        transformers, "AutoModelForSequenceClassification", _StubTorchModel, raising=False
+    )
+    monkeypatch.setattr(onnxruntime, "InferenceSession", fail_session)
+
+    reranker = get_reranker(make_settings(reranker_provider="local"))
+    assert reranker is not None
+    # both snapshot passes happened: onnx first, then the torch weights
+    assert requested == [SNAPSHOT_PATTERNS, TORCH_SNAPSHOT_PATTERNS]
+    assert _StubTorchModel.loaded == [str(snapshot)]
+
+    hits = [_hit("a"), _hit("b"), _hit("c")]
+    top = await reranker.rerank("q", hits, k=2)
+    # stub logits are the pair index: the LAST pair scores highest
+    assert [h.content for h in top] == ["c", "b"]

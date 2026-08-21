@@ -361,7 +361,17 @@ so the offline guarantee of the local profile is unchanged.
 (max 407 ms) on CPU. The reranker is bounded by the pool it is given: it cannot recover what
 the fused query missed, which is why the lexical-leg work of 3.13 precedes it and why
 `RERANKER_PROVIDER=none` remains the measured control arm. A reranker can also degrade
-out-of-domain, so any model change goes through the same benchmark before shipping.
+out-of-domain, so any model change goes through the same benchmark before shipping. The
+adapter accepts torch-only models by falling back to a transformers forward pass on the same
+tokenizer and scoring path when the snapshot publishes no ONNX export, which makes the model a
+one-variable trade measured on identical candidate pools: bge-reranker-v2-m3 buys MRR 0.770 ->
+0.820 and a multi-hop stratum at 0.91 for roughly five times the latency (~2 s per query on
+CPU); the default IS the quality winner since the operator decision of 2026-08-21, with the small
+model documented as the low-latency alternative. An ONNX export tool exists for x86
+deployments; on ARM it measured slower than the torch forward pass (2854 vs 1958 ms per 40
+pairs), so the image bakes the torch weights. gte-multilingual was evaluated and excluded:
+it requires trust_remote_code, which is disqualifying for a sovereign image regardless of
+quality.
 
 ## 4. Testing strategy
 

@@ -32,16 +32,23 @@ from sovereign_rag.errors import ConfigError
 from sovereign_rag.store.base import SearchHit
 
 # The exact files the reranker needs; everything else in the model repository
-# (torch weights, the eight other ONNX exports) stays out of the image.
-# Mirrored by the bake step in backend/Dockerfile -- keep the two in sync.
+# stays out of the image. Mirrored by the bake step in backend/Dockerfile --
+# keep the two in sync. Models that publish a graph-optimized ONNX export
+# (the default mmarco does) run over ONNX Runtime; models that ship only
+# torch weights (bge-reranker-v2-m3) fall back to a plain transformers
+# forward pass on the same tokenizer/scoring path, so switching models stays
+# one setting, not one adapter.
+# model_O3.onnx plus its optional external-data sibling (graphs over
+# protobuf's 2 GB cap store their weights in a companion file).
 MODEL_FILE = "onnx/model_O3.onnx"
-SNAPSHOT_PATTERNS = [
+_COMMON_PATTERNS = [
     "config.json",
     "tokenizer*",
     "special_tokens_map.json",
     "sentencepiece*",
-    MODEL_FILE,
 ]
+SNAPSHOT_PATTERNS = [*_COMMON_PATTERNS, MODEL_FILE + "*"]
+TORCH_SNAPSHOT_PATTERNS = [*_COMMON_PATTERNS, "*.safetensors"]
 
 
 class LocalCrossEncoderReranker:
@@ -72,28 +79,53 @@ class LocalCrossEncoderReranker:
             # the cache under HF_HUB_OFFLINE=1 (the baked image), downloaded
             # on first use otherwise.
             source = snapshot_download(source, allow_patterns=SNAPSHOT_PATTERNS)
+        if not (Path(source) / MODEL_FILE).is_file() and not Path(settings.reranker_model).is_dir():
+            # No published ONNX export: fetch the torch weights instead and
+            # take the transformers path below.
+            source = snapshot_download(
+                settings.reranker_model, allow_patterns=TORCH_SNAPSHOT_PATTERNS
+            )
         self._tokenizer: Any = AutoTokenizer.from_pretrained(  # pyright: ignore[reportUnknownMemberType]
             source
         )
-        self._session: Any = onnxruntime.InferenceSession(
-            str(Path(source) / MODEL_FILE), providers=["CPUExecutionProvider"]
-        )
-        self._input_names: set[str] = {i.name for i in self._session.get_inputs()}
-        # One tiny inference warms the session so the first real query does
-        # not pay the initialization cost.
+        self._session: Any = None
+        self._model: Any = None
+        if (Path(source) / MODEL_FILE).is_file():
+            self._session = onnxruntime.InferenceSession(
+                str(Path(source) / MODEL_FILE), providers=["CPUExecutionProvider"]
+            )
+            self._input_names: set[str] = {i.name for i in self._session.get_inputs()}
+        else:
+            from transformers import AutoModelForSequenceClassification
+
+            self._model = AutoModelForSequenceClassification.from_pretrained(  # pyright: ignore[reportUnknownMemberType]
+                source
+            )
+            self._model.eval()  # pyright: ignore[reportUnknownMemberType]
+        # One tiny inference warms the execution path so the first real query
+        # does not pay the initialization cost.
         self._scores([("warmup", "warmup")])
 
     def _scores(self, pairs: list[tuple[str, str]]) -> list[float]:
+        tensors = "np" if self._session is not None else "pt"
         encoded = self._tokenizer(
             [query for query, _ in pairs],
             [passage for _, passage in pairs],
             padding=True,
             truncation=True,
             max_length=512,
-            return_tensors="np",
+            return_tensors=tensors,
         )
-        inputs = {name: array for name, array in dict(encoded).items() if name in self._input_names}
-        logits = self._session.run(None, inputs)[0]
+        if self._session is not None:
+            inputs = {
+                name: array for name, array in dict(encoded).items() if name in self._input_names
+            }
+            logits = self._session.run(None, inputs)[0]
+            return [float(row[0]) for row in logits]
+        import torch
+
+        with torch.no_grad():
+            logits = self._model(**encoded).logits
         return [float(row[0]) for row in logits]
 
     async def rerank(self, query: str, hits: Sequence[SearchHit], *, k: int) -> list[SearchHit]:

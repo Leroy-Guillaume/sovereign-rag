@@ -108,6 +108,23 @@ the API image, so the local profile stays fully offline. Set
 `RERANKER_PROVIDER=none` to serve the fused order directly (the control arm
 worth re-measuring against after any corpus change).
 
+`RERANKER_MODEL` accepts any cross-encoder from the Hub: models publishing a
+graph-optimized ONNX export run over ONNX Runtime, models shipping only torch
+weights (such as `BAAI/bge-reranker-v2-m3`) load through transformers
+automatically. Measured on the same fused candidate pools (159-question
+stratified set):
+
+| Model | MRR | multi-hop stratum | CPU latency / query |
+| --- | --- | --- | --- |
+| `BAAI/bge-reranker-v2-m3` (default) | 0.820 | 0.91 | ~2 s |
+| `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` | 0.770 | 0.72 | ~0.4 s |
+
+The default is the quality winner; flip to the small model when latency
+matters more than precision. Both figures are ARM CPU (torch path); for x86
+deployments, `backend/scripts/export_reranker_onnx.py` generates an ONNX
+export worth measuring there (on ARM it measured slower than torch, which is
+why the image does not bake it).
+
 ## Embedding model
 
 > [!WARNING]
