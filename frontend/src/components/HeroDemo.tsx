@@ -1,26 +1,14 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
+import type { HeroDemoCopy } from "../views/landingCopy";
 
 /**
  * The landing hero's chat window, played as a looping product simulation:
  * the question types itself, the answer streams in with its citation chips,
  * a pointer glides to the Sources pill and clicks, the panel slides open.
- * Decorative only; the composer doubles as the real CTA into /chat.
+ * Decorative only; the composer doubles as the real CTA into /chat. The
+ * caller remounts it (key) on language change so the loop restarts clean.
  */
-
-const QUESTION = "Quelles sont les obligations de sécurité selon la nLPD ?";
-
-/** The streamed answer, split around its citation chips (a chip costs one tick). */
-const ANSWER: { text?: string; chip?: string }[] = [
-  {
-    text: "Le responsable du traitement et le sous-traitant doivent assurer, par des mesures organisationnelles et techniques appropriées, une sécurité adaptée au risque",
-  },
-  { chip: "1" },
-  { text: " (art. 8 al. 1 nLPD). Ces mesures doivent éviter toute violation de la sécurité des données" },
-  { chip: "2" },
-  { text: "." },
-];
-const ANSWER_TOTAL = ANSWER.reduce((sum, seg) => sum + (seg.text?.length ?? 1), 0);
 
 /** Scenario steps, in playback order; at(p) tests "phase p reached or passed". */
 const PHASES = [
@@ -37,22 +25,6 @@ const PHASES = [
 ] as const;
 type Phase = (typeof PHASES)[number];
 
-const SOURCES = [
-  {
-    filename: "nlpd-excerpt.fr.md",
-    score: "0,033",
-    where: "Art. 8 · Sécurité des données",
-    excerpt:
-      "« …doivent assurer, par des mesures organisationnelles et techniques appropriées, une sécurité adaptée au risque… »",
-  },
-  {
-    filename: "dsg-auszug.de.md",
-    score: "0,030",
-    where: "Art. 8 DSG · Datensicherheit",
-    excerpt: "« Der Verantwortliche gewährleistet eine dem Risiko angemessene Datensicherheit… »",
-  },
-];
-
 function Chip({ n, active }: { n: string; active: boolean }) {
   return (
     <span
@@ -65,7 +37,12 @@ function Chip({ n, active }: { n: string; active: boolean }) {
   );
 }
 
-export default function HeroDemo() {
+export default function HeroDemo({ copy }: { copy: HeroDemoCopy }) {
+  const question = copy.question;
+  const answerTotal = useMemo(
+    () => copy.answer.reduce((sum, seg) => sum + (seg.text?.length ?? 1), 0),
+    [copy],
+  );
   const reduced = useMemo(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     [],
@@ -99,14 +76,14 @@ export default function HeroDemo() {
     if (!active || reduced) return;
     if (phase === "typing") {
       const timer = window.setInterval(
-        () => setTypedCount((count) => Math.min(count + 1, QUESTION.length)),
+        () => setTypedCount((count) => Math.min(count + 1, question.length)),
         26,
       );
       return () => window.clearInterval(timer);
     }
     if (phase === "answering") {
       const timer = window.setInterval(
-        () => setAnswerBudget((budget) => Math.min(budget + 2, ANSWER_TOTAL)),
+        () => setAnswerBudget((budget) => Math.min(budget + 2, answerTotal)),
         12,
       );
       return () => window.clearInterval(timer);
@@ -124,13 +101,13 @@ export default function HeroDemo() {
         timer = next("typing", 900);
         break;
       case "typing":
-        if (typedCount >= QUESTION.length) timer = next("sent", 350);
+        if (typedCount >= question.length) timer = next("sent", 350);
         break;
       case "sent":
         timer = next("answering", 800);
         break;
       case "answering":
-        if (answerBudget >= ANSWER_TOTAL) timer = next("meta", 300);
+        if (answerBudget >= answerTotal) timer = next("meta", 300);
         break;
       case "meta":
         timer = next("cursor", 800);
@@ -180,9 +157,9 @@ export default function HeroDemo() {
   }, [phase]);
 
   function renderAnswer(): ReactNode[] {
-    let remaining = reduced ? ANSWER_TOTAL : answerBudget;
+    let remaining = reduced ? answerTotal : answerBudget;
     const parts: ReactNode[] = [];
-    for (const [i, segment] of ANSWER.entries()) {
+    for (const [i, segment] of copy.answer.entries()) {
       if (remaining <= 0) break;
       if (segment.chip !== undefined) {
         parts.push(<Chip key={i} n={segment.chip} active={segment.chip === "1" && at("panel")} />);
@@ -207,7 +184,7 @@ export default function HeroDemo() {
           <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
         </div>
         <div className="text-center text-[12px] font-medium text-ink-tertiary">
-          Obligations de sécurité nLPD
+          {copy.windowTitle}
         </div>
         <div />
       </div>
@@ -221,7 +198,7 @@ export default function HeroDemo() {
           <div className="flex min-h-[38px] justify-end">
             {at("sent") && (
               <span className="rounded-[18px] rounded-br-[6px] bg-accent px-[15px] py-[9px] text-[14.5px] leading-normal text-white">
-                {QUESTION}
+                {question}
               </span>
             )}
           </div>
@@ -240,24 +217,24 @@ export default function HeroDemo() {
                 pressed ? "scale-90 bg-[#e3e3e8]" : ""
               }`}
             >
-              Sources
+              {copy.sourcesLabel}
               <span className="font-mono text-[11px] font-normal text-muted">8</span>
             </span>
-            <span className="text-[11.5px] text-muted">2,4 s · audit conservé</span>
+            <span className="text-[11.5px] text-muted">{copy.meta}</span>
           </div>
           <Link
             to="/chat"
-            aria-label="Accéder au chat"
+            aria-label={copy.composerAria}
             className="group mt-auto flex items-center gap-3 rounded-full bg-surface py-2 pr-2 pl-[18px] transition hover:bg-surface-hover"
           >
             <span className="flex-1 truncate text-left text-[14px] text-muted">
               {phase === "typing" ? (
                 <span className="text-ink">
-                  {QUESTION.slice(0, typedCount)}
+                  {question.slice(0, typedCount)}
                   <span className="animate-pulse">|</span>
                 </span>
               ) : (
-                "Posez votre question sur vos propres documents…"
+                copy.composer
               )}
             </span>
             <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent text-white transition group-hover:brightness-110">
@@ -280,8 +257,8 @@ export default function HeroDemo() {
           style={{ width: panelOpen ? 316 : 0 }}
         >
           <div className="w-[316px] px-[18px] py-5">
-            <div className="px-1 pb-3 text-[11px] font-medium text-muted">SOURCES</div>
-            {SOURCES.map((source, i) => (
+            <div className="px-1 pb-3 text-[11px] font-medium text-muted">{copy.panelHeading}</div>
+            {copy.sources.map((source, i) => (
               <div
                 key={source.filename}
                 className={`rounded-[14px] bg-white px-4 py-3.5 transition-all duration-500 ${i > 0 ? "mt-2.5" : ""} ${
