@@ -1,16 +1,17 @@
 import { useState, type KeyboardEvent } from "react";
 
 interface MessageInputProps {
-  disabled: boolean;
+  busy: boolean;
   onSend: (text: string) => void;
+  onStop: () => void;
 }
 
-export default function MessageInput({ disabled, onSend }: MessageInputProps) {
+export default function MessageInput({ busy, onSend, onStop }: MessageInputProps) {
   const [text, setText] = useState("");
 
   function submit() {
     const trimmed = text.trim();
-    if (trimmed === "" || disabled) return;
+    if (trimmed === "" || busy) return;
     onSend(trimmed);
     setText("");
   }
@@ -23,24 +24,44 @@ export default function MessageInput({ disabled, onSend }: MessageInputProps) {
   }
 
   return (
-    <div className="flex flex-1 items-end gap-2">
-      <textarea
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-        rows={2}
-        placeholder="Ask about the ingested documents… (Enter to send, Shift+Enter for a new line)"
-        className="flex-1 resize-none rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-200 placeholder:text-neutral-600 focus:border-indigo-500 focus:outline-none disabled:opacity-50"
-      />
-      <button
-        type="button"
-        onClick={submit}
-        disabled={disabled || text.trim() === ""}
-        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-40"
-      >
-        Send
-      </button>
+    <div>
+      <div className="flex items-end gap-2.5">
+        <textarea
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          onKeyDown={handleKeyDown}
+          disabled={busy}
+          rows={1}
+          placeholder="Posez une question sur les documents indexés…"
+          className="max-h-40 flex-1 resize-none rounded-[22px] bg-surface px-[18px] py-[11px] text-sm text-ink field-sizing-content placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-60"
+        />
+        <button
+          type="button"
+          onClick={submit}
+          disabled={busy || text.trim() === ""}
+          aria-label="Envoyer"
+          className="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-white hover:bg-accent-hover disabled:opacity-40"
+        >
+          <svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true">
+            <path
+              d="M6.5 11V2M2.5 6 6.5 2l4 4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+      <div className="mt-2 flex justify-between px-1.5 text-[11px] text-muted">
+        <span>⏎ envoyer · ⇧⏎ nouvelle ligne · questions en FR, DE, EN</span>
+        {busy && (
+          <button type="button" onClick={onStop} className="text-link hover:underline">
+            ■ arrêter
+          </button>
+        )}
+      </div>
     </div>
   );
 }
