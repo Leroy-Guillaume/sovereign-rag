@@ -108,6 +108,20 @@ the API image, so the local profile stays fully offline. Set
 `RERANKER_PROVIDER=none` to serve the fused order directly (the control arm
 worth re-measuring against after any corpus change).
 
+`RERANKER_MODEL` accepts any cross-encoder from the Hub: models publishing a
+graph-optimized ONNX export run over ONNX Runtime, models shipping only torch
+weights (such as `BAAI/bge-reranker-v2-m3`) load through transformers
+automatically. Measured on the same fused candidate pools (159-question
+stratified set):
+
+| Model | MRR | multi-hop stratum | CPU latency / query |
+| --- | --- | --- | --- |
+| `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` (default) | 0.770 | 0.72 | ~0.4 s |
+| `BAAI/bge-reranker-v2-m3` | 0.820 | 0.91 | ~2 s |
+
+The default favors latency; flip one variable when precision is worth two
+seconds.
+
 ## Embedding model
 
 > [!WARNING]
