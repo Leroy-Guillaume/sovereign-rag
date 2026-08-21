@@ -66,8 +66,8 @@ and by commit sha).
 
 Wait for the model pull to finish (first boot only), then:
 
-1. Open http://localhost:8080
-2. Sign in with the demo API key: `sk-demo` (`sk-demo-admin` grants the admin role)
+1. Open http://localhost:8080 (the public landing; the app lives at `/chat` and `/admin`)
+2. Open the chat and sign in with the demo API key: `sk-demo` (`sk-demo-admin` grants the admin role)
 3. Ask: *Quelles sont les obligations de sécurité selon la nLPD ?*
 
 The answer streams in French and cites the seeded demo documents as `[1]`, `[2]`, …
