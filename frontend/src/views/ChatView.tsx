@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useOutletContext, useSearchParams } from "react-router";
 import { ApiError, getConversation } from "../api";
 import type { AppOutletContext } from "../App";
@@ -14,6 +14,10 @@ export default function ChatView() {
   const { status, messages, conversationId, error, send, stop, hydrate } =
     useChatStream(onUnauthorized);
   const busy = status === "retrieving" || status === "streaming";
+  // Mirror for async callbacks: a hydration fetch resolving mid-stream must
+  // read the CURRENT streaming state, not the one captured at navigation.
+  const busyRef = useRef(busy);
+  busyRef.current = busy;
 
   // Hydrate from the URL (?c=<id>). Keyed on location.key on purpose: it
   // changes on every router navigation (sidebar click, "New conversation")
@@ -31,7 +35,10 @@ export default function ChatView() {
     let cancelled = false;
     getConversation(requestedId)
       .then((detail) => {
-        if (cancelled) return;
+        // A slow resolution can land after the user already sent a message
+        // in this conversation: the live stream is fresher than the fetched
+        // history, so hydrating now would abort it and discard their turn.
+        if (cancelled || busyRef.current) return;
         hydrate(
           detail.id,
           detail.messages.map((m) => ({ role: m.role, content: m.content, sources: m.sources })),
@@ -43,6 +50,7 @@ export default function ChatView() {
           onUnauthorized();
           return;
         }
+        if (busyRef.current) return;
         hydrate(null, []); // 404 (not ours or deleted): fall back to a fresh chat
       });
     return () => {

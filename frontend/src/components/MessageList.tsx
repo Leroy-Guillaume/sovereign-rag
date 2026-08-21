@@ -13,9 +13,20 @@ const CITATION_EXACT = /^\[(\d+)\]$/;
 export default function MessageList({ messages, status }: MessageListProps) {
   const [highlighted, setHighlighted] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const pinnedToBottom = useRef(true);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ block: "end" });
+    // Follow the stream only while the reader is already at the bottom:
+    // unconditional scrolling would yank the view back down on every delta
+    // and make re-reading an earlier answer impossible mid-stream.
+    const bottom = bottomRef.current;
+    if (bottom === null) return;
+    const container = bottom.parentElement;
+    if (container !== null) {
+      const distance = container.scrollHeight - container.scrollTop - container.clientHeight;
+      pinnedToBottom.current = distance < 80;
+    }
+    if (pinnedToBottom.current) bottom.scrollIntoView({ block: "end" });
   }, [messages, status]);
 
   function jumpToSource(anchorId: string) {

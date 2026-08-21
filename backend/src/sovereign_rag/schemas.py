@@ -20,6 +20,32 @@ class PermissionOut(BaseModel):
     granted_at: datetime
 
 
+class LatencyOut(BaseModel):
+    """Stage latency percentiles in milliseconds; None until data exists."""
+
+    p50_ms: int | None
+    p95_ms: int | None
+
+
+class CitedDocument(BaseModel):
+    filename: str
+    citations: int
+
+
+class AdminMetricsOut(BaseModel):
+    """Aggregates over the typed per-message columns (ADR 3.12)."""
+
+    window_days: int
+    answers: int
+    conversations: int
+    prompt_tokens: int
+    completion_tokens: int
+    errors: int
+    retrieval: LatencyOut
+    generation: LatencyOut
+    top_cited: list[CitedDocument]
+
+
 class DocumentOut(BaseModel):
     id: UUID
     filename: str

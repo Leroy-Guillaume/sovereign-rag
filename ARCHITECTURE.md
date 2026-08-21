@@ -380,6 +380,6 @@ out-of-domain, so any model change goes through the same benchmark before shippi
 | Ingestion | In-process `asyncio` task | `jobs` table + worker process | Statuses already persisted in the database; boot sweep already handles interruption |
 | Vector store | pgvector | Qdrant / Azure AI Search adapter | `VectorStore` Protocol + contract suite; README guide |
 | Embeddings | multilingual-e5-small (384 d) | bge-m3 (1024 d) | Env vars + `vector(1024)` migration + re-ingestion; boot guard blocks silent switches; prefix table already knows bge-m3 |
-| Metrics | Typed columns on `messages` | SQL dashboard (Phase 2), Prometheus (production) | `messages_created_idx`; `jsonb_array_elements(sources)` for citation aggregates |
+| Metrics | Typed columns on `messages` + admin dashboard (usage, tokens, p50/p95, top cited) | Prometheus (production, multi-instance) | `messages_created_idx`; the dashboard queries are exactly the ADR 3.12 design |
 | PII | `redact()` no-op seam in the prompt builder | Presidio redaction (Phase 2) | The seam is the only integration point; callers never change |
 | Feedback | none | Thumbs up/down (Phase 2) | Additive `0004_feedback.sql`, no `ALTER` on Phase 1 tables |

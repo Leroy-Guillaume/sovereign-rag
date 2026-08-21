@@ -1,4 +1,5 @@
 import type {
+  AdminMetrics,
   ChatDeltaData,
   ChatDoneData,
   ChatErrorData,
@@ -57,8 +58,20 @@ export async function request<T>(path: string, init: RequestOptions = {}): Promi
     body: init.body,
   });
   if (!response.ok) {
-    const detail = await response.text();
-    throw new ApiError(response.status, detail !== "" ? detail : response.statusText);
+    // FastAPI wraps error messages as {"detail": ...}; surface the message,
+    // never the raw JSON envelope, and fall back to the HTTP status text.
+    const raw = await response.text();
+    let message = response.statusText;
+    if (raw !== "") {
+      try {
+        const parsed: unknown = JSON.parse(raw);
+        const detail = (parsed as { detail?: unknown }).detail;
+        message = typeof detail === "string" ? detail : raw;
+      } catch {
+        message = raw;
+      }
+    }
+    throw new ApiError(response.status, message);
   }
   if (response.status === 204) {
     return undefined as unknown as T; // DELETE /api/documents/{id}
@@ -81,6 +94,10 @@ export function uploadDocument(file: File): Promise<DocumentOut> {
 
 export function deleteDocument(id: string): Promise<void> {
   return request<void>(`/api/documents/${id}`, { method: "DELETE" });
+}
+
+export function getAdminMetrics(): Promise<AdminMetrics> {
+  return request<AdminMetrics>("/api/admin/metrics");
 }
 
 export function listConversations(): Promise<ConversationOut[]> {
