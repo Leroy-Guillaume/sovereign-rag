@@ -1,0 +1,1052 @@
+[
+ {
+  "q": "Quelles sont les obligations de sécurité selon la nLPD ?",
+  "expect": "nlpd-excerpt",
+  "hint": "Art. 8",
+  "stratum": "S0"
+ },
+ {
+  "q": "Qui surveille l'application de la loi suisse sur la protection des données ?",
+  "expect": "nlpd-excerpt",
+  "hint": "Art. 4",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quel est le droit d'accès de la personne concernée en Suisse ?",
+  "expect": "nlpd-excerpt",
+  "hint": "Art. 25",
+  "stratum": "S0"
+ },
+ {
+  "q": "Was ist das Ziel des schweizerischen Datenschutzgesetzes?",
+  "expect": "dsg-auszug",
+  "hint": "Art. 1",
+  "stratum": "S0"
+ },
+ {
+  "q": "What is the purpose of an ISMS in ISO 27001?",
+  "expect": "iso27001",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Dans quel délai faut-il notifier une violation de données personnelles à l'autorité de contrôle ?",
+  "expect": "eu-rgpd.fr",
+  "hint": "72",
+  "stratum": "S0"
+ },
+ {
+  "q": "Qu'est-ce qu'une analyse d'impact relative à la protection des données ?",
+  "expect": "eu-rgpd.fr",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quelles sont les conditions du consentement au sens du RGPD ?",
+  "expect": "eu-rgpd.fr",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Wann muss eine Datenschutz-Folgenabschätzung durchgeführt werden?",
+  "expect": "eu-rgpd.de",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "What are the rights of the data subject to erasure?",
+  "expect": "eu-rgpd.en",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quels systèmes d'intelligence artificielle sont interdits ?",
+  "expect": "eu-ai-act.fr",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Comment classe-t-on un système d'IA à haut risque ?",
+  "expect": "eu-ai-act.fr",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Welche Transparenzpflichten gelten für KI-Systeme?",
+  "expect": "eu-ai-act.de",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "What obligations apply to general-purpose AI models?",
+  "expect": "eu-ai-act.en",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quelles entités sont considérées comme essentielles au sens de NIS2 ?",
+  "expect": "eu-nis2.fr",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quelles mesures de gestion des risques de cybersécurité impose NIS2 ?",
+  "expect": "eu-nis2.fr",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "What incident reporting deadlines does NIS2 impose?",
+  "expect": "eu-nis2.en",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Qu'est-ce que le test de résilience opérationnelle numérique avancé ?",
+  "expect": "eu-dora",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quelles obligations DORA impose-t-il aux prestataires tiers de services TIC ?",
+  "expect": "eu-dora",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quelles obligations de transparence pèsent sur les plateformes en ligne de très grande taille ?",
+  "expect": "eu-dsa",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Qu'est-ce qu'un contrôleur d'accès au sens du DMA ?",
+  "expect": "eu-dma",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quelles sont les conditions de partage des données par les détenteurs de données ?",
+  "expect": "eu-data-act",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Qu'est-ce qu'un service de confiance qualifié ?",
+  "expect": "eu-eidas",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Quel est le rôle de l'ENISA ?",
+  "expect": "eu-cybersecurity-act",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Que prévoit l'article 35 du RGPD ?",
+  "expect": "eu-rgpd",
+  "hint": "35",
+  "stratum": "S0"
+ },
+ {
+  "q": "Que dit l'article 22 sur la décision automatisée ?",
+  "expect": "eu-rgpd",
+  "hint": "22",
+  "stratum": "S0"
+ },
+ {
+  "q": "ENISA cybersecurity certification framework",
+  "expect": "eu-cybersecurity-act",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Que signifie DORA ?",
+  "expect": "eu-dora",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Qu'est-ce qu'un gatekeeper ?",
+  "expect": "eu-dma",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Was bedeutet Auftragsverarbeiter?",
+  "expect": "eu-rgpd.de",
+  "hint": "",
+  "stratum": "S0"
+ },
+ {
+  "q": "Que prévoit l'article 33 du RGPD en cas de violation de données à caractère personnel ?",
+  "expect": "eu-rgpd",
+  "hint": "Article 33",
+  "stratum": "S1"
+ },
+ {
+  "q": "Was regelt Artikel 6 der DSGVO zur Rechtmäßigkeit der Verarbeitung?",
+  "expect": "eu-rgpd",
+  "hint": "Artikel 6",
+  "stratum": "S1"
+ },
+ {
+  "q": "What does Article 35 of the GDPR say about data protection impact assessments?",
+  "expect": "eu-rgpd",
+  "hint": "Article 35",
+  "stratum": "S1"
+ },
+ {
+  "q": "Quelles sont les obligations d'information prévues par l'article 23 de la directive NIS2 ?",
+  "expect": "eu-nis2",
+  "hint": "Article 23",
+  "stratum": "S1"
+ },
+ {
+  "q": "Welche Risikomanagementmaßnahmen schreibt Artikel 21 der NIS2-Richtlinie vor?",
+  "expect": "eu-nis2",
+  "hint": "Artikel 21",
+  "stratum": "S1"
+ },
+ {
+  "q": "What governance obligations does Article 20 of NIS2 impose on management bodies?",
+  "expect": "eu-nis2",
+  "hint": "Article 20",
+  "stratum": "S1"
+ },
+ {
+  "q": "Quelles pratiques d'IA sont interdites par l'article 5 du règlement sur l'IA ?",
+  "expect": "eu-ai-act",
+  "hint": "Article 5",
+  "stratum": "S1"
+ },
+ {
+  "q": "What does Article 14 of the AI Act require regarding human oversight of high-risk AI systems?",
+  "expect": "eu-ai-act",
+  "hint": "Article 14",
+  "stratum": "S1"
+ },
+ {
+  "q": "Was sieht Artikel 43 der KI-Verordnung zur Konformitätsbewertung vor?",
+  "expect": "eu-ai-act",
+  "hint": "Artikel 43",
+  "stratum": "S1"
+ },
+ {
+  "q": "Que demande l'article 34 du DSA aux très grandes plateformes en matière d'évaluation des risques ?",
+  "expect": "eu-dsa",
+  "hint": "Article 34",
+  "stratum": "S1"
+ },
+ {
+  "q": "Was verlangt Artikel 16 des Digital Services Act zu Melde- und Abhilfeverfahren?",
+  "expect": "eu-dsa",
+  "hint": "Artikel 16",
+  "stratum": "S1"
+ },
+ {
+  "q": "Quelles obligations l'article 5 du DMA impose-t-il aux contrôleurs d'accès ?",
+  "expect": "eu-dma",
+  "hint": "Article 5",
+  "stratum": "S1"
+ },
+ {
+  "q": "What obligations for gatekeepers does Article 6 of the Digital Markets Act contain?",
+  "expect": "eu-dma",
+  "hint": "Article 6",
+  "stratum": "S1"
+ },
+ {
+  "q": "Que prévoit l'article 4 du Data Act sur l'accès des utilisateurs aux données du produit ?",
+  "expect": "eu-data-act",
+  "hint": "Article 4",
+  "stratum": "S1"
+ },
+ {
+  "q": "Welche Pflicht zur Zugänglichmachung von Produktdaten enthält Artikel 3 des Data Act?",
+  "expect": "eu-data-act",
+  "hint": "Artikel 3",
+  "stratum": "S1"
+ },
+ {
+  "q": "Que doit contenir le processus de gestion des incidents liés aux TIC selon l'article 17 de DORA ?",
+  "expect": "eu-dora",
+  "hint": "Article 17",
+  "stratum": "S1"
+ },
+ {
+  "q": "What general principles does Article 28 of DORA set out for managing ICT third-party risk?",
+  "expect": "eu-dora",
+  "hint": "Article 28",
+  "stratum": "S1"
+ },
+ {
+  "q": "Que prévoit l'article 11 du règlement DORA en matière de réponse et de rétablissement ?",
+  "expect": "eu-dora",
+  "hint": "Article 11",
+  "stratum": "S1"
+ },
+ {
+  "q": "Quelles exigences l'article 24 du règlement eIDAS impose-t-il aux prestataires de services de confiance qualifiés ?",
+  "expect": "eu-eidas",
+  "hint": "Article 24",
+  "stratum": "S1"
+ },
+ {
+  "q": "What are the requirements of Article 45 of the eIDAS Regulation for qualified website authentication certificates?",
+  "expect": "eu-eidas",
+  "hint": "Article 45",
+  "stratum": "S1"
+ },
+ {
+  "q": "Que dit l'article 56 du règlement sur la cybersécurité concernant la certification de cybersécurité ?",
+  "expect": "eu-cybersecurity-act",
+  "hint": "Article 56",
+  "stratum": "S1"
+ },
+ {
+  "q": "Que prévoit l'article 39 du règlement 2018/1725 sur l'analyse d'impact relative à la protection des données ?",
+  "expect": "eu-edps",
+  "hint": "Article 39",
+  "stratum": "S1"
+ },
+ {
+  "q": "What does Article 66 of Regulation 2018/1725 provide regarding administrative fines?",
+  "expect": "eu-edps",
+  "hint": "Article 66",
+  "stratum": "S1"
+ },
+ {
+  "q": "Notre base clients a été piratée cette nuit et des informations sur des particuliers ont fuité : combien de temps avons-nous pour prévenir le régulateur ?",
+  "expect": "eu-rgpd",
+  "hint": "72 heures au plus tard",
+  "stratum": "S2"
+ },
+ {
+  "q": "Dans quels cas une organisation est-elle obligée de nommer en interne une personne dédiée qui veille au respect de la vie privée ?",
+  "expect": "eu-rgpd",
+  "hint": "délégué à la protection des données",
+  "stratum": "S2"
+ },
+ {
+  "q": "Notre fournisseur d'électricité vient de subir une cyberattaque majeure : sous quel délai doit-il émettre un tout premier signalement, et auprès de qui ?",
+  "expect": "eu-nis2",
+  "hint": "alerte précoce",
+  "stratum": "S2"
+ },
+ {
+  "q": "La police a-t-elle le droit de scanner en direct le visage des passants dans la rue avec des caméras ?",
+  "expect": "eu-ai-act",
+  "hint": "identification biométrique à distance en temps réel",
+  "stratum": "S2"
+ },
+ {
+  "q": "Je suis tombé sur une offre manifestement frauduleuse sur une place de marché en ligne : quel moyen le site doit-il me donner pour l'en avertir ?",
+  "expect": "eu-dsa",
+  "hint": "signaler la présence",
+  "stratum": "S2"
+ },
+ {
+  "q": "À partir de combien d'utilisateurs européens un réseau social bascule-t-il dans la catégorie soumise à la surveillance renforcée de la Commission ?",
+  "expect": "eu-dsa",
+  "hint": "45 millions",
+  "stratum": "S2"
+ },
+ {
+  "q": "Quelle taille financière une entreprise du numérique doit-elle atteindre pour être présumée incontournable et se voir imposer les obligations européennes spéciales ?",
+  "expect": "eu-dma",
+  "hint": "7,5 milliards",
+  "stratum": "S2"
+ },
+ {
+  "q": "Le propriétaire d'un tracteur bourré de capteurs peut-il exiger du constructeur de consulter les mesures que sa machine enregistre ?",
+  "expect": "eu-data-act",
+  "hint": "rendent les données facilement accessibles",
+  "stratum": "S2"
+ },
+ {
+  "q": "Les banques et assurances doivent-elles encadrer leur dépendance vis-à-vis des sociétés informatiques externes auxquelles elles font appel ?",
+  "expect": "eu-dora",
+  "hint": "prestataires tiers de services TIC",
+  "stratum": "S2"
+ },
+ {
+  "q": "Un contrat approuvé par un procédé cryptographique certifié a-t-il la même valeur devant un tribunal qu'un document signé au stylo ?",
+  "expect": "eu-eidas",
+  "hint": "signature manuscrite",
+  "stratum": "S2"
+ },
+ {
+  "q": "Quels paliers de fiabilité peut-on attribuer à un objet high-tech lors de son évaluation de sécurité au niveau européen ?",
+  "expect": "eu-cybersecurity-act",
+  "hint": "«élémentaire», «substantiel» ou «élevé»",
+  "stratum": "S2"
+ },
+ {
+  "q": "Une agence de Bruxelles utilise mal mes informations personnelles : vers qui puis-je me tourner pour me plaindre ?",
+  "expect": "eu-edps",
+  "hint": "introduire une réclamation",
+  "stratum": "S2"
+ },
+ {
+  "q": "Quelles obligations une société établie en Suisse doit-elle respecter lorsqu'elle exploite des renseignements sur des personnes privées ?",
+  "expect": "nlpd-excerpt",
+  "hint": "",
+  "stratum": "S2"
+ },
+ {
+  "q": "Ein Kunde verlangt, dass wir sämtliche Informationen über ihn endgültig aus unseren Systemen entfernen — sind wir dazu verpflichtet?",
+  "expect": "eu-rgpd",
+  "hint": "Recht auf Löschung",
+  "stratum": "S2"
+ },
+ {
+  "q": "Muss die Chefetage eines Energieversorgers persönlich Kurse zur Abwehr von Hackerangriffen besuchen?",
+  "expect": "eu-nis2",
+  "hint": "an Schulungen teilnehmen",
+  "stratum": "S2"
+ },
+ {
+  "q": "Muss bei automatisierten Systemen, die folgenreiche Entscheidungen treffen, stets eine Person eingreifen und korrigieren können?",
+  "expect": "eu-ai-act",
+  "hint": "Menschliche Aufsicht",
+  "stratum": "S2"
+ },
+ {
+  "q": "Darf eine Plattform Kindern und Jugendlichen Anzeigen ausspielen, die auf ihr Verhalten zugeschnitten sind?",
+  "expect": "eu-dsa",
+  "hint": "Werbung auf der Grundlage von Profiling",
+  "stratum": "S2"
+ },
+ {
+  "q": "Wie leicht muss es mir mein Cloud-Anbieter machen, mit allem, was ich dort gespeichert habe, zu einem Konkurrenten umzuziehen?",
+  "expect": "eu-data-act",
+  "hint": "Wechsel zwischen Datenverarbeitungsdiensten",
+  "stratum": "S2"
+ },
+ {
+  "q": "Gibt es ein offizielles Logo, an dem man seriöse, behördlich geprüfte Anbieter digitaler Beglaubigungsdienste erkennen kann?",
+  "expect": "eu-eidas",
+  "hint": "EU-Vertrauenssiegel",
+  "stratum": "S2"
+ },
+ {
+  "q": "Can I take everything a service knows about me and move it across to a rival provider without retyping it all?",
+  "expect": "eu-rgpd",
+  "hint": "data portability",
+  "stratum": "S2"
+ },
+ {
+  "q": "If someone uses software to fabricate a realistic video of a person saying things they never said, do viewers have to be told it isn't genuine?",
+  "expect": "eu-ai-act",
+  "hint": "deep fake",
+  "stratum": "S2"
+ },
+ {
+  "q": "Is it legal for a website to lay out its buttons and menus so that people get tricked into choices they never meant to make?",
+  "expect": "eu-dsa",
+  "hint": "deceives or manipulates",
+  "stratum": "S2"
+ },
+ {
+  "q": "Will I eventually be able to text friends who use a different chat app, without both of us having to install the same one?",
+  "expect": "eu-dma",
+  "hint": "number-independent interpersonal communications",
+  "stratum": "S2"
+ },
+ {
+  "q": "How often must financial firms bring in ethical hackers to stage realistic attack simulations against their live systems?",
+  "expect": "eu-dora",
+  "hint": "threat-led penetration testing",
+  "stratum": "S2"
+ },
+ {
+  "q": "On me parle du cadre TIBER-EU pour les tests de pénétration fondés sur la menace dans le secteur financier — quel règlement européen s'y réfère ?",
+  "expect": "eu-dora",
+  "hint": "TIBER-EU",
+  "stratum": "S3"
+ },
+ {
+  "q": "C'est quoi exactement EU-CyCLONe et quel est son rôle dans la gestion des crises de cybersécurité à grande échelle ?",
+  "expect": "eu-nis2",
+  "hint": "EU-CyCLONe",
+  "stratum": "S3"
+ },
+ {
+  "q": "Quels types de services sont considérés comme des services de plateforme essentiels au sens du règlement sur les marchés numériques ?",
+  "expect": "eu-dma",
+  "hint": "services de plateforme essentiels",
+  "stratum": "S3"
+ },
+ {
+  "q": "Quel est le rôle du coordinateur pour les services numériques que chaque État membre doit désigner ?",
+  "expect": "eu-dsa",
+  "hint": "coordinateur pour les services numériques",
+  "stratum": "S3"
+ },
+ {
+  "q": "Comment une entité obtient-elle le statut de signaleur de confiance et quel traitement prioritaire cela donne-t-il à ses notifications ?",
+  "expect": "eu-dsa",
+  "hint": "signaleurs de confiance",
+  "stratum": "S3"
+ },
+ {
+  "q": "Quelles sont les missions du Bureau de l'IA vis-à-vis des modèles d'IA à usage général ?",
+  "expect": "eu-ai-act",
+  "hint": "Bureau de l’IA",
+  "stratum": "S3"
+ },
+ {
+  "q": "Quelles conditions un prestataire de services de confiance qualifié doit-il remplir pour obtenir et conserver ce statut ?",
+  "expect": "eu-eidas",
+  "hint": "prestataire de services de confiance qualifié",
+  "stratum": "S3"
+ },
+ {
+  "q": "Quels sont les pouvoirs du PFPDT en matière de surveillance de la protection des données en Suisse ?",
+  "expect": "nlpd-excerpt",
+  "hint": "",
+  "stratum": "S3"
+ },
+ {
+  "q": "Qui doit désigner ou mettre en place les CSIRT nationaux et quelles exigences ces équipes doivent-elles respecter ?",
+  "expect": "eu-nis2",
+  "hint": "désigne ou met en place",
+  "stratum": "S3"
+ },
+ {
+  "q": "Quelles règles s'appliquent au traitement des données opérationnelles à caractère personnel par les organes et organismes de l'Union ?",
+  "expect": "eu-edps",
+  "hint": "données opérationnelles",
+  "stratum": "S3"
+ },
+ {
+  "q": "Nach welchen Kriterien wird ein Unternehmen als Torwächter benannt?",
+  "expect": "eu-dma",
+  "hint": "Torwächter",
+  "stratum": "S3"
+ },
+ {
+  "q": "Welche Garantien muss ein Auftragsverarbeiter bieten, damit ein Verantwortlicher ihn mit der Verarbeitung beauftragen darf?",
+  "expect": "eu-rgpd",
+  "hint": "hinreichende Garantien",
+  "stratum": "S3"
+ },
+ {
+  "q": "Welche Pflichten hat ein Dateninhaber, wenn ein Nutzer Zugang zu den Daten eines vernetzten Produkts verlangt?",
+  "expect": "eu-data-act",
+  "hint": "Dateninhaber",
+  "stratum": "S3"
+ },
+ {
+  "q": "Was ist ein KI-Reallabor und wer muss solche Reallabore einrichten?",
+  "expect": "eu-ai-act",
+  "hint": "KI-Reallabor",
+  "stratum": "S3"
+ },
+ {
+  "q": "Who appoints the Lead Overseer for critical ICT third-party service providers, and what powers does it have?",
+  "expect": "eu-dora",
+  "hint": "Lead Overseer",
+  "stratum": "S3"
+ },
+ {
+  "q": "What is the Union rolling work programme for European cybersecurity certification supposed to identify?",
+  "expect": "eu-cybersecurity-act",
+  "hint": "Union rolling work programme",
+  "stratum": "S3"
+ },
+ {
+  "q": "What essential requirements apply to smart contracts used for executing data sharing agreements?",
+  "expect": "eu-data-act",
+  "hint": "smart contract",
+  "stratum": "S3"
+ },
+ {
+  "q": "Je consulte la version allemande de la nouvelle loi suisse sur la protection des données (DSG) : quel est le but déclaré de cette loi à son article premier ?",
+  "expect": "dsg-auszug",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Quel rôle le texte allemand de la loi suisse sur la protection des données (DSG) confie-t-il au préposé fédéral (EDÖB) ?",
+  "expect": "dsg-auszug",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Comment le DSG suisse définit-il les notions clés, par exemple les données personnelles particulièrement sensibles ?",
+  "expect": "dsg-auszug",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Quels principes généraux de traitement (bonne foi, proportionnalité, finalité) le DSG suisse impose-t-il ?",
+  "expect": "dsg-auszug",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "La loi suisse DSG exige-t-elle la protection des données dès la conception et par défaut ?",
+  "expect": "dsg-auszug",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Qu'exige le DSG suisse du responsable du traitement en matière de sécurité des données (Datensicherheit) ?",
+  "expect": "dsg-auszug",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Selon le DSG suisse, quelles informations dois-je communiquer aux personnes concernées au moment où je collecte leurs données ?",
+  "expect": "dsg-auszug",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Un client peut-il invoquer le droit d'accès (Auskunftsrecht) prévu par le DSG suisse pour savoir quelles données nous détenons sur lui ?",
+  "expect": "dsg-auszug",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Was versteht ISO 27001 unter einem Informationssicherheits-Managementsystem und wozu dient es?",
+  "expect": "iso27001",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Wie funktioniert der Plan-Do-Check-Act-Managementzyklus nach ISO 27001?",
+  "expect": "iso27001",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Welche Arten von Sicherheitsmaßnahmen deckt Annex A der ISO 27001 ab?",
+  "expect": "iso27001",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Does the revised Swiss data protection act (nLPD) still cover data about legal entities, or only natural persons?",
+  "expect": "nlpd-excerpt",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Our servers are outside Switzerland — does the Swiss LPD still apply if the processing has effects in Switzerland?",
+  "expect": "nlpd-excerpt",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Under the Swiss LPD's duty to inform, do I have to notify people even when I obtain their personal data from third parties?",
+  "expect": "nlpd-excerpt",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "What details is a data subject entitled to receive when exercising the right of access under the Swiss LPD?",
+  "expect": "nlpd-excerpt",
+  "hint": "",
+  "stratum": "S4"
+ },
+ {
+  "q": "Un hôpital vient de subir un ransomware avec exfiltration de données de patients. Sous NIS2 et sous le RGPD, dans quels délais doit-il notifier l'incident, et à qui ?",
+  "expect": "eu-nis2",
+  "hint": "alerte précoce",
+  "stratum": "S5"
+ },
+ {
+  "q": "Notre plateforme en ligne dépasse désormais 45 millions d'utilisateurs actifs mensuels dans l'UE. Qu'est-ce que cela change pour nous en matière de désignation et d'évaluation des risques systémiques sous le DSA ?",
+  "expect": "eu-dsa",
+  "hint": "45 millions",
+  "stratum": "S5"
+ },
+ {
+  "q": "Notre groupe réalise plus de 7,5 milliards d'euros de chiffre d'affaires annuel dans l'Union et fournit un même service de plateforme essentiel dans trois États membres : sommes-nous présumés contrôleur d'accès au sens du DMA, et pourrons-nous encore combiner les données personnelles de nos différents services ?",
+  "expect": "eu-dma",
+  "hint": "7,5 milliards",
+  "stratum": "S5"
+ },
+ {
+  "q": "Quelles conditions une signature électronique doit-elle remplir pour être considérée comme qualifiée au sens d'eIDAS, et quel effet juridique obtient-elle alors par rapport à une signature papier ?",
+  "expect": "eu-eidas",
+  "hint": "signature manuscrite",
+  "stratum": "S5"
+ },
+ {
+  "q": "Une agence de l'Union européenne subit une violation de données à caractère personnel : doit-elle la notifier au CEPD dans le même délai que celui que le RGPD impose aux entreprises vis-à-vis de leur autorité de contrôle ?",
+  "expect": "eu-edps",
+  "hint": "72 heures",
+  "stratum": "S5"
+ },
+ {
+  "q": "Ein Unternehmen setzt ein biometrisches Echtzeit-Fernidentifizierungssystem in öffentlich zugänglichen Räumen ein, ohne die Voraussetzungen des Artikels 5 der KI-Verordnung zu erfüllen. Welche Geldbuße droht bei Missachtung dieses Verbots?",
+  "expect": "eu-ai-act",
+  "hint": "35 000 000 EUR",
+  "stratum": "S5"
+ },
+ {
+  "q": "Unsere Bank fällt als Finanzunternehmen unter DORA, wäre aber als Einrichtung eigentlich auch von NIS2 erfasst. Nach welchen Regeln und an welche Behörde müssen wir einen schwerwiegenden IKT-bezogenen Vorfall melden?",
+  "expect": "eu-dora",
+  "hint": "Meldung schwerwiegender IKT-bezogener Vorfälle",
+  "stratum": "S5"
+ },
+ {
+  "q": "NIS2 erlaubt es, für wesentliche Einrichtungen die Nutzung zertifizierter IKT-Produkte vorzuschreiben. Welche Vertrauenswürdigkeitsstufen sehen die europäischen Schemata für die Cybersicherheitszertifizierung nach dem Cybersecurity Act dafür vor, und wonach richtet sich die Stufe?",
+  "expect": "eu-cybersecurity-act",
+  "hint": "Vertrauenswürdigkeitsstufe",
+  "stratum": "S5"
+ },
+ {
+  "q": "How does the user's right under the Data Act to make product data available to a third party go beyond the data portability right in Article 20 GDPR?",
+  "expect": "eu-data-act",
+  "hint": "Article 20 of Regulation (EU) 2016/679",
+  "stratum": "S5"
+ },
+ {
+  "q": "Under the GDPR, when is a controller required to carry out a data protection impact assessment, and in which case must it additionally consult the supervisory authority before starting the processing?",
+  "expect": "eu-rgpd",
+  "hint": "consult the supervisory authority prior",
+  "stratum": "S5"
+ },
+ {
+  "q": "Que prévoit l'article 150 du RGPD concernant les transferts de données vers des pays tiers ?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Quelles sont les conséquences de l'arrêt Schrems II de la CJUE sur la validité du Privacy Shield ?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Quel montant d'amende la CNIL a-t-elle infligé à Google en 2019 pour manquement à la transparence ?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Quelle est la durée minimale des congés payés annuels garantie à un salarié en droit du travail français ?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Quel taux d'impôt sur les sociétés s'applique aux PME dont le chiffre d'affaires est inférieur à 10 millions d'euros ?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Wie lange gilt der Schutz eines europäischen Patents ab dem Anmeldetag?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Wie viele Wochen Mutterschaftsurlaub stehen einer Arbeitnehmerin vor und nach der Entbindung zu?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Welche Geldbuße hat die irische Datenschutzbehörde 2023 gegen Meta wegen der Datenübermittlung in die USA verhängt?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "In which year did the CJEU invalidate the Data Retention Directive in the Digital Rights Ireland case?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "What withholding tax rate applies to cross-border dividend payments between an EU parent company and its subsidiary?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Un collégien de quatorze ans peut-il donner seul son feu vert à une appli pour exploiter ses informations, ou l'accord des parents est-il requis ?",
+  "expect": "eu-rgpd",
+  "hint": "âgé d'au moins 16 ans",
+  "stratum": "S2"
+ },
+ {
+  "q": "Un juriste mandaté cherche à identifier le titulaire d'un site web : en combien de temps le gestionnaire des adresses internet doit-il donner suite à sa demande légitime ?",
+  "expect": "eu-nis2",
+  "hint": "enregistrement de noms de domaine",
+  "stratum": "S2"
+ },
+ {
+  "q": "Le concepteur d'un logiciel intelligent sensible doit-il alerter les pouvoirs publics lorsque son produit provoque un accident sérieux, et sous quel délai maximal ?",
+  "expect": "eu-ai-act",
+  "hint": "signalent tout incident grave",
+  "stratum": "S2"
+ },
+ {
+  "q": "Le réseau social vient de retirer ma publication : est-il obligé de me détailler les raisons précises de cette décision ?",
+  "expect": "eu-dsa",
+  "hint": "exposé des motifs",
+  "stratum": "S2"
+ },
+ {
+  "q": "Une multinationale du numérique a-t-elle le droit de placer ses propres offres en meilleure position que celles de ses rivaux dans les résultats affichés par sa plateforme ?",
+  "expect": "eu-dma",
+  "hint": "traitement plus favorable",
+  "stratum": "S2"
+ },
+ {
+  "q": "Le constructeur d'une machine bardée de capteurs peut-il refuser d'en livrer les relevés au motif que cela dévoilerait son savoir-faire confidentiel ?",
+  "expect": "eu-data-act",
+  "hint": "secrets d'affaires",
+  "stratum": "S2"
+ },
+ {
+  "q": "Après une panne informatique, comment un établissement bancaire doit-il en jauger la gravité, et selon quels paramètres ?",
+  "expect": "eu-dora",
+  "hint": "classent les incidents liés aux TIC",
+  "stratum": "S2"
+ },
+ {
+  "q": "Comment prouver de manière incontestable qu'un fichier existait déjà à une date donnée et qu'il n'a pas été modifié depuis ?",
+  "expect": "eu-eidas",
+  "hint": "horodatage électronique qualifié",
+  "stratum": "S2"
+ },
+ {
+  "q": "Pour un objet high-tech ne présentant que peu de dangers, le fabricant peut-il attester lui-même sa robustesse sans recourir à un organisme extérieur ?",
+  "expect": "eu-cybersecurity-act",
+  "hint": "autoévaluation de la conformité",
+  "stratum": "S2"
+ },
+ {
+  "q": "Müssen wir intern schriftlich festhalten, was in unserem Unternehmen mit Kundeninformationen geschieht, und was gehört alles in diese Übersicht?",
+  "expect": "eu-rgpd",
+  "hint": "Verzeichnis von Verarbeitungstätigkeiten",
+  "stratum": "S2"
+ },
+ {
+  "q": "Darf ich die vom Smartphone-Hersteller mitgelieferten Programme loswerden und andere Anbieter als Voreinstellung wählen?",
+  "expect": "eu-dma",
+  "hint": "auf einfache Weise zu deinstallieren",
+  "stratum": "S2"
+ },
+ {
+  "q": "Muss eine Versicherung in regelmäßigen Abständen Kopien ihrer Bestände anlegen, damit nach einem Systemausfall alles wieder zum Laufen gebracht werden kann?",
+  "expect": "eu-dora",
+  "hint": "Verfahren für die Datensicherung",
+  "stratum": "S2"
+ },
+ {
+  "q": "Sind Nachrichten, die über die Netze einer Brüsseler Behörde laufen, vor fremden Blicken geschützt?",
+  "expect": "eu-edps",
+  "hint": "Vertraulichkeit der elektronischen Kommunikation",
+  "stratum": "S2"
+ },
+ {
+  "q": "I discovered a security hole in another vendor's product — is there an official go-between I can report it through without contacting the maker myself?",
+  "expect": "eu-nis2",
+  "hint": "coordinated vulnerability disclosure",
+  "stratum": "S2"
+ },
+ {
+  "q": "Before a firm switches on algorithmic monitoring software over its staff, must the people concerned and their unions be told?",
+  "expect": "eu-ai-act",
+  "hint": "affected workers",
+  "stratum": "S2"
+ },
+ {
+  "q": "Why does my feed keep pushing certain posts to the top, and do I get any say in how the ordering works?",
+  "expect": "eu-dsa",
+  "hint": "main parameters used in their recommender systems",
+  "stratum": "S2"
+ },
+ {
+  "q": "When a flood or a pandemic strikes, can public authorities compel private firms to hand over information they hold to help manage the crisis?",
+  "expect": "eu-data-act",
+  "hint": "exceptional need",
+  "stratum": "S2"
+ },
+ {
+  "q": "Can a company as an organisation — rather than one of its employees — put a digital stamp on paperwork proving it genuinely came from that business and was never altered?",
+  "expect": "eu-eidas",
+  "hint": "issued by a legal person",
+  "stratum": "S2"
+ },
+ {
+  "q": "Notre entreprise n'a pas notifié à l'autorité de contrôle une violation de données dans le délai imposé par le RGPD : quelle est l'obligation exacte que nous avons enfreinte et quel plafond d'amende administrative risquons-nous pour ce manquement ?",
+  "expect": "eu-rgpd",
+  "hint": "10 000 000 EUR",
+  "stratum": "S5"
+ },
+ {
+  "q": "La directive NIS2 distingue les entités essentielles des entités importantes : quels plafonds d'amendes administratives s'appliquent respectivement à chacune de ces deux catégories ?",
+  "expect": "eu-nis2",
+  "hint": "7 000 000 EUR",
+  "stratum": "S5"
+ },
+ {
+  "q": "À partir de quelle quantité cumulée de calcul utilisée pour l'entraînement un modèle d'IA à usage général est-il présumé présenter un risque systémique, et quelles obligations supplémentaires pèsent alors sur son fournisseur ?",
+  "expect": "eu-ai-act",
+  "hint": "opérations en virgule flottante",
+  "stratum": "S5"
+ },
+ {
+  "q": "Le propriétaire d'une machine connectée peut-il exiger que le fabricant transmette les données générées à une grande plateforme désignée comme contrôleur d'accès au titre du DMA ?",
+  "expect": "eu-data-act",
+  "hint": "n'est pas un tiers éligible",
+  "stratum": "S5"
+ },
+ {
+  "q": "Quel pourcentage maximal du chiffre d'affaires mondial une plateforme encourt-elle comme amende au titre du DSA, et ce plafond est-il plus ou moins élevé que celui que le DMA prévoit pour un contrôleur d'accès ?",
+  "expect": "eu-dsa",
+  "hint": "6 %",
+  "stratum": "S5"
+ },
+ {
+  "q": "Une institution de l'Union européenne peut-elle se dispenser de nommer un délégué à la protection des données, comme certaines entreprises privées le peuvent sous le RGPD ?",
+  "expect": "eu-edps",
+  "hint": "désigne un délégué à la protection des données",
+  "stratum": "S5"
+ },
+ {
+  "q": "Worin unterscheidet sich die behördliche Aufsicht über wichtige Einrichtungen von derjenigen über wesentliche Einrichtungen nach der NIS2-Richtlinie — wann dürfen die zuständigen Behörden bei wichtigen Einrichtungen überhaupt tätig werden?",
+  "expect": "eu-nis2",
+  "hint": "nachträglichen Aufsichtsmaßnahmen",
+  "stratum": "S5"
+ },
+ {
+  "q": "Welche Schritte muss der Anbieter eines Hochrisiko-KI-Systems vor dem Inverkehrbringen durchlaufen — von der Konformitätsbewertung bis zur Anbringung der CE-Kennzeichnung?",
+  "expect": "eu-ai-act",
+  "hint": "CE-Kennzeichnung",
+  "stratum": "S5"
+ },
+ {
+  "q": "Darf ein Dateninhaber für die Bereitstellung von Daten an einen Datenempfänger eine Gegenleistung verlangen, und welche Obergrenze gilt dafür, wenn der Empfänger ein KMU ist?",
+  "expect": "eu-data-act",
+  "hint": "Datenempfänger ein KMU",
+  "stratum": "S5"
+ },
+ {
+  "q": "When two companies jointly determine the purposes and means of processing personal data, what arrangement does the GDPR require them to conclude, and can a data subject still exercise their rights against each of them individually?",
+  "expect": "eu-rgpd",
+  "hint": "joint controllers",
+  "stratum": "S5"
+ },
+ {
+  "q": "What legal presumption does a qualified electronic seal enjoy under eIDAS, and how does its function for legal persons differ from that of a qualified electronic signature?",
+  "expect": "eu-eidas",
+  "hint": "presumption of integrity",
+  "stratum": "S5"
+ },
+ {
+  "q": "Must a very large online platform offer users a recommender feed that does not rely on profiling within the meaning of the GDPR, and what must it disclose about the main parameters of its recommender systems?",
+  "expect": "eu-dsa",
+  "hint": "not based on profiling",
+  "stratum": "S5"
+ },
+ {
+  "q": "Qu'est-ce que les règles d'entreprise contraignantes et à quoi servent-elles pour encadrer les transferts de données hors de l'UE ?",
+  "expect": "eu-rgpd",
+  "hint": "règles d'entreprise contraignantes",
+  "stratum": "S3"
+ },
+ {
+  "q": "Qui établit et gère la base de données européenne des vulnérabilités prévue par la directive NIS2 ?",
+  "expect": "eu-nis2",
+  "hint": "base de données européenne des vulnérabilités",
+  "stratum": "S3"
+ },
+ {
+  "q": "Quel effet juridique un service d'envoi recommandé électronique qualifié confère-t-il aux données envoyées et reçues ?",
+  "expect": "eu-eidas",
+  "hint": "envoi recommandé électronique",
+  "stratum": "S3"
+ },
+ {
+  "q": "Dans quelles situations un organisme du secteur public peut-il invoquer un besoin exceptionnel pour exiger des données d'un détenteur de données ?",
+  "expect": "eu-data-act",
+  "hint": "besoin exceptionnel",
+  "stratum": "S3"
+ },
+ {
+  "q": "Quel est le rôle du groupe des parties prenantes pour la certification de cybersécurité institué par le règlement sur la cybersécurité ?",
+  "expect": "eu-cybersecurity-act",
+  "hint": "groupe des parties prenantes pour la certification",
+  "stratum": "S3"
+ },
+ {
+  "q": "Was ist das Kohärenzverfahren und wann müssen die Aufsichtsbehörden es anwenden?",
+  "expect": "eu-rgpd",
+  "hint": "Kohärenzverfahren",
+  "stratum": "S3"
+ },
+ {
+  "q": "Ab welcher kumulierten Menge an Gleitkommaoperationen für das Training wird bei einem KI-Modell mit allgemeinem Verwendungszweck ein systemisches Risiko vermutet?",
+  "expect": "eu-ai-act",
+  "hint": "Gleitkommaoperationen",
+  "stratum": "S3"
+ },
+ {
+  "q": "What is the ECCG and what role does it play in the preparation of European cybersecurity certification schemes?",
+  "expect": "eu-cybersecurity-act",
+  "hint": "ECCG",
+  "stratum": "S3"
+ },
+ {
+  "q": "How can vetted researchers obtain access to data from very large online platforms for studying systemic risks?",
+  "expect": "eu-dsa",
+  "hint": "vetted researchers",
+  "stratum": "S3"
+ },
+ {
+  "q": "On what terms must gatekeepers give third-party online search engines access to their ranking, query, click and view data?",
+  "expect": "eu-dma",
+  "hint": "query, click and view data",
+  "stratum": "S3"
+ },
+ {
+  "q": "Pendant combien d'années après la mort de l'auteur une œuvre reste-t-elle protégée par le droit d'auteur dans l'Union européenne ?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Quelle est la durée de validité de l'enregistrement d'une marque de l'Union européenne auprès de l'EUIPO et comment le renouveler ?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Quel taux normal minimal de TVA la directive TVA impose-t-elle aux États membres de l'Union européenne ?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Innerhalb welcher Frist muss der Vollstreckungsmitgliedstaat endgültig über die Vollstreckung eines Europäischen Haftbefehls entscheiden?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Which categories of criminal offences fall within the material competence of the European Public Prosecutor's Office (EPPO)?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ },
+ {
+  "q": "Which court has exclusive jurisdiction over infringement actions concerning European patents with unitary effect?",
+  "expect": "",
+  "hint": "",
+  "stratum": "S6"
+ }
+]
