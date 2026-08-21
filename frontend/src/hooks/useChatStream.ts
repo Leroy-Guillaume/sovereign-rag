@@ -4,10 +4,20 @@ import type { SourceOut } from "../types";
 
 export type ChatStatus = "idle" | "retrieving" | "streaming" | "error";
 
+/** Facts about a completed answer, shown in the meta row and audit footer. */
+export interface AnswerMeta {
+  /** Backend message id; its first 4 hex chars label the audit snapshot. */
+  messageId: string;
+  /** Stage latencies; null on messages hydrated from history (not persisted per stage in the listing). */
+  retrievalMs: number | null;
+  generationMs: number | null;
+}
+
 export interface UiMessage {
   role: "user" | "assistant";
   content: string;
   sources?: SourceOut[];
+  meta?: AnswerMeta;
 }
 
 /** Apply an update to the trailing (pending) assistant message, immutably. */
@@ -75,7 +85,17 @@ export function useChatStream(onUnauthorized: () => void) {
                 withPendingAssistant(prev, (m) => ({ ...m, content: m.content + data.text })),
               );
             },
-            onDone: () => {
+            onDone: (data) => {
+              setMessages((prev) =>
+                withPendingAssistant(prev, (m) => ({
+                  ...m,
+                  meta: {
+                    messageId: data.message_id,
+                    retrievalMs: data.retrieval_ms,
+                    generationMs: data.generation_ms,
+                  },
+                })),
+              );
               setStatus("idle");
             },
             onError: (data) => {
