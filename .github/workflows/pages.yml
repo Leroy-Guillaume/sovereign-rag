@@ -1,0 +1,53 @@
+# Deploys the public landing to GitHub Pages on every merge to main.
+# The build carries VITE_STATIC_LANDING=1: only the landing is served there,
+# so the in-app links degrade to the repository.
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Build the static landing
+        working-directory: frontend
+        env:
+          VITE_STATIC_LANDING: "1"
+        run: |
+          npm run build -- --base="/${{ github.event.repository.name }}/"
+          # SPA fallback: direct links to client routes resolve to the app.
+          cp dist/index.html dist/404.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: frontend/dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

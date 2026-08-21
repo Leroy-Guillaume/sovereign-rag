@@ -13,8 +13,7 @@ variables only.
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB.svg)](https://www.python.org)
 
-<!-- ./assets/demo.gif inserted at end of Phase 1 -->
-<!-- ![sovereign-rag demo: streaming chat with cited sources](./assets/demo.gif) -->
+![Animated demo: a question typed into the chat window, the answer streaming with citation chips, the sources panel opening](./assets/demo.gif)
 
 ## Why
 
@@ -50,6 +49,14 @@ flowchart LR
 Retrieval is a single SQL query: HNSW vector search and tri-language full-text search (French,
 German, English) run as two CTEs and are fused with Reciprocal Rank Fusion inside PostgreSQL.
 Design decisions and trade-offs are documented in [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Interface
+
+The public landing (trilingual EN / FR / DE) plays the demo above; the app itself is two screens.
+
+| Chat: citations open the sources panel | Admin: metrics, documents, sharing |
+|---|---|
+| ![Chat with the sources panel open: the active citation is highlighted, each passage shows its fused score and per-leg ranks](./assets/chat-sources.png) | ![Admin dashboard: usage, token and latency tiles over a selectable window, document table with per-document sharing](./assets/admin-dashboard.png) |
 
 ## Quickstart
 
@@ -176,6 +183,15 @@ Notes for the two most-requested targets (documented, not implemented):
   Python. Map `filename`, `section` and `page` into the point payload.
 - **Azure AI Search**: use the built-in hybrid mode (vector + BM25, optional semantic ranking);
   fusion stays server-side. Store chunk metadata as index fields.
+
+## Evaluation
+
+The retrieval numbers quoted above are not marketing: the full bench lives in [`bench/`](bench/),
+with the stratified golden sets (175 legal questions in FR, DE and EN across seven strata,
+cross-lingual and trap questions included), the runners, the corpus fetcher and the recorded
+results. Headlines on the current pipeline: 96 % hit@8 (153/159), MRR 0.775, cross-lingual MRR
+0.84, and 0 fabricated answers on the 16 no-answer trap questions. The protocol and how to
+reproduce every number against a running stack are documented in [`bench/README.md`](bench/README.md).
 
 ## Limitations
 

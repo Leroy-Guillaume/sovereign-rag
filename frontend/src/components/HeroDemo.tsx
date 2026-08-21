@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
+import { staticLanding } from "../lib/env";
 import type { HeroDemoCopy } from "../views/landingCopy";
 
 /**
@@ -222,34 +223,51 @@ export default function HeroDemo({ copy }: { copy: HeroDemoCopy }) {
             </span>
             <span className="text-[11.5px] text-muted">{copy.meta}</span>
           </div>
-          <Link
-            to="/chat"
-            aria-label={copy.composerAria}
-            className="group mt-auto flex items-center gap-3 rounded-full bg-surface py-2 pr-2 pl-[18px] transition hover:bg-surface-hover"
-          >
-            <span className="flex-1 truncate text-left text-[14px] text-muted">
-              {phase === "typing" ? (
-                <span className="text-ink">
-                  {question.slice(0, typedCount)}
-                  <span className="animate-pulse">|</span>
+          {(() => {
+            const body = (
+              <>
+                <span className="flex-1 truncate text-left text-[14px] text-muted">
+                  {phase === "typing" ? (
+                    <span className="text-ink">
+                      {question.slice(0, typedCount)}
+                      <span className="animate-pulse">|</span>
+                    </span>
+                  ) : (
+                    copy.composer
+                  )}
                 </span>
-              ) : (
-                copy.composer
-              )}
-            </span>
-            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent text-white transition group-hover:brightness-110">
-              <svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true">
-                <path
-                  d="M6.5 11V2M2.5 6 6.5 2l4 4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </span>
-          </Link>
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent text-white transition group-hover:brightness-110">
+                  <svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true">
+                    <path
+                      d="M6.5 11V2M2.5 6 6.5 2l4 4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+              </>
+            );
+            const className =
+              "group mt-auto flex items-center gap-3 rounded-full bg-surface py-2 pr-2 pl-[18px] transition hover:bg-surface-hover";
+            return staticLanding ? (
+              <a
+                href="https://github.com/Leroy-Guillaume/sovereign-rag"
+                target="_blank"
+                rel="noreferrer"
+                aria-label={copy.composerAria}
+                className={className}
+              >
+                {body}
+              </a>
+            ) : (
+              <Link to="/chat" aria-label={copy.composerAria} className={className}>
+                {body}
+              </Link>
+            );
+          })()}
         </div>
 
         <div
