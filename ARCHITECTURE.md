@@ -167,6 +167,12 @@ table, with no prefixes). The README documents the bge-m3 upgrade: change `EMBED
 **Consequences.** Fast first boot and a slim image. Because switching models silently would
 corrupt retrieval, two guards exist: the `embedding_config` singleton row is checked at boot
 (mismatch = refusal to start), and each document is stamped with `embedding_model` at ingestion.
+The upgrade is now paved and measured rather than hypothetical: bge-m3 plus the reranker lifts
+MRR from 0.717 to 0.784 on the stratified evaluation set and takes the cross-lingual stratum
+from 0.15 to 0.84, at the cost of ~2.3 GB of image and markedly slower CPU embedding; the
+shipped `migrations/optional/upgrade_bge_m3_1024.sql` and the `BAKED_EMBEDDING_MODEL` build
+argument make the switch a documented operator action, and e5-small stays the default for the
+boot-fast local demo.
 
 ### 3.6 Ollama native API over its OpenAI-compatible endpoint
 
