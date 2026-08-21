@@ -8,7 +8,7 @@ request_id, a property Prometheus counters cannot offer.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Query, Request
 from psycopg.rows import dict_row
 
 from sovereign_rag.auth import AdminUser
@@ -16,7 +16,7 @@ from sovereign_rag.schemas import AdminMetricsOut, CitedDocument, LatencyOut
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
-_WINDOW_DAYS = 30
+_DEFAULT_WINDOW_DAYS = 30
 
 _USAGE = """\
 SELECT
@@ -56,9 +56,13 @@ LIMIT 5
 
 
 @router.get("/metrics")
-async def metrics(request: Request, user: AdminUser) -> AdminMetricsOut:
+async def metrics(
+    request: Request,
+    user: AdminUser,
+    days: int = Query(default=_DEFAULT_WINDOW_DAYS, ge=1, le=365),
+) -> AdminMetricsOut:
     pool = request.app.state.pool
-    params = {"days": _WINDOW_DAYS}
+    params = {"days": days}
     async with pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:
         await cur.execute(_USAGE, params)
         usage = await cur.fetchone()
@@ -72,7 +76,7 @@ async def metrics(request: Request, user: AdminUser) -> AdminMetricsOut:
         return None if value is None else int(value)
 
     return AdminMetricsOut(
-        window_days=_WINDOW_DAYS,
+        window_days=days,
         answers=usage["answers"],
         conversations=usage["conversations"],
         prompt_tokens=usage["prompt_tokens"],

@@ -58,6 +58,7 @@ class DocumentOut(BaseModel):
     owner_id: str
     created_at: datetime
     deduplicated: bool | None = None  # set on POST /api/documents responses only
+    chunk_count: int | None = None  # set on GET /api/documents listings only
 
 
 class SourceOut(BaseModel):

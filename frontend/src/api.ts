@@ -8,6 +8,7 @@ import type {
   ConversationOut,
   DocumentOut,
   Me,
+  PermissionOut,
   SourceOut,
 } from "./types";
 
@@ -96,8 +97,34 @@ export function deleteDocument(id: string): Promise<void> {
   return request<void>(`/api/documents/${id}`, { method: "DELETE" });
 }
 
-export function getAdminMetrics(): Promise<AdminMetrics> {
-  return request<AdminMetrics>("/api/admin/metrics");
+export function getAdminMetrics(days: number): Promise<AdminMetrics> {
+  return request<AdminMetrics>(`/api/admin/metrics?days=${days}`);
+}
+
+export function listPermissions(documentId: string): Promise<PermissionOut[]> {
+  return request<PermissionOut[]>(`/api/documents/${documentId}/permissions`);
+}
+
+export function grantPermission(documentId: string, principal: string): Promise<void> {
+  return request<void>(`/api/documents/${documentId}/permissions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ principal }),
+  });
+}
+
+export function revokePermission(documentId: string, principal: string): Promise<void> {
+  return request<void>(
+    `/api/documents/${documentId}/permissions/${encodeURIComponent(principal)}`,
+    { method: "DELETE" },
+  );
+}
+
+/** "sk-····d4a2" style display form of the stored key (sidebar and admin bar). */
+export function maskedApiKey(): string | null {
+  const key = getApiKey();
+  if (key === null) return null;
+  return `${key.slice(0, 3)}····${key.slice(-4)}`;
 }
 
 export function listConversations(): Promise<ConversationOut[]> {

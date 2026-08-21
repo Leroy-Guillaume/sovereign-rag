@@ -161,3 +161,21 @@ async def test_permissions_require_owner_or_admin_and_404_on_unknown(
             headers=AUTH_ALICE,
         )
         assert resp.status_code == 422
+
+
+async def test_listing_reports_chunk_count(api_client: ClientFactory, pg: Any) -> None:
+    """GET /api/documents counts the rows actually indexed in the chunks table
+    (the admin table renders it as "ready - N passages")."""
+    async with _client(api_client) as client:
+        doc = await _upload(client, AUTH_ALICE, "counted.txt", b"counted content")
+        zero_vector = "[" + ",".join(["0"] * 384) + "]"
+        async with pg.connection() as conn:
+            for index in range(3):
+                await conn.execute(
+                    """INSERT INTO chunks (document_id, chunk_index, content, embedding)
+                       VALUES (%s, %s, %s, %s::vector)""",
+                    (doc["id"], index, f"chunk {index}", zero_vector),
+                )
+        listing = (await client.get("/api/documents", headers=AUTH_ALICE)).json()
+    by_id = {d["id"]: d for d in listing}
+    assert by_id[doc["id"]]["chunk_count"] == 3

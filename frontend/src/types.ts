@@ -14,6 +14,15 @@ export interface DocumentOut {
   created_at: string;
   /** Present and true when POST /api/documents matched an existing sha256. */
   deduplicated?: boolean;
+  /** Indexed passages; populated on GET /api/documents listings only. */
+  chunk_count?: number | null;
+}
+
+export interface PermissionOut {
+  /** A user id, or "*" for everyone. */
+  principal: string;
+  granted_by: string;
+  granted_at: string;
 }
 
 export interface SourceOut {

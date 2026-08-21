@@ -121,3 +121,34 @@ async def test_metrics_window_excludes_old_messages(
     assert body["prompt_tokens"] == 0
     assert body["retrieval"] == {"p50_ms": None, "p95_ms": None}
     assert body["top_cited"] == []
+
+
+async def test_metrics_days_parameter_widens_the_window(
+    api_client: ClientFactory, pg: AsyncConnectionPool
+) -> None:
+    """?days= lets the dashboard switch between 7/30/90-day views: a 31-day-old
+    answer is outside the default window but inside days=90."""
+    async with pg.connection() as conn:
+        conv = uuid4()
+        await conn.execute(
+            "INSERT INTO conversations (id, user_id, title) VALUES (%s, 'alice', 't')",
+            (conv,),
+        )
+        await conn.execute(
+            """INSERT INTO messages
+               (conversation_id, request_id, role, content, sources,
+                prompt_tokens, completion_tokens, retrieval_ms, generation_ms,
+                error_code, created_at)
+               VALUES (%s, %s, 'assistant', 'x', %s, 10, 5, 100, 1000, NULL,
+                       now() - interval '31 days')""",
+            (conv, uuid4(), Jsonb([{"filename": "old.md"}])),
+        )
+    async with _client(api_client) as client:
+        body = (await client.get("/api/admin/metrics?days=90", headers=AUTH_ADMIN)).json()
+        assert body["window_days"] == 90
+        assert body["answers"] == 1
+        assert body["top_cited"] == [{"filename": "old.md", "citations": 1}]
+        # Bounds are enforced, not silently clamped.
+        for bad in ("0", "366"):
+            bad_response = await client.get(f"/api/admin/metrics?days={bad}", headers=AUTH_ADMIN)
+            assert bad_response.status_code == 422
