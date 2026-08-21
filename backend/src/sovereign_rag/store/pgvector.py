@@ -79,14 +79,15 @@ QUERY_STOPLIST = [
     "wieso",
     "wann",
     "muss",
-    "muessen",
+    "müssen",
     "kann",
-    "koennen",
+    "können",
     "soll",
     "sollen",
     "gibt",
     "laut",
-    "gemaess",
+    "gemäß",
+    "gemäss",
     # english
     "what",
     "which",
@@ -122,10 +123,13 @@ MAX_DF_RATIO = 0.15
 
 HYBRID_SEARCH_TEMPLATE = """\
 WITH tokens AS (
-  -- raw query words: lowercased, alnum-split, short words and interrogatives out
+  -- raw query words: lowercased, alnum-split, short words and interrogatives
+  -- out. The bound and the LIMIT are defence in depth behind the request-size
+  -- validation: pathological input degrades retrieval, never errors the query.
   SELECT DISTINCT tok
-  FROM regexp_split_to_table(lower(%(q)s), '[^[:alnum:]]+') AS tok
+  FROM regexp_split_to_table(lower(left(%(q)s, 8000)), '[^[:alnum:]]+') AS tok
   WHERE length(tok) >= 2 AND NOT (tok = ANY(%(stoplist)s))
+  LIMIT 64
 ),
 terms AS (
   -- informative terms only:

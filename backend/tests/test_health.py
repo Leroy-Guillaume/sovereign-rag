@@ -91,7 +91,7 @@ async def test_readyz_503_when_llm_is_down() -> None:
     assert response.status_code == 503
     checks = response.json()["checks"]
     assert checks["database"] == "ok"
-    assert checks["llm"] == "error: ollama is down"
+    assert checks["llm"] == "error"
     assert checks["embeddings"] == "ok"
 
 
@@ -100,7 +100,7 @@ async def test_readyz_503_when_database_is_down() -> None:
     async with client_for(app) as client:
         response = await client.get("/readyz")
     assert response.status_code == 503
-    assert response.json()["checks"]["database"] == "error: connection refused"
+    assert response.json()["checks"]["database"] == "error"
 
 
 async def test_readyz_result_is_cached_for_ttl() -> None:
