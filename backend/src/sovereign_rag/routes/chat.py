@@ -186,6 +186,22 @@ async def get_conversation(
     )
 
 
+@router.get("/api/auth/config")
+async def auth_config(request: Request) -> dict[str, object]:
+    """Public login configuration for the SPA (no secrets: issuer and client
+    id are what any OIDC redirect exposes anyway). Anonymous on purpose: the
+    login screen needs it before any credential exists."""
+    settings = request.app.state.settings
+    if settings.oidc_issuer and settings.oidc_client_id:
+        return {
+            "oidc": {
+                "issuer": settings.oidc_issuer.rstrip("/"),
+                "client_id": settings.oidc_client_id,
+            }
+        }
+    return {"oidc": None}
+
+
 @router.get("/api/me")
 async def get_me(user: CurrentUser) -> dict[str, Any]:
     return {"id": user.id, "roles": sorted(user.roles)}

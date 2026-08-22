@@ -3,6 +3,7 @@ import { Link, useLocation, useSearchParams } from "react-router";
 import { listConversations, maskedApiKey } from "../api";
 import { APP_COPY } from "../lib/appCopy";
 import { LangSwitcher, localeOf, useLang } from "../lib/lang";
+import { clearOidcSession, oidcSession } from "../lib/oidc";
 import type { ConversationOut } from "../types";
 import BrandHomeLink from "./BrandHomeLink";
 
@@ -44,8 +45,10 @@ export default function ConversationSidebar() {
   const [searchParams] = useSearchParams();
   const activeId = searchParams.get("c");
   const masked = maskedApiKey();
+  const oidc = oidcSession();
   const { lang } = useLang();
   const t = APP_COPY[lang].sidebar;
+  const tAuth = APP_COPY[lang].auth;
   const locale = localeOf(lang);
 
   useEffect(() => {
@@ -123,7 +126,21 @@ export default function ConversationSidebar() {
       </nav>
 
       <div className="flex items-center justify-between border-t border-black/[0.06] px-[18px] py-3">
-        <span className="font-mono text-[11px] text-muted">{masked ?? t.offline}</span>
+        {oidc !== null ? (
+          <button
+            type="button"
+            onClick={() => {
+              clearOidcSession();
+              window.location.assign("/chat");
+            }}
+            title={oidc.sub}
+            className="max-w-[110px] truncate text-left font-mono text-[11px] text-muted hover:text-danger"
+          >
+            {tAuth.signOut}
+          </button>
+        ) : (
+          <span className="font-mono text-[11px] text-muted">{masked ?? t.offline}</span>
+        )}
         <div className="flex items-center gap-3">
           <LangSwitcher />
           <Link to="/admin" className="text-xs font-medium text-link hover:underline">

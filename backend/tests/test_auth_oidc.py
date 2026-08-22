@@ -140,3 +140,14 @@ async def test_api_keys_still_work_next_to_oidc(api_client: ClientFactory, pg: A
         me = await client.get("/api/me", headers={"Authorization": "Bearer test-key-alice"})
         assert me.status_code == 200
         assert me.json()["id"] == "alice"
+
+
+async def test_auth_config_is_public_and_reflects_settings(
+    api_client: ClientFactory, pg: Any
+) -> None:
+    async with _client(api_client, oidc_client_id="sovereign-rag-spa") as client:
+        resp = await client.get("/api/auth/config")  # no Authorization header
+        assert resp.status_code == 200
+        assert resp.json() == {"oidc": {"issuer": ISSUER, "client_id": "sovereign-rag-spa"}}
+    async with _client(api_client) as client:  # no client id configured
+        assert (await client.get("/api/auth/config")).json() == {"oidc": None}

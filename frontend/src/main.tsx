@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import "@fontsource-variable/geist";
 import "@fontsource-variable/geist-mono";
 import App from "./App";
+import AuthCallback from "./views/AuthCallback";
 import { LangProvider } from "./lib/lang";
 import AdminView from "./views/AdminView";
 import ChatView from "./views/ChatView";
@@ -19,6 +20,7 @@ const router = createBrowserRouter(
     // The landing is public: it must render without an API key, so it lives
     // outside the App shell (which owns the key modal).
     { path: "/", element: <LandingView /> },
+    { path: "auth/callback", element: <AuthCallback /> },
     {
       element: <App />,
       children: [
