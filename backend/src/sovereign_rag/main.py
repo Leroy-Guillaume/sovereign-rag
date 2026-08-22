@@ -39,6 +39,8 @@ from .errors import AuthError, ConfigError, ExtractionError, ProviderError
 from .ingestion.service import IngestionService
 from .llm import get_llm_client
 from .llm.base import LLMClient
+from .llm.redacting import RedactingLLMClient
+from .redaction import create_redactor
 from .reranking import get_reranker
 from .routes import admin as admin_routes
 from .routes import chat as chat_routes
@@ -186,6 +188,13 @@ def create_app(
                 await _sweep_interrupted_documents(active_pool)
 
             active_llm = llm if llm is not None else get_llm_client(app_settings)
+            # The PII boundary wraps WHATEVER client is in use, injected fakes
+            # included: enforcement must not depend on which provider ships
+            # the tokens out.
+            if app_settings.redaction_provider != "none":
+                active_llm = RedactingLLMClient(
+                    active_llm, create_redactor(app_settings.redaction_provider)
+                )
             active_embedder = (
                 embedder if embedder is not None else get_embedding_client(app_settings)
             )
