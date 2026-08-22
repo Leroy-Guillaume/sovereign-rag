@@ -234,26 +234,31 @@ jobs:
           exit-code: "1"
           ignore-unfixed: true
 
-  publish:
-    # Every merge to main ships both images to GHCR, tagged latest + sha.
-    # PRs never publish: the build job (with its Trivy gate) is the only
-    # image work they run.
+  publish-build:
+    # Every merge to main ships both images to GHCR. Each architecture is
+    # built NATIVELY (ubuntu-24.04-arm is free for public repos): the QEMU
+    # variant was measured at over an hour for the frontend's esbuild alone.
+    # Images are pushed by digest here; the merge job below assembles the
+    # multi-arch index, tags it and signs it.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-latest
-    # Multi-arch: the arm64 half builds under QEMU; slow on a cold layer
-    # cache (torch install and model bake emulated), then amortized by the
-    # per-scope gha cache.
-    timeout-minutes: 120
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
     permissions:
       contents: read
       packages: write
-      id-token: write # keyless cosign signing via the GitHub OIDC token
+    strategy:
+      matrix:
+        image: [api, frontend]
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v5
-      - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
-      - uses: sigstore/cosign-installer@v3
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -262,37 +267,69 @@ jobs:
       - name: Lowercase the image namespace (ghcr rejects uppercase)
         id: ns
         run: echo "repo=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
-      - name: Push backend image
-        id: push-api
+      - name: Build and push by digest
+        id: push
         uses: docker/build-push-action@v6
         with:
-          context: backend
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ghcr.io/${{ steps.ns.outputs.repo }}-api:latest
-            ghcr.io/${{ steps.ns.outputs.repo }}-api:${{ github.sha }}
-          cache-from: type=gha,scope=api
-          cache-to: type=gha,mode=max,scope=api
-      - name: Push frontend image
-        id: push-frontend
-        uses: docker/build-push-action@v6
-        with:
-          context: frontend
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ghcr.io/${{ steps.ns.outputs.repo }}-frontend:latest
-            ghcr.io/${{ steps.ns.outputs.repo }}-frontend:${{ github.sha }}
-          cache-from: type=gha,scope=frontend
-          cache-to: type=gha,mode=max,scope=frontend
-      - name: Sign both images (keyless, Sigstore transparency log)
-        env:
-          API_DIGEST: ${{ steps.push-api.outputs.digest }}
-          FRONTEND_DIGEST: ${{ steps.push-frontend.outputs.digest }}
+          context: ${{ matrix.image == 'api' && 'backend' || 'frontend' }}
+          platforms: linux/${{ matrix.arch }}
+          outputs: type=image,name=ghcr.io/${{ steps.ns.outputs.repo }}-${{ matrix.image }},push-by-digest=true,push=true
+          cache-from: type=gha,scope=${{ matrix.image }}-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}-${{ matrix.arch }}
+      - name: Record the digest
         run: |
-          cosign sign --yes "ghcr.io/${{ steps.ns.outputs.repo }}-api@${API_DIGEST}"
-          cosign sign --yes "ghcr.io/${{ steps.ns.outputs.repo }}-frontend@${FRONTEND_DIGEST}"
+          mkdir -p /tmp/digests
+          digest="${{ steps.push.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ matrix.image }}-${{ matrix.arch }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    # Assemble the two per-arch digests into one multi-arch index per image,
+    # tag it latest + sha, and sign the index keyless (Sigstore).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: publish-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+      id-token: write # keyless cosign signing via the GitHub OIDC token
+    strategy:
+      matrix:
+        image: [api, frontend]
+    steps:
+      - uses: sigstore/cosign-installer@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Lowercase the image namespace (ghcr rejects uppercase)
+        id: ns
+        run: echo "repo=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: digest-${{ matrix.image }}-*
+          path: /tmp/digests
+          merge-multiple: true
+      - name: Create and push the multi-arch index
+        working-directory: /tmp/digests
+        run: |
+          IMAGE="ghcr.io/${{ steps.ns.outputs.repo }}-${{ matrix.image }}"
+          docker buildx imagetools create \
+            -t "$IMAGE:latest" -t "$IMAGE:${{ github.sha }}" \
+            $(printf "$IMAGE@sha256:%s " *)
+      - name: Sign the index (keyless, Sigstore transparency log)
+        run: |
+          IMAGE="ghcr.io/${{ steps.ns.outputs.repo }}-${{ matrix.image }}"
+          digest=$(docker buildx imagetools inspect "$IMAGE:${{ github.sha }}" --format '{{json .Manifest}}' | python3 -c "import json,sys; print(json.load(sys.stdin)['digest'])")
+          cosign sign --yes "$IMAGE@$digest"
 
   terraform:
     runs-on: ubuntu-latest
