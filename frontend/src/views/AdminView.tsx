@@ -629,6 +629,45 @@ export default function AdminView() {
                   </div>
                 )}
               </div>
+
+              <div className={`${CARD} p-6`}>
+                <div className="text-[15px] font-medium">Questions sans réponse</div>
+                {metrics === null ? (
+                  <div className="mt-2 text-[12.5px] text-ink-tertiary">…</div>
+                ) : metrics.unanswered.length === 0 ? (
+                  <div className="mt-2 text-[12.5px] leading-relaxed text-ink-tertiary">
+                    Aucune question restée sans réponse sur la période.
+                  </div>
+                ) : (
+                  <>
+                    <div className="mt-1.5 text-[12.5px] leading-relaxed text-ink-tertiary">
+                      Le corpus n'a pas permis de répondre{" "}
+                      {formatInt(
+                        metrics.unanswered.reduce((sum, entry) => sum + entry.occurrences, 0),
+                      )}{" "}
+                      fois sur la période. Chaque cas est une piste de document à indexer.
+                    </div>
+                    <div className="mt-4 flex flex-col gap-2.5">
+                      {metrics.unanswered.map((entry) => (
+                        <div
+                          key={entry.question}
+                          className="flex items-baseline justify-between gap-3"
+                        >
+                          <span
+                            className="truncate text-[12.5px] text-ink-secondary"
+                            title={entry.question}
+                          >
+                            {entry.question}
+                          </span>
+                          <span className="shrink-0 font-mono text-xs text-muted">
+                            {formatInt(entry.occurrences)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
