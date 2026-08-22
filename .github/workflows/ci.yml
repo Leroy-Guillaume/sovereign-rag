@@ -146,6 +146,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v6
+        with:
+          # The post-job cache prune would wait on the uv lock held by the
+          # backgrounded API; the kill step below is the real cleanup.
+          prune-cache: false
       - name: Install backend with the local embeddings extra
         working-directory: backend
         run: uv sync --frozen --all-extras
@@ -182,7 +186,11 @@ jobs:
       - name: Replay the smoke golden through the API
         working-directory: backend
         run: |
-          uv run ../bench/run.py ci-smoke --golden ../bench/golden_smoke.json             --min-hit8 0.9 --min-mrr 0.45 || { tail -50 /tmp/api.log; exit 1; }
+          uv run ../bench/run.py ci-smoke --golden ../bench/golden_smoke.json \
+            --min-hit8 0.9 --min-mrr 0.45 || { tail -50 /tmp/api.log; exit 1; }
+      - name: Stop the API
+        if: always()
+        run: pkill -f "uvicorn sovereign_rag" || true
 
   build:
     needs: [test, core-no-azure]
