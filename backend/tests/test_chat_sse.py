@@ -410,3 +410,56 @@ async def test_me_returns_identity_and_roles(api_client: ClientFactory, pg: obje
         assert me.json() == {"id": "admin", "roles": ["admin"]}
         alice = await client.get("/api/me", headers=AUTH_ALICE)
         assert alice.json() == {"id": "alice", "roles": []}
+
+
+async def test_export_returns_the_full_record_as_attachment(
+    api_client: ClientFactory, pg: object
+) -> None:
+    """The art. 25 export carries every persisted column of every message,
+    with an attachment disposition; foreign and unknown ids both answer 404."""
+    embedder = FakeEmbedding()
+    store = await seeded_store(embedder)
+    llm = FakeLLM(chunks=["Answer [1]."])
+    settings = make_settings(database_url=TEST_DATABASE_URL)
+    async with api_client(settings=settings, llm=llm, embedder=embedder, store=store) as client:
+        resp = await client.post(
+            "/api/chat",
+            json={"conversation_id": None, "message": "What is the nLPD?"},
+            headers=AUTH_ALICE,
+        )
+        conversation_id = parse_sse(resp.text)[0][1]["conversation_id"]
+
+        export = await client.get(
+            f"/api/conversations/{conversation_id}/export", headers=AUTH_ALICE
+        )
+        assert export.status_code == 200
+        disposition = export.headers["content-disposition"]
+        assert disposition.startswith('attachment; filename="conversation-')
+        body = export.json()
+        assert body["conversation"]["id"] == conversation_id
+        assert body["exported_at"]
+        roles = [m["role"] for m in body["messages"]]
+        assert roles == ["user", "assistant"]
+        answer = body["messages"][1]
+        # Nothing held back: audit columns travel with the content.
+        assert {
+            "request_id",
+            "sources",
+            "model",
+            "prompt_tokens",
+            "completion_tokens",
+            "retrieval_ms",
+            "generation_ms",
+            "error_code",
+        } <= answer.keys()
+        assert answer["prompt_tokens"] == 10
+        assert answer["sources"]
+
+        # Foreign conversation: 404, no existence oracle.
+        foreign = await client.get(f"/api/conversations/{conversation_id}/export", headers=AUTH_BOB)
+        assert foreign.status_code == 404
+        unknown = await client.get(
+            "/api/conversations/00000000-0000-0000-0000-000000000000/export",
+            headers=AUTH_ALICE,
+        )
+        assert unknown.status_code == 404
