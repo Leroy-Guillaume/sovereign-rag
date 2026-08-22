@@ -12,6 +12,9 @@ dependencies = [
   "pypdf>=5.1", "python-docx>=1.1", "python-multipart>=0.0.17",
 ]
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [project.optional-dependencies]
 local = [
     "sentence-transformers>=3.2",
@@ -21,6 +24,19 @@ local = [
                            # CVE-2026-4372 and CVE-2026-5241, both fixed in the 5.x line)
 ]
 azure = ["azure-identity>=1.19"]         # ONLY keyless auth (Entra / managed identity)
+# The spaCy model wheels below are direct URL references; hatchling requires
+# an explicit opt-in for those. This package is an application, never
+# published to an index, so direct references are safe here.
+pii = [
+    # REDACTION_PROVIDER=ner: PERSON-only NER layered over the pattern
+    # redactor. Measured on the redaction bench before shipping; see
+    # bench/results/2026-08-redaction.md for the numbers and the trade.
+    "presidio-analyzer>=2.2,<3",
+    "spacy>=3.8,<3.9",
+    "fr-core-news-md @ https://github.com/explosion/spacy-models/releases/download/fr_core_news_md-3.8.0/fr_core_news_md-3.8.0-py3-none-any.whl",
+    "de-core-news-md @ https://github.com/explosion/spacy-models/releases/download/de_core_news_md-3.8.0/de_core_news_md-3.8.0-py3-none-any.whl",
+    "en-core-web-md @ https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.8.0/en_core_web_md-3.8.0-py3-none-any.whl",
+]
 
 [dependency-groups]
 dev = ["pytest>=8", "pytest-asyncio>=0.24", "pytest-cov", "respx>=0.21",

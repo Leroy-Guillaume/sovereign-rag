@@ -1,0 +1,4206 @@
+{
+ "cases": [
+  {
+   "id": "fr-000",
+   "lang": "fr",
+   "text": "Sur demande, l’ENISA permet aux autorités compétentes d’accéder à ce registre, tout en veillant à ce que la confidentialité des informations soit protégée, s’il y a lieu. Pour toute question, contactez Elise Martin (elise.martin@bluewin.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Martin"
+    },
+    {
+     "type": "email",
+     "value": "elise.martin@bluewin.ch"
+    }
+   ]
+  },
+  {
+   "id": "fr-001",
+   "lang": "fr",
+   "text": "si les données à caractère personnel doivent être utilisées aux fins de la communication avec la personne concernée, au plus tard au moment de la première communication à ladite personne; Le prepose Pierre Favre est joignable au +41 79 721 75 34.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Pierre Favre"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 721 75 34"
+    }
+   ]
+  },
+  {
+   "id": "fr-002",
+   "lang": "fr",
+   "text": "le chiffre d'affaires annuel réalisé par l'auteur de l'infraction au cours de l'exercice précédent dans l'Union. Paiement sur le compte CH64 7590 2350 9791 9808 88 de Fiduciaire Leman SA.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH64 7590 2350 9791 9808 88"
+    },
+    {
+     "type": "org",
+     "value": "Fiduciaire Leman SA"
+    }
+   ]
+  },
+  {
+   "id": "fr-003",
+   "lang": "fr",
+   "text": "La Commission publie les décisions qu’elle adopte au titre de l’article 70, paragraphe 1, de l’article 71, paragraphe 1, et des articles 73 à 76. Dossier de Sophie Favre, n. AVS 756.1901.6067.95.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Sophie Favre"
+    },
+    {
+     "type": "avs",
+     "value": "756.1901.6067.95"
+    }
+   ]
+  },
+  {
+   "id": "fr-004",
+   "lang": "fr",
+   "text": "Les membres du groupe de haut niveau devraient régulièrement faire rapport aux organes et réseaux qu’ils représentent sur les tâches effectuées dans le cadre du groupe, et les consulter à cet égard. Adresse de notification : Jean Perret, Rue du Rhone 12, 1204 Geneve.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Jean Perret"
+    },
+    {
+     "type": "address",
+     "value": "Rue du Rhone 12, 1204 Geneve"
+    }
+   ]
+  },
+  {
+   "id": "fr-005",
+   "lang": "fr",
+   "text": "La décision de révocation met fin à la délégation de pouvoir qui y est précisée. Reference : elise.bonvin@gmx.de, tel. 022 270 57 30.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "elise.bonvin@gmx.de"
+    },
+    {
+     "type": "phone",
+     "value": "022 270 57 30"
+    }
+   ]
+  },
+  {
+   "id": "fr-006",
+   "lang": "fr",
+   "text": "Le conseil d’administration crée, sur proposition du directeur exécutif, un réseau des agents de liaison nationaux composé de représentants de tous les États membres (les agents de liaison nationaux). Pour toute question, contactez Jean Bonvin (jean.bonvin@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Jean Bonvin"
+    },
+    {
+     "type": "email",
+     "value": "jean.bonvin@example.org"
+    }
+   ]
+  },
+  {
+   "id": "fr-007",
+   "lang": "fr",
+   "text": "ou s’il est envisagé de communiquer les informations à un autre destinataire, au plus tard lorsque les données à caractère personnel sont communiquées pour la première fois. Le prepose Elise Dupont est joignable au 022 903 48 89.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Dupont"
+    },
+    {
+     "type": "phone",
+     "value": "022 903 48 89"
+    }
+   ]
+  },
+  {
+   "id": "fr-008",
+   "lang": "fr",
+   "text": "Le groupe de coopération, en coopération avec la Commission et l’ENISA, élabore des codes de conduite appropriés qui sous-tendent les méthodes de travail des experts en cybersécurité désignés. Paiement sur le compte CH15 4792 9515 7767 7102 68 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH15 4792 9515 7767 7102 68"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-009",
+   "lang": "fr",
+   "text": "le suivi des évolutions technologiques et commerciales pertinentes pour la mise à disposition et l'utilisation des données; Dossier de Marie Bonvin, n. AVS 756.2785.3546.23.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Marie Bonvin"
+    },
+    {
+     "type": "avs",
+     "value": "756.2785.3546.23"
+    }
+   ]
+  },
+  {
+   "id": "fr-010",
+   "lang": "fr",
+   "text": "Les fonctions et les procédures du réseau des agents de liaison nationaux sont précisées dans les règles internes de fonctionnement de l’ENISA et sont rendues publiques. Adresse de notification : Elise Martin, Avenue de la Gare 3, 1003 Lausanne.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Martin"
+    },
+    {
+     "type": "address",
+     "value": "Avenue de la Gare 3, 1003 Lausanne"
+    }
+   ]
+  },
+  {
+   "id": "fr-011",
+   "lang": "fr",
+   "text": "Ils peuvent devoir atténuer les effets négatifs de recommandations personnalisées et à corriger les critères utilisés dans leurs recommandations. Reference : pierre.martin@bluewin.ch, tel. +41 79 131 61 67.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "pierre.martin@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 131 61 67"
+    }
+   ]
+  },
+  {
+   "id": "fr-012",
+   "lang": "fr",
+   "text": "En tout état de cause, les amendes imposées sont effectives, proportionnées et dissuasives. Pour toute question, contactez Sophie Perret (sophie.perret@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Sophie Perret"
+    },
+    {
+     "type": "email",
+     "value": "sophie.perret@example.org"
+    }
+   ]
+  },
+  {
+   "id": "fr-013",
+   "lang": "fr",
+   "text": "Les juridictions nationales devraient être autorisées à demander à la Commission de leur transmettre des informations ou des avis sur des questions concernant l’application du présent règlement. Le prepose Luc Dupont est joignable au +33 6 62 80 71 17.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Luc Dupont"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 62 80 71 17"
+    }
+   ]
+  },
+  {
+   "id": "fr-014",
+   "lang": "fr",
+   "text": "le régime de contrôle applicable et des informations sur la responsabilité en ce qui concerne les aspects suivants: la partie qui délivre le moyen d’identification électronique; Paiement sur le compte CH70 9674 6856 4813 3615 22 de Fiduciaire Leman SA.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH70 9674 6856 4813 3615 22"
+    },
+    {
+     "type": "org",
+     "value": "Fiduciaire Leman SA"
+    }
+   ]
+  },
+  {
+   "id": "fr-015",
+   "lang": "fr",
+   "text": "La décision visée au paragraphe 1, est motivée et est adressée à l'autorité de contrôle chef de file et à toutes les autorités de contrôle concernées et est contraignante à leur égard. Dossier de Hugo Martin, n. AVS 756.2478.1920.39.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hugo Martin"
+    },
+    {
+     "type": "avs",
+     "value": "756.2478.1920.39"
+    }
+   ]
+  },
+  {
+   "id": "fr-016",
+   "lang": "fr",
+   "text": "Ces attributs n’affectent pas l’interopérabilité et la reconnaissance des cachets électroniques qualifiés. Adresse de notification : Elise Dupont, Avenue de la Gare 3, 1003 Lausanne.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Dupont"
+    },
+    {
+     "type": "address",
+     "value": "Avenue de la Gare 3, 1003 Lausanne"
+    }
+   ]
+  },
+  {
+   "id": "fr-017",
+   "lang": "fr",
+   "text": "Cet acte d’exécution est adopté en conformité avec la procédure consultative visée à l’article 50, paragraphe 2. Reference : luc.perret@example.org, tel. 022 764 50 32.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "luc.perret@example.org"
+    },
+    {
+     "type": "phone",
+     "value": "022 764 50 32"
+    }
+   ]
+  },
+  {
+   "id": "fr-018",
+   "lang": "fr",
+   "text": "ou dès le moment où il en prend connaissance ou conscience, agisse promptement pour retirer le contenu illicite ou rendre l’accès à celui-ci impossible. Pour toute question, contactez Marie Rochat (marie.rochat@bluewin.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Marie Rochat"
+    },
+    {
+     "type": "email",
+     "value": "marie.rochat@bluewin.ch"
+    }
+   ]
+  },
+  {
+   "id": "fr-019",
+   "lang": "fr",
+   "text": "Le comité devrait faire connaître son point de vue sur les griefs et l’appréciation émis par la Commission, qui devrait prendre en compte cet avis dans la motivation sous-tendant sa décision définitive. Le prepose Elise Perret est joignable au 022 487 54 79.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Perret"
+    },
+    {
+     "type": "phone",
+     "value": "022 487 54 79"
+    }
+   ]
+  },
+  {
+   "id": "fr-020",
+   "lang": "fr",
+   "text": "est autorisée par le droit de l’Union, qui prévoit également des mesures appropriées pour la sauvegarde des droits et libertés et des intérêts légitimes de la personne concernée; Paiement sur le compte CH16 2659 6424 4367 4112 62 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH16 2659 6424 4367 4112 62"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-021",
+   "lang": "fr",
+   "text": "Les rapports contiennent des recommandations permettant d’améliorer les aspects sur lesquels l’évaluation par les pairs a porté. Dossier de Sophie Dupont, n. AVS 756.3798.5781.20.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Sophie Dupont"
+    },
+    {
+     "type": "avs",
+     "value": "756.3798.5781.20"
+    }
+   ]
+  },
+  {
+   "id": "fr-022",
+   "lang": "fr",
+   "text": "Dans ce contexte, les tiers ou les détenteurs de données devraient s'abstenir de recourir à des interfaces trompeuses lors de la conception de leurs interfaces numériques. Adresse de notification : Pierre Rochat, Rue du Rhone 12, 1204 Geneve.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Pierre Rochat"
+    },
+    {
+     "type": "address",
+     "value": "Rue du Rhone 12, 1204 Geneve"
+    }
+   ]
+  },
+  {
+   "id": "fr-023",
+   "lang": "fr",
+   "text": "la demande ne satisfait pas aux conditions énoncées à l'article 17, paragraphes 1 et 2. Reference : marie.dupont@gmx.de, tel. +49 30 8023480.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "marie.dupont@gmx.de"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 8023480"
+    }
+   ]
+  },
+  {
+   "id": "fr-024",
+   "lang": "fr",
+   "text": "Au plus tard le 17 novembre 2027, puis tous les cinq ans, la Commission évalue le présent règlement et fait rapport au Parlement européen, au Conseil et au Comité économique et social européen. Pour toute question, contactez Elise Favre (elise.favre@bluewin.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Favre"
+    },
+    {
+     "type": "email",
+     "value": "elise.favre@bluewin.ch"
+    }
+   ]
+  },
+  {
+   "id": "fr-025",
+   "lang": "fr",
+   "text": "(109) Le présent règlement respecte les droits fondamentaux et observe les principes reconnus par la Charte des droits fondamentaux de l’Union européenne, notamment ses articles 16, 47 et 50. Le prepose Hugo Dupont est joignable au +33 6 23 82 22 46.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hugo Dupont"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 23 82 22 46"
+    }
+   ]
+  },
+  {
+   "id": "fr-026",
+   "lang": "fr",
+   "text": "Ces informations sont disponibles, au moins par certificat, à tout moment et au-delà de la période de validité du certificat, sous une forme automatisée qui est fiable, gratuite et efficace. Paiement sur le compte CH72 2609 4734 3201 5923 66 de Fiduciaire Leman SA.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH72 2609 4734 3201 5923 66"
+    },
+    {
+     "type": "org",
+     "value": "Fiduciaire Leman SA"
+    }
+   ]
+  },
+  {
+   "id": "fr-027",
+   "lang": "fr",
+   "text": "Pour cette raison, toutes les communications entre ces autorités devraient avoir lieu sur la base d’un système de partage d’informations fiable et sécurisé, dont les détails devraient être fixés dans un acte d’exécution. Dossier de Elise Favre, n. AVS 756.1944.5087.14.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Favre"
+    },
+    {
+     "type": "avs",
+     "value": "756.1944.5087.14"
+    }
+   ]
+  },
+  {
+   "id": "fr-028",
+   "lang": "fr",
+   "text": "Cette demande devrait comprendre, au minimum, tous les faits et circonstances nécessaires à l’appui de l’infraction alléguée et de son caractère systémique. Adresse de notification : Camille Perret, Rue du Rhone 12, 1204 Geneve.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Camille Perret"
+    },
+    {
+     "type": "address",
+     "value": "Rue du Rhone 12, 1204 Geneve"
+    }
+   ]
+  },
+  {
+   "id": "fr-029",
+   "lang": "fr",
+   "text": "La position préliminaire tient compte du point de vue de tous les autres coordinateurs pour les services numériques participant à l’enquête conjointe. Reference : jean.rochat@example.ch, tel. +41 79 266 83 37.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "jean.rochat@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 266 83 37"
+    }
+   ]
+  },
+  {
+   "id": "fr-030",
+   "lang": "fr",
+   "text": "Les États membres peuvent prévoir par la loi un âge inférieur pour ces finalités pour autant que cet âge inférieur ne soit pas en-dessous de 13 ans. Pour toute question, contactez Hugo Rochat (hugo.rochat@gmx.de).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hugo Rochat"
+    },
+    {
+     "type": "email",
+     "value": "hugo.rochat@gmx.de"
+    }
+   ]
+  },
+  {
+   "id": "fr-031",
+   "lang": "fr",
+   "text": "( 18 ) Décision-cadre 2002/584/JAI du Conseil du 13 juin 2002 relative au mandat d’arrêt européen et aux procédures de remise entre États membres ( JO L 190 du 18.7.2002, p. Le prepose Pierre Perret est joignable au +41 79 292 29 76.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Pierre Perret"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 292 29 76"
+    }
+   ]
+  },
+  {
+   "id": "fr-032",
+   "lang": "fr",
+   "text": "La révocation prend effet le jour suivant celui de la publication de ladite décision au Journal officiel de l’Union européenne ou à une date ultérieure qui est précisée dans ladite décision. Paiement sur le compte CH70 3096 5237 3999 6499 93 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH70 3096 5237 3999 6499 93"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-033",
+   "lang": "fr",
+   "text": "Les grandes lignes de l'accord sont mises à la disposition de la personne concernée. Dossier de Hugo Martin, n. AVS 756.7768.1885.29.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hugo Martin"
+    },
+    {
+     "type": "avs",
+     "value": "756.7768.1885.29"
+    }
+   ]
+  },
+  {
+   "id": "fr-034",
+   "lang": "fr",
+   "text": "la personne concernée a consenti au traitement de ses données à caractère personnel pour une ou plusieurs finalités spécifiques; Adresse de notification : Camille Rochat, Rue du Rhone 12, 1204 Geneve.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Camille Rochat"
+    },
+    {
+     "type": "address",
+     "value": "Rue du Rhone 12, 1204 Geneve"
+    }
+   ]
+  },
+  {
+   "id": "fr-035",
+   "lang": "fr",
+   "text": "les conséquences économiques, en particulier les coûts et pertes directs et indirects, en termes absolus et relatifs, de l’incident lié aux TIC. Reference : hugo.rochat@example.org, tel. +41 79 588 59 10.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "hugo.rochat@example.org"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 588 59 10"
+    }
+   ]
+  },
+  {
+   "id": "fr-036",
+   "lang": "fr",
+   "text": "La Commission est assistée par le comité institué par l’article 93 du règlement (UE) 2016/679. Pour toute question, contactez Marie Dupont (marie.dupont@gmx.de).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Marie Dupont"
+    },
+    {
+     "type": "email",
+     "value": "marie.dupont@gmx.de"
+    }
+   ]
+  },
+  {
+   "id": "fr-037",
+   "lang": "fr",
+   "text": "la forme, la teneur et les autres modalités de la demande motivée présentée en application de l’article 8, paragraphe 3; Le prepose Camille Perret est joignable au +41 79 484 91 42.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Camille Perret"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 484 91 42"
+    }
+   ]
+  },
+  {
+   "id": "fr-038",
+   "lang": "fr",
+   "text": "Le présent règlement ne s’applique pas aux: gestionnaires de fonds d’investissement alternatifs visés à l’article 3, paragraphe 2, de la directive 2011/61/UE; Paiement sur le compte CH46 2867 2741 9154 4254 87 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH46 2867 2741 9154 4254 87"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-039",
+   "lang": "fr",
+   "text": "«dispositif de création de cachet électronique qualifié», un dispositif de création de cachet électronique qui satisfait mutatis mutandis aux exigences fixées à l’annexe II; Dossier de Hugo Martin, n. AVS 756.2659.5192.92.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hugo Martin"
+    },
+    {
+     "type": "avs",
+     "value": "756.2659.5192.92"
+    }
+   ]
+  },
+  {
+   "id": "fr-040",
+   "lang": "fr",
+   "text": "43) «plate-forme de négociation»: une plate-forme de négociation au sens de l’article 4, paragraphe 1, point 24), de la directive 2014/65/UE; Adresse de notification : Pierre Martin, Avenue de la Gare 3, 1003 Lausanne.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Pierre Martin"
+    },
+    {
+     "type": "address",
+     "value": "Avenue de la Gare 3, 1003 Lausanne"
+    }
+   ]
+  },
+  {
+   "id": "fr-041",
+   "lang": "fr",
+   "text": "les finalités du traitement auquel sont destinées les données à caractère personnel ainsi que la base juridique du traitement; Reference : luc.dupont@example.org, tel. 022 955 59 98.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "luc.dupont@example.org"
+    },
+    {
+     "type": "phone",
+     "value": "022 955 59 98"
+    }
+   ]
+  },
+  {
+   "id": "fr-042",
+   "lang": "fr",
+   "text": "Les conséquences potentielles visées au point b) du présent paragraphe sont prises en considération dans les recommandations formulées par le superviseur principal conformément à l’article 35, paragraphe 1, point d). Pour toute question, contactez Jean Perret (jean.perret@bluewin.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Jean Perret"
+    },
+    {
+     "type": "email",
+     "value": "jean.perret@bluewin.ch"
+    }
+   ]
+  },
+  {
+   "id": "fr-043",
+   "lang": "fr",
+   "text": "Cette publication non confidentielle devrait permettre aux tiers d’évaluer si les contrôleurs d’accès respectent les obligations énoncées dans le présent règlement. Le prepose Jean Dupont est joignable au +41 79 617 70 73.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Jean Dupont"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 617 70 73"
+    }
+   ]
+  },
+  {
+   "id": "fr-044",
+   "lang": "fr",
+   "text": "l'autorité compétente chargée de l'application et de l'exécution des articles 23 à 31 et des articles 34 et 35 dispose d'une expérience dans le domaine des données et des services de communications électroniques. Paiement sur le compte CH87 5990 9328 4389 8474 53 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH87 5990 9328 4389 8474 53"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-045",
+   "lang": "fr",
+   "text": "Pour permettre aux utilisateurs finaux de choisir, les contrôleurs d’accès ne devraient pas les empêcher de désinstaller toute application logicielle sur leur système d’exploitation. Dossier de Elise Perret, n. AVS 756.7704.2752.42.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Perret"
+    },
+    {
+     "type": "avs",
+     "value": "756.7704.2752.42"
+    }
+   ]
+  },
+  {
+   "id": "fr-046",
+   "lang": "fr",
+   "text": "Les exigences essentielles ne devraient s'appliquer qu'aux vendeurs de contrats intelligents, sauf lorsque ces derniers élaborent des contrats intelligents en interne à des fins exclusivement internes. Adresse de notification : Marie Rochat, Avenue de la Gare 3, 1003 Lausanne.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Marie Rochat"
+    },
+    {
+     "type": "address",
+     "value": "Avenue de la Gare 3, 1003 Lausanne"
+    }
+   ]
+  },
+  {
+   "id": "fr-047",
+   "lang": "fr",
+   "text": "Lorsque les icônes sont présentées par voie électronique, elles devraient être lisibles par machine. Reference : luc.perret@bluewin.ch, tel. +33 6 74 59 63 87.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "luc.perret@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 74 59 63 87"
+    }
+   ]
+  },
+  {
+   "id": "fr-048",
+   "lang": "fr",
+   "text": "Lorsque, et dans la mesure où, il n’est pas possible de fournir les informations visées au paragraphe 2 en même temps, les informations peuvent être communiquées de manière échelonnée sans autre retard indu. Pour toute question, contactez Sophie Favre (sophie.favre@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Sophie Favre"
+    },
+    {
+     "type": "email",
+     "value": "sophie.favre@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "fr-049",
+   "lang": "fr",
+   "text": "La révocation prend effet le jour suivant celui de la publication de ladite décision au Journal officiel de l’Union européenne ou à une date ultérieure qui est précisée dans ladite décision. Le prepose Luc Dupont est joignable au +41 79 304 44 30.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Luc Dupont"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 304 44 30"
+    }
+   ]
+  },
+  {
+   "id": "fr-050",
+   "lang": "fr",
+   "text": "les aspects de la portabilité des données en nuage pour la portabilité syntactique des données, la portabilité sémantique des données et la portabilité stratégique des données; Paiement sur le compte CH34 5819 8353 3906 2220 33 de Fiduciaire Leman SA.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH34 5819 8353 3906 2220 33"
+    },
+    {
+     "type": "org",
+     "value": "Fiduciaire Leman SA"
+    }
+   ]
+  },
+  {
+   "id": "fr-051",
+   "lang": "fr",
+   "text": "L’ENISA assure le secrétariat et apporte une aide active à la coopération entre les CSIRT. Dossier de Hugo Martin, n. AVS 756.6207.9608.38.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hugo Martin"
+    },
+    {
+     "type": "avs",
+     "value": "756.6207.9608.38"
+    }
+   ]
+  },
+  {
+   "id": "fr-052",
+   "lang": "fr",
+   "text": "La délégation de pouvoir visée à l'article 12, paragraphe 8, et à l'article 43, paragraphe 8, peut être révoquée à tout moment par le Parlement européen ou le Conseil. Adresse de notification : Luc Rochat, Rue du Rhone 12, 1204 Geneve.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Luc Rochat"
+    },
+    {
+     "type": "address",
+     "value": "Rue du Rhone 12, 1204 Geneve"
+    }
+   ]
+  },
+  {
+   "id": "fr-053",
+   "lang": "fr",
+   "text": "(85) La Commission devrait pouvoir prendre les mesures nécessaires pour contrôler la mise en œuvre et le respect effectifs des obligations prévues par le présent règlement. Reference : camille.rochat@example.ch, tel. +49 30 8475204.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "camille.rochat@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 8475204"
+    }
+   ]
+  },
+  {
+   "id": "fr-054",
+   "lang": "fr",
+   "text": "ordonner au responsable du traitement ou au sous-traitant de satisfaire aux demandes présentées par la personne concernée en vue d’exercer ses droits en application du présent règlement; Pour toute question, contactez Sophie Perret (sophie.perret@bluewin.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Sophie Perret"
+    },
+    {
+     "type": "email",
+     "value": "sophie.perret@bluewin.ch"
+    }
+   ]
+  },
+  {
+   "id": "fr-055",
+   "lang": "fr",
+   "text": "Les demandes d'assistances contiennent toutes les informations nécessaires, notamment la finalité et les motifs de la demande. Le prepose Pierre Rochat est joignable au +41 79 561 90 61.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Pierre Rochat"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 561 90 61"
+    }
+   ]
+  },
+  {
+   "id": "fr-056",
+   "lang": "fr",
+   "text": "13) «destinataire»: la personne physique ou morale, l’autorité publique, le service ou tout autre organisme qui reçoit communication des données à caractère personnel, qu’il s’agisse ou non d’un tiers. Paiement sur le compte CH48 7113 1182 3316 3019 15 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH48 7113 1182 3316 3019 15"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-057",
+   "lang": "fr",
+   "text": "Pour garantir le respect de ces exigences, il est tenu compte du système de gestion des risques prévu à l’article 9. Dossier de Sophie Perret, n. AVS 756.2198.5762.95.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Sophie Perret"
+    },
+    {
+     "type": "avs",
+     "value": "756.2198.5762.95"
+    }
+   ]
+  },
+  {
+   "id": "fr-058",
+   "lang": "fr",
+   "text": "Le rapport d’audit devrait comprendre un avis d’audit fondé sur les conclusions tirées des éléments probants recueillis dans le cadre de l’audit. Adresse de notification : Marie Favre, Avenue de la Gare 3, 1003 Lausanne.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Marie Favre"
+    },
+    {
+     "type": "address",
+     "value": "Avenue de la Gare 3, 1003 Lausanne"
+    }
+   ]
+  },
+  {
+   "id": "fr-059",
+   "lang": "fr",
+   "text": "(67) Les services d’authentification de site internet sont un moyen permettant au visiteur d’un site internet de s’assurer que celui-ci est tenu par une entité véritable et légitime. Reference : jean.martin@bluewin.ch, tel. +49 30 8765307.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "jean.martin@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 8765307"
+    }
+   ]
+  },
+  {
+   "id": "fr-060",
+   "lang": "fr",
+   "text": "La Cour de justice de l’Union européenne statue avec compétence de pleine juridiction sur les recours formés contre les décisions par lesquelles la Commission a fixé une amende au titre du présent article. Pour toute question, contactez Marie Perret (marie.perret@example.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Marie Perret"
+    },
+    {
+     "type": "email",
+     "value": "marie.perret@example.ch"
+    }
+   ]
+  },
+  {
+   "id": "fr-061",
+   "lang": "fr",
+   "text": "Lorsque le traitement est limité en vertu du premier alinéa, point a), le responsable du traitement informe la personne concernée avant de lever la limitation du traitement. Le prepose Camille Bonvin est joignable au +49 30 3452813.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Camille Bonvin"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 3452813"
+    }
+   ]
+  },
+  {
+   "id": "fr-062",
+   "lang": "fr",
+   "text": "Ils devraient également accorder une reconnaissance publique aux détenteurs de données à la demande de ces derniers et devraient être responsables du maintien de la sécurité des données reçues. Paiement sur le compte CH93 7201 6985 2275 9465 42 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH93 7201 6985 2275 9465 42"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-063",
+   "lang": "fr",
+   "text": "Les prestataires de services de confiance qualifiés font l’objet, au moins tous les vingt-quatre mois, d’un audit effectué à leurs frais par un organisme d’évaluation de la conformité. Dossier de Camille Rochat, n. AVS 756.4773.7793.52.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Camille Rochat"
+    },
+    {
+     "type": "avs",
+     "value": "756.4773.7793.52"
+    }
+   ]
+  },
+  {
+   "id": "fr-064",
+   "lang": "fr",
+   "text": "La Commission et l’ENISA participent en tant qu’observateurs aux évaluations par les pairs. Adresse de notification : Elise Rochat, Avenue de la Gare 3, 1003 Lausanne.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Rochat"
+    },
+    {
+     "type": "address",
+     "value": "Avenue de la Gare 3, 1003 Lausanne"
+    }
+   ]
+  },
+  {
+   "id": "fr-065",
+   "lang": "fr",
+   "text": "À cette fin, les autorités de contrôle coopèrent entre elles et avec la Commission conformément au chapitre VII. Reference : pierre.dupont@bluewin.ch, tel. +33 6 38 62 86 28.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "pierre.dupont@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 38 62 86 28"
+    }
+   ]
+  },
+  {
+   "id": "fr-066",
+   "lang": "fr",
+   "text": "La décision d'un organe de règlement des litiges n'est contraignante pour les parties que si celles-ci ont expressément consenti à son caractère contraignant avant le début de la procédure de règlement du litige. Pour toute question, contactez Hugo Favre (hugo.favre@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hugo Favre"
+    },
+    {
+     "type": "email",
+     "value": "hugo.favre@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "fr-067",
+   "lang": "fr",
+   "text": "Les droits de la défense des parties concernées sont pleinement respectés dans le déroulement de la procédure. Le prepose Elise Rochat est joignable au +49 30 5752426.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Elise Rochat"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 5752426"
+    }
+   ]
+  },
+  {
+   "id": "fr-068",
+   "lang": "fr",
+   "text": "Un système de gestion des risques est établi, mis en œuvre, documenté et tenu à jour en ce qui concerne les systèmes d’IA à haut risque. Paiement sur le compte CH36 7770 8904 3928 7065 81 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH36 7770 8904 3928 7065 81"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-069",
+   "lang": "fr",
+   "text": "les exigences relatives aux accords contractuels conclus entre des prestataires tiers de services TIC et des entités financières; Dossier de Luc Perret, n. AVS 756.8133.2444.18.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Luc Perret"
+    },
+    {
+     "type": "avs",
+     "value": "756.8133.2444.18"
+    }
+   ]
+  },
+  {
+   "id": "fr-070",
+   "lang": "fr",
+   "text": "En outre, les microentreprises ne devraient être tenues d’évaluer la nécessité de maintenir ces capacités en matière de TIC redondantes qu’en se fondant sur leur profil de risque. Adresse de notification : Camille Dupont, Rue du Rhone 12, 1204 Geneve.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Camille Dupont"
+    },
+    {
+     "type": "address",
+     "value": "Rue du Rhone 12, 1204 Geneve"
+    }
+   ]
+  },
+  {
+   "id": "fr-071",
+   "lang": "fr",
+   "text": "Les certificats qualifiés de signature électronique peuvent comprendre des attributs spécifiques supplémentaires non obligatoires. Reference : jean.martin@bluewin.ch, tel. +41 79 770 10 30.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "jean.martin@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 770 10 30"
+    }
+   ]
+  },
+  {
+   "id": "fr-072",
+   "lang": "fr",
+   "text": "Indépendamment de la publication annuelle du rapport d’activité, le Contrôleur européen de la protection des données peut publier des rapports sur des sujets spécifiques. Pour toute question, contactez Pierre Favre (pierre.favre@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Pierre Favre"
+    },
+    {
+     "type": "email",
+     "value": "pierre.favre@example.org"
+    }
+   ]
+  },
+  {
+   "id": "fr-073",
+   "lang": "fr",
+   "text": "Les actes d’exécution visés aux paragraphes 7 et 8 du présent article sont adoptés en conformité avec la procédure d’examen visés à l’article 48, paragraphe 2. Le prepose Marie Rochat est joignable au 022 919 50 62.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Marie Rochat"
+    },
+    {
+     "type": "phone",
+     "value": "022 919 50 62"
+    }
+   ]
+  },
+  {
+   "id": "fr-074",
+   "lang": "fr",
+   "text": "La directive 2002/58/CE protège l'intégrité de l'équipement terminal d'un utilisateur en ce qui concerne l'utilisation des capacités de traitement et de stockage et la collecte d'informations. Paiement sur le compte CH23 2964 2285 9071 1108 79 de Cabinet Vaudois Conseil.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH23 2964 2285 9071 1108 79"
+    },
+    {
+     "type": "org",
+     "value": "Cabinet Vaudois Conseil"
+    }
+   ]
+  },
+  {
+   "id": "fr-075",
+   "lang": "fr",
+   "text": "Le présent règlement ne s’applique pas à la fourniture de services de confiance utilisés exclusivement dans des systèmes fermés résultant du droit national ou d’accords au sein d’un ensemble défini de participants. Dossier de Pierre Rochat, n. AVS 756.9490.8537.50.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Pierre Rochat"
+    },
+    {
+     "type": "avs",
+     "value": "756.9490.8537.50"
+    }
+   ]
+  },
+  {
+   "id": "fr-076",
+   "lang": "fr",
+   "text": "«actif informationnel»: un ensemble d’informations, matérielles ou immatérielles, qui justifie une protection; Adresse de notification : Sophie Rochat, Avenue de la Gare 3, 1003 Lausanne.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Sophie Rochat"
+    },
+    {
+     "type": "address",
+     "value": "Avenue de la Gare 3, 1003 Lausanne"
+    }
+   ]
+  },
+  {
+   "id": "fr-077",
+   "lang": "fr",
+   "text": "Les recours formés en vertu du présent article sont portés devant les juridictions de l’État membre dans lequel se trouve l’autorité ou l’organisme à l’encontre duquel le recours juridictionnel a été formé. Reference : luc.bonvin@bluewin.ch, tel. 022 933 22 44.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "luc.bonvin@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "022 933 22 44"
+    }
+   ]
+  },
+  {
+   "id": "fr-078",
+   "lang": "fr",
+   "text": "Les institutions et organes de l’Union publient les coordonnées du délégué à la protection des données et les communiquent au Contrôleur européen de la protection des données. Pour toute question, contactez Pierre Martin (pierre.martin@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Pierre Martin"
+    },
+    {
+     "type": "email",
+     "value": "pierre.martin@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "fr-079",
+   "lang": "fr",
+   "text": "Le contrôleur d’accès ne rend pas l’obtention de ce consentement par les entreprises utilisatrices plus lourde que pour ses propres services. Le prepose Camille Perret est joignable au +49 30 9563838.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Camille Perret"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 9563838"
+    }
+   ]
+  },
+  {
+   "id": "de-000",
+   "lang": "de",
+   "text": "( 16 ) Richtlinie (EU) 2019/882 des Europäischen Parlaments und des Rates vom 17. Bei Fragen wenden Sie sich an Markus Keller (markus.keller@gmx.de).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Markus Keller"
+    },
+    {
+     "type": "email",
+     "value": "markus.keller@gmx.de"
+    }
+   ]
+  },
+  {
+   "id": "de-001",
+   "lang": "de",
+   "text": "Die im Unionsrecht vorgesehene Rechtsgrundlage für die Verarbeitung personenbezogener Daten kann auch als Rechtsgrundlage für eine weitere Verarbeitung dienen. Der Berater Hans Schmid ist unter +49 30 1087466 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hans Schmid"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 1087466"
+    }
+   ]
+  },
+  {
+   "id": "de-002",
+   "lang": "de",
+   "text": "Regelungen zur Streitbeilegung und gemeinsamen Sicherheitsnormen für den Betrieb. Zahlung auf das Konto CH70 4519 8309 2279 7050 96 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH70 4519 8309 2279 7050 96"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-003",
+   "lang": "de",
+   "text": "(4) Bei der Festsetzung der Höhe der Geldbuße berücksichtigt die Kommission Art, Schwere, Dauer und Wiederholung der Zuwiderhandlung sowie bei gemäß Absatz 2 verhängten Geldbußen die im Verfahren verursachte Verzögerung. Dossier von Verena Huber, AHV-Nr. 756.1534.3569.81.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Verena Huber"
+    },
+    {
+     "type": "avs",
+     "value": "756.1534.3569.81"
+    }
+   ]
+  },
+  {
+   "id": "de-004",
+   "lang": "de",
+   "text": "Der Anbieter hält die EU-Konformitätserklärung gegebenenfalls auf dem neuesten Stand. Zustelladresse: Markus Mueller, Bahnhofstrasse 5, 8001 Zuerich.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Markus Mueller"
+    },
+    {
+     "type": "address",
+     "value": "Bahnhofstrasse 5, 8001 Zuerich"
+    }
+   ]
+  },
+  {
+   "id": "de-005",
+   "lang": "de",
+   "text": "Mai 2003 betreffend die Definition der Kleinstunternehmen sowie der kleinen und mittleren Unternehmen ( ABl. Kontakt: hans.mueller@mail.com, Tel. +49 30 7330138.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "hans.mueller@mail.com"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 7330138"
+    }
+   ]
+  },
+  {
+   "id": "de-006",
+   "lang": "de",
+   "text": "Die Kommission trägt den Ansichten des Gremiums bei ihrer Entscheidung weitestgehend Rechnung. Bei Fragen wenden Sie sich an Markus Keller (markus.keller@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Markus Keller"
+    },
+    {
+     "type": "email",
+     "value": "markus.keller@example.org"
+    }
+   ]
+  },
+  {
+   "id": "de-007",
+   "lang": "de",
+   "text": "Diese Durchführungsrechtsakte werden gemäß dem Prüfverfahren nach Artikel 93 Absatz 2 erlassen. Der Berater Peter Mueller ist unter +41 79 905 36 41 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Mueller"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 905 36 41"
+    }
+   ]
+  },
+  {
+   "id": "de-008",
+   "lang": "de",
+   "text": "Es beteiligt sich aktiv an den Entscheidungen im Zusammenhang mit dem Management und der Durchsetzung dieser Verordnung und sorgt dafür, dass angemessene Ressourcen dafür zugewiesen werden. Zahlung auf das Konto CH88 6329 3973 1445 1958 48 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH88 6329 3973 1445 1958 48"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-009",
+   "lang": "de",
+   "text": "Dies sollte auch für Verlangen der Kommission, der Europäischen Zentralbank oder einer Einrichtung der Union gelten. Dossier von Heidi Schmid, AHV-Nr. 756.7669.2072.71.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Heidi Schmid"
+    },
+    {
+     "type": "avs",
+     "value": "756.7669.2072.71"
+    }
+   ]
+  },
+  {
+   "id": "de-010",
+   "lang": "de",
+   "text": "Birgt das Hochrisiko-IT-System zudem ein Risiko im Sinne des Artikels 79 Absatz 1, so informiert der Händler den Anbieter bzw. Zustelladresse: Ursula Mueller, Marktgasse 21, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Mueller"
+    },
+    {
+     "type": "address",
+     "value": "Marktgasse 21, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "de-011",
+   "lang": "de",
+   "text": "Sie sorgen dafür, dass diese Angaben öffentlich verfügbar, leicht zugänglich, richtig und stets aktuell sind. Kontakt: hans.mueller@example.org, Tel. +49 30 5209218.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "hans.mueller@example.org"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 5209218"
+    }
+   ]
+  },
+  {
+   "id": "de-012",
+   "lang": "de",
+   "text": "(4) Der Koordinator für digitale Dienste am Niederlassungsort trägt der Aufforderung gemäß der Absätze 1 oder 2 dieses Artikels weitestgehend Rechnung. Bei Fragen wenden Sie sich an Anna Keller (anna.keller@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Anna Keller"
+    },
+    {
+     "type": "email",
+     "value": "anna.keller@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "de-013",
+   "lang": "de",
+   "text": "Die Kommission bemüht sich, diesen Durchführungsrechtsakt unverzüglich, spätestens jedoch drei Monate nach Eingang eines vollständigen mit Gründen versehenen Antrags, zu erlassen. Der Berater Verena Mueller ist unter +41 79 788 32 62 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Verena Mueller"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 788 32 62"
+    }
+   ]
+  },
+  {
+   "id": "de-014",
+   "lang": "de",
+   "text": "1101/2008 des Europäischen Parlaments und des Rates über die Übermittlung von unter die Geheimhaltungspflicht fallenden Informationen an das Statistische Amt der Europäischen Gemeinschaften, der Verordnung (EG) Nr. Zahlung auf das Konto CH39 9090 6947 1602 5599 73 der Treuhand Alpina AG.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH39 9090 6947 1602 5599 73"
+    },
+    {
+     "type": "org",
+     "value": "Treuhand Alpina AG"
+    }
+   ]
+  },
+  {
+   "id": "de-015",
+   "lang": "de",
+   "text": "Diese Schutzmaßnahmen sollten sicherstellen, dass die Datenschutzvorschriften und die Rechte der betroffenen Personen auf eine der Verarbeitung innerhalb der Union angemessene Art und Weise beachtet werden; Dossier von Stefan Frei, AHV-Nr. 756.4734.9570.45.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Stefan Frei"
+    },
+    {
+     "type": "avs",
+     "value": "756.4734.9570.45"
+    }
+   ]
+  },
+  {
+   "id": "de-016",
+   "lang": "de",
+   "text": "Oktober 2019 zum Schutz von Personen, die Verstöße gegen das Unionsrecht melden ( ABl. Zustelladresse: Stefan Huber, Marktgasse 21, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Stefan Huber"
+    },
+    {
+     "type": "address",
+     "value": "Marktgasse 21, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "de-017",
+   "lang": "de",
+   "text": "Die für diese Aufgabe benannten unabhängigen Sachverständigen erfüllen die in Artikel 68 Absatz 2 umrissenen Kriterien. Kontakt: verena.schmid@example.ch, Tel. 022 183 83 13.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "verena.schmid@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "022 183 83 13"
+    }
+   ]
+  },
+  {
+   "id": "de-018",
+   "lang": "de",
+   "text": "Endet jedoch ihre Mitgliedschaft im Verwaltungsrat während ihrer Amtszeit, so endet auch ihre Amtszeit automatisch am selben Tag. Bei Fragen wenden Sie sich an Ursula Mueller (ursula.mueller@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Mueller"
+    },
+    {
+     "type": "email",
+     "value": "ursula.mueller@example.org"
+    }
+   ]
+  },
+  {
+   "id": "de-019",
+   "lang": "de",
+   "text": "Diese Dokumentation muss der Aufsichtsbehörde die Überprüfung der Einhaltung der Bestimmungen dieses Artikels ermöglichen. Der Berater Hans Baumann ist unter +49 30 5947882 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hans Baumann"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 5947882"
+    }
+   ]
+  },
+  {
+   "id": "de-020",
+   "lang": "de",
+   "text": "iii) Meldung schwerwiegender zahlungsbezogener Betriebs- oder Sicherheitsvorfälle durch in Artikel 2 Absatz 1 Buchstaben a bis d aufgeführte Finanzunternehmen an die zuständigen Behörden; Zahlung auf das Konto CH55 7897 8887 8284 4046 41 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH55 7897 8887 8284 4046 41"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-021",
+   "lang": "de",
+   "text": "Weil eindeutige und angepasste Unionsstandards, die auf die vertraglichen Vereinbarungen mit IKT-Drittdienstleistern anwendbar sind, fehlen, werden externe Quellen für IKT-Risiken nicht umfassend behandelt. Dossier von Markus Frei, AHV-Nr. 756.1894.7915.54.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Markus Frei"
+    },
+    {
+     "type": "avs",
+     "value": "756.1894.7915.54"
+    }
+   ]
+  },
+  {
+   "id": "de-022",
+   "lang": "de",
+   "text": "(4) Bevor der Europäische Datenschutzbeauftragte Entscheidungen nach dem vorliegenden Artikel trifft, gibt er dem Organ, der Einrichtung oder der sonstigen Stelle der Union, gegen das bzw. Zustelladresse: Ursula Mueller, Bahnhofstrasse 5, 8001 Zuerich.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Mueller"
+    },
+    {
+     "type": "address",
+     "value": "Bahnhofstrasse 5, 8001 Zuerich"
+    }
+   ]
+  },
+  {
+   "id": "de-023",
+   "lang": "de",
+   "text": "Es kann auch als Kommunikationsmittel und zur Einreichung und Bearbeitung von Datenzugangsverlangen verwendet werden. Kontakt: verena.frei@bluewin.ch, Tel. +41 79 344 71 52.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "verena.frei@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 344 71 52"
+    }
+   ]
+  },
+  {
+   "id": "de-024",
+   "lang": "de",
+   "text": "Auf Verlangen der zuständigen nationalen Behörden legt der Anbieter die Dokumentation der Bewertung vor. Bei Fragen wenden Sie sich an Ursula Schmid (ursula.schmid@bluewin.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Schmid"
+    },
+    {
+     "type": "email",
+     "value": "ursula.schmid@bluewin.ch"
+    }
+   ]
+  },
+  {
+   "id": "de-025",
+   "lang": "de",
+   "text": "die Daten für die unter Buchstabe a genannten Zwecke an einen anderen Dritten weiterzugeben. Der Berater Peter Frei ist unter +33 6 34 78 58 98 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Frei"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 34 78 58 98"
+    }
+   ]
+  },
+  {
+   "id": "de-026",
+   "lang": "de",
+   "text": "(3) Ein qualifiziertes elektronisches Siegel, das auf einem in einem Mitgliedstaat ausgestellten qualifizierten Zertifikat beruht, wird in allen anderen Mitgliedstaaten als qualifiziertes elektronisches Siegel anerkannt. Zahlung auf das Konto CH92 9342 7131 9168 9501 69 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH92 9342 7131 9168 9501 69"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-027",
+   "lang": "de",
+   "text": "(12) Die Betreiber arbeiten mit den zuständigen Behörden bei allen Maßnahmen zusammen, die diese Behörden im Zusammenhang mit dem Hochrisiko-KI-System zur Umsetzung dieser Verordnung ergreifen. Dossier von Verena Schmid, AHV-Nr. 756.2388.3200.20.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Verena Schmid"
+    },
+    {
+     "type": "avs",
+     "value": "756.2388.3200.20"
+    }
+   ]
+  },
+  {
+   "id": "de-028",
+   "lang": "de",
+   "text": "Die Gültigkeit von delegierten Rechtsakten, die bereits in Kraft sind, wird von dem Beschluss über den Widerruf nicht berührt. Zustelladresse: Heidi Keller, Bahnhofstrasse 5, 8001 Zuerich.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Heidi Keller"
+    },
+    {
+     "type": "address",
+     "value": "Bahnhofstrasse 5, 8001 Zuerich"
+    }
+   ]
+  },
+  {
+   "id": "de-029",
+   "lang": "de",
+   "text": "(4) Eine öffentliche Stelle, die Kommission, die Europäische Zentralbank oder eine Einrichtung der Union sind für die Sicherheit der erhaltenen Daten verantwortlich. Kontakt: anna.schmid@mail.com, Tel. 022 180 45 39.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "anna.schmid@mail.com"
+    },
+    {
+     "type": "phone",
+     "value": "022 180 45 39"
+    }
+   ]
+  },
+  {
+   "id": "de-030",
+   "lang": "de",
+   "text": "der dem Finanzunternehmen ermöglicht, zu einem anderen IKT-Drittdienstleister zu wechseln oder auf interne Lösungen umzustellen, die der Komplexität der erbrachten Dienstleistung entsprechen. Bei Fragen wenden Sie sich an Hans Schmid (hans.schmid@gmx.de).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hans Schmid"
+    },
+    {
+     "type": "email",
+     "value": "hans.schmid@gmx.de"
+    }
+   ]
+  },
+  {
+   "id": "de-031",
+   "lang": "de",
+   "text": "um die Maßnahmen festzulegen, die von einem Torwächter bei Umgehung der Verpflichtungen nach dieser Verordnung umzusetzen sind; Der Berater Ursula Baumann ist unter +41 79 314 66 67 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Baumann"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 314 66 67"
+    }
+   ]
+  },
+  {
+   "id": "de-032",
+   "lang": "de",
+   "text": "(5) Der Verantwortliche unterrichtet den Datenschutzbeauftragten über die Verletzung des Schutzes personenbezogener Daten. Zahlung auf das Konto CH78 7331 4085 8778 2779 52 der Treuhand Alpina AG.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH78 7331 4085 8778 2779 52"
+    },
+    {
+     "type": "org",
+     "value": "Treuhand Alpina AG"
+    }
+   ]
+  },
+  {
+   "id": "de-033",
+   "lang": "de",
+   "text": "Der Datenschutzbeauftragte kann für derartige Verbände und andere Vereinigungen, die Verantwortliche oder Auftragsverarbeiter vertreten, handeln. Dossier von Peter Mueller, AHV-Nr. 756.6353.7731.60.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Mueller"
+    },
+    {
+     "type": "avs",
+     "value": "756.6353.7731.60"
+    }
+   ]
+  },
+  {
+   "id": "de-034",
+   "lang": "de",
+   "text": "(13) Die KI-Reallabore sind so konzipiert und werden so umgesetzt, dass sie gegebenenfalls die grenzüberschreitende Zusammenarbeit zwischen zuständigen nationalen Behörden erleichtern. Zustelladresse: Peter Frei, Marktgasse 21, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Frei"
+    },
+    {
+     "type": "address",
+     "value": "Marktgasse 21, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "de-035",
+   "lang": "de",
+   "text": "(12) Die notifizierten Stellen wirken an den in Artikel 38 genannten Koordinierungstätigkeiten mit. Kontakt: markus.frei@bluewin.ch, Tel. +33 6 83 15 21 46.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "markus.frei@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 83 15 21 46"
+    }
+   ]
+  },
+  {
+   "id": "de-036",
+   "lang": "de",
+   "text": "Ohne ein Tätigwerden der Union wären Tests der digitalen operationalen Resilienz weiterhin uneinheitlich, und es gäbe kein System für die gegenseitige Anerkennung der IKT-Testergebnisse in verschiedenen Rechtsordnungen. Bei Fragen wenden Sie sich an Anna Baumann (anna.baumann@example.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Anna Baumann"
+    },
+    {
+     "type": "email",
+     "value": "anna.baumann@example.ch"
+    }
+   ]
+  },
+  {
+   "id": "de-037",
+   "lang": "de",
+   "text": "(10) Diese Richtlinie gilt nicht für Einrichtungen, die die Mitgliedstaaten gemäß Artikel 2 Absatz 4 der Verordnung (EU) 2022/2554 vom Anwendungsbereich der genannten Verordnung ausgenommen haben. Der Berater Ursula Frei ist unter +49 30 4261550 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Frei"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 4261550"
+    }
+   ]
+  },
+  {
+   "id": "de-038",
+   "lang": "de",
+   "text": "Um sicherzustellen, dass diese Verpflichtung wirksam ist und nicht umgangen werden kann, sollte sie auch für jede Maßnahme gelten, die die gleiche Wirkung wie eine Differenzierung oder Vorzugsbehandlung beim Ranking hat. Zahlung auf das Konto CH78 7403 3759 2271 1183 96 der Treuhand Alpina AG.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH78 7403 3759 2271 1183 96"
+    },
+    {
+     "type": "org",
+     "value": "Treuhand Alpina AG"
+    }
+   ]
+  },
+  {
+   "id": "de-039",
+   "lang": "de",
+   "text": "Er findet spätestens ab dem Datum Anwendung, zu dem die Beschränkung verhängt wird, ungeachtet dessen, warum oder wie sie verhängt wurde. Dossier von Ursula Huber, AHV-Nr. 756.7183.4305.41.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Huber"
+    },
+    {
+     "type": "avs",
+     "value": "756.7183.4305.41"
+    }
+   ]
+  },
+  {
+   "id": "de-040",
+   "lang": "de",
+   "text": "(15) Die Daten stellen digitalisierte Nutzerhandlungen und -vorgänge dar und sollten dementsprechend für den Nutzer zugänglich sein. Zustelladresse: Ursula Mueller, Marktgasse 21, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Mueller"
+    },
+    {
+     "type": "address",
+     "value": "Marktgasse 21, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "de-041",
+   "lang": "de",
+   "text": "( 32 ) Verordnung (EU) 2019/1150 des Europäischen Parlaments und des Rates vom 20. Kontakt: anna.keller@bluewin.ch, Tel. +49 30 4569653.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "anna.keller@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 4569653"
+    }
+   ]
+  },
+  {
+   "id": "de-042",
+   "lang": "de",
+   "text": "( 14 ) Richtlinie (EU) 2018/1972 des Europäischen Parlaments und des Rates vom 11. Bei Fragen wenden Sie sich an Peter Schmid (peter.schmid@example.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Schmid"
+    },
+    {
+     "type": "email",
+     "value": "peter.schmid@example.ch"
+    }
+   ]
+  },
+  {
+   "id": "de-043",
+   "lang": "de",
+   "text": "Artikel 57 gilt nur, soweit die Anforderungen an Hochrisiko-KI-Systeme gemäß dieser Verordnung im Rahmen der genannten Harmonisierungsrechtsvorschriften der Union eingebunden wurden. Der Berater Hans Frei ist unter +33 6 20 17 27 57 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hans Frei"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 20 17 27 57"
+    }
+   ]
+  },
+  {
+   "id": "de-044",
+   "lang": "de",
+   "text": "Besondere Aufmerksamkeit sollte der Vermeidung negativer Auswirkungen auf die Sicherheit, den Schutz der Privatsphäre und personenbezogener Daten sowie dem Verbot der Auferlegung allgemeiner Überwachungspflichten gelten. Zahlung auf das Konto CH87 7250 9543 6269 4007 66 der Treuhand Alpina AG.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH87 7250 9543 6269 4007 66"
+    },
+    {
+     "type": "org",
+     "value": "Treuhand Alpina AG"
+    }
+   ]
+  },
+  {
+   "id": "de-045",
+   "lang": "de",
+   "text": "die Kosten für die Migration von Daten und IKT-Arbeitslasten zu anderen IKT-Drittdienstleistern; Dossier von Hans Huber, AHV-Nr. 756.5079.5966.46.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hans Huber"
+    },
+    {
+     "type": "avs",
+     "value": "756.5079.5966.46"
+    }
+   ]
+  },
+  {
+   "id": "de-046",
+   "lang": "de",
+   "text": "Juli 2008 über die Vorschriften für die Akkreditierung und zur Aufhebung der Verordnung (EWG) Nr. Zustelladresse: Stefan Baumann, Bahnhofstrasse 5, 8001 Zuerich.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Stefan Baumann"
+    },
+    {
+     "type": "address",
+     "value": "Bahnhofstrasse 5, 8001 Zuerich"
+    }
+   ]
+  },
+  {
+   "id": "de-047",
+   "lang": "de",
+   "text": "Diese erweiterten Tests sollten nur für Finanzunternehmen vorgeschrieben werden, die aus IKT-Perspektive ausgereift genug sind, um sie angemessen durchführen zu können. Kontakt: markus.baumann@gmx.de, Tel. 022 675 87 71.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "markus.baumann@gmx.de"
+    },
+    {
+     "type": "phone",
+     "value": "022 675 87 71"
+    }
+   ]
+  },
+  {
+   "id": "de-048",
+   "lang": "de",
+   "text": "zu aggregierten Interaktionen mit Inhalten von öffentlichen Seiten, öffentlichen Gruppen oder Persönlichkeiten des öffentlichen Lebens, einschließlich Daten zu Wahrnehmung und Interaktion, wie z. Bei Fragen wenden Sie sich an Verena Schmid (verena.schmid@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Verena Schmid"
+    },
+    {
+     "type": "email",
+     "value": "verena.schmid@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "de-049",
+   "lang": "de",
+   "text": "(4) Vor dem Erlass eines delegierten Rechtsakts konsultiert die Kommission die von den einzelnen Mitgliedstaaten benannten Sachverständigen, im Einklang mit den in der Interinstitutionellen Vereinbarung vom 13. Der Berater Peter Schmid ist unter +41 79 566 97 28 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Schmid"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 566 97 28"
+    }
+   ]
+  },
+  {
+   "id": "de-050",
+   "lang": "de",
+   "text": "Besonders für relativ kleine Anbieter von Vermittlungsdiensten könnten solche Normen nützlich sein, da sie bewährte Verfahren vorgeben. Zahlung auf das Konto CH10 3759 9056 1025 2587 18 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH10 3759 9056 1025 2587 18"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-051",
+   "lang": "de",
+   "text": "Kann ein solcher Mitgliedstaat nicht bestimmt werden, so gilt als Hauptniederlassung der Mitgliedstaat, in dem die betreffende Einrichtung die Niederlassung mit der höchsten Beschäftigtenzahl in der Union hat. Dossier von Peter Keller, AHV-Nr. 756.2789.3721.20.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Keller"
+    },
+    {
+     "type": "avs",
+     "value": "756.2789.3721.20"
+    }
+   ]
+  },
+  {
+   "id": "de-052",
+   "lang": "de",
+   "text": "Die Erklärung enthält alle erforderlichen Informationen zur Feststellung der Harmonisierungsrechtsvorschriften der Union, auf die sich die Erklärung bezieht. Zustelladresse: Markus Mueller, Marktgasse 21, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Markus Mueller"
+    },
+    {
+     "type": "address",
+     "value": "Marktgasse 21, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "de-053",
+   "lang": "de",
+   "text": "(77) Der Europäische Datenschutzbeauftragte ist gemäß Artikel 28 Absatz 2 der Verordnung (EG) Nr. Kontakt: heidi.frei@example.org, Tel. +33 6 56 95 61 58.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "heidi.frei@example.org"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 56 95 61 58"
+    }
+   ]
+  },
+  {
+   "id": "de-054",
+   "lang": "de",
+   "text": "(7) Das Grundrecht auf den Schutz personenbezogener Daten wird insbesondere durch die Verordnungen (EU) 2016/679 ( 6 ) und (EU) 2018/1725 ( 7 ) des Europäischen Parlaments und des Rates gewahrt. Bei Fragen wenden Sie sich an Heidi Baumann (heidi.baumann@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Heidi Baumann"
+    },
+    {
+     "type": "email",
+     "value": "heidi.baumann@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "de-055",
+   "lang": "de",
+   "text": "Oktober 2013 zur Übertragung besonderer Aufgaben im Zusammenhang mit der Aufsicht über Kreditinstitute auf die Europäische Zentralbank ( ABl. Der Berater Markus Schmid ist unter +49 30 6055785 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Markus Schmid"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 6055785"
+    }
+   ]
+  },
+  {
+   "id": "de-056",
+   "lang": "de",
+   "text": "dies gilt insbesondere für die zur Eindämmung des Risikos für die Rechte und Freiheiten natürlicher Personen geplanten Maßnahmen. Zahlung auf das Konto CH78 9060 2481 6452 4666 83 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH78 9060 2481 6452 4666 83"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-057",
+   "lang": "de",
+   "text": "(3) Die Kommission veröffentlicht ihre Beurteilung innerhalb von 18 Monaten nach dem in Artikel 16 Absatz 3 Buchstabe a genannten Zeitpunkt in einem Bericht. Dossier von Ursula Keller, AHV-Nr. 756.9775.4110.59.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Keller"
+    },
+    {
+     "type": "avs",
+     "value": "756.9775.4110.59"
+    }
+   ]
+  },
+  {
+   "id": "de-058",
+   "lang": "de",
+   "text": "gemäß den Artikeln 2 und 3 der Richtlinie 2014/65/EU ausgenommene natürliche oder juristische Personen; Zustelladresse: Heidi Huber, Bahnhofstrasse 5, 8001 Zuerich.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Heidi Huber"
+    },
+    {
+     "type": "address",
+     "value": "Bahnhofstrasse 5, 8001 Zuerich"
+    }
+   ]
+  },
+  {
+   "id": "de-059",
+   "lang": "de",
+   "text": "Die Artikel 101 und 102 des Vertrags über die Arbeitsweise der Europäischen Union (AEUV) sind zwar auf das Verhalten von Torwächtern anwendbar, jedoch nur auf bestimmte Arten von Marktmacht, z. Kontakt: stefan.frei@example.ch, Tel. 022 746 37 73.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "stefan.frei@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "022 746 37 73"
+    }
+   ]
+  },
+  {
+   "id": "de-060",
+   "lang": "de",
+   "text": "Stellt die notifizierte Stelle ihre Tätigkeit ein, so widerruft die notifizierende Behörde die Benennung. Bei Fragen wenden Sie sich an Markus Huber (markus.huber@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Markus Huber"
+    },
+    {
+     "type": "email",
+     "value": "markus.huber@example.org"
+    }
+   ]
+  },
+  {
+   "id": "de-061",
+   "lang": "de",
+   "text": "Die Anwendung dieser Vorschriften in diesen Mitgliedstaaten muss eine gleichwertige Wirkung haben. Der Berater Peter Keller ist unter 022 109 56 83 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Keller"
+    },
+    {
+     "type": "phone",
+     "value": "022 109 56 83"
+    }
+   ]
+  },
+  {
+   "id": "de-062",
+   "lang": "de",
+   "text": "Die unabhängigen Sachverständigen werden auf der Grundlage ihres Fachwissens in den Bereichen Finanzstabilität, digitale operationale Resilienz und Fragen der IKT-Sicherheit ernannt. Zahlung auf das Konto CH69 7260 5509 8292 7018 11 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH69 7260 5509 8292 7018 11"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-063",
+   "lang": "de",
+   "text": "Sonstige gültige Dokumente in Bezug auf bestehende Benennungen der antragstellenden notifizierten Stelle im Rahmen anderer Harmonisierungsrechtsvorschriften der Union sind ebenfalls beizufügen. Dossier von Ursula Mueller, AHV-Nr. 756.4029.7640.99.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Mueller"
+    },
+    {
+     "type": "avs",
+     "value": "756.4029.7640.99"
+    }
+   ]
+  },
+  {
+   "id": "de-064",
+   "lang": "de",
+   "text": "Die Kommission kann im Wege eines Durchführungsrechtsakts einen Praxisleitfaden genehmigen und ihm in der Union allgemeine Gültigkeit verleihen. Zustelladresse: Verena Mueller, Marktgasse 21, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Verena Mueller"
+    },
+    {
+     "type": "address",
+     "value": "Marktgasse 21, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "de-065",
+   "lang": "de",
+   "text": "45/2001/EG und der Beschluss 1247/2002/EG des Europäischen Parlaments, des Rates und der Kommission ( 13 ) sollten aufgehoben werden. Kontakt: anna.mueller@mail.com, Tel. +33 6 10 41 48 15.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "anna.mueller@mail.com"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 10 41 48 15"
+    }
+   ]
+  },
+  {
+   "id": "de-066",
+   "lang": "de",
+   "text": "Die Kommission trägt den jährlichen Berichten gegebenenfalls bei der Wahrnehmung ihrer Aufgaben gemäß dieser Verordnung Rechnung. Bei Fragen wenden Sie sich an Hans Keller (hans.keller@example.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Hans Keller"
+    },
+    {
+     "type": "email",
+     "value": "hans.keller@example.ch"
+    }
+   ]
+  },
+  {
+   "id": "de-067",
+   "lang": "de",
+   "text": "( 57 ) Richtlinie (EU) 2016/943 des Europäischen Parlaments und des Rates vom 8. Der Berater Markus Huber ist unter 022 744 44 91 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Markus Huber"
+    },
+    {
+     "type": "phone",
+     "value": "022 744 44 91"
+    }
+   ]
+  },
+  {
+   "id": "de-068",
+   "lang": "de",
+   "text": "Diese Durchführungsrechtsakte werden nach dem in Artikel 48 Absatz 2 genannten Prüfverfahren erlassen. Zahlung auf das Konto CH58 2720 3023 3879 9625 49 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH58 2720 3023 3879 9625 49"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-069",
+   "lang": "de",
+   "text": "(6) Für die Zwecke der Absätze 1, 4 und 5 führen Finanzunternehmen entsprechende Inventare, die sie regelmäßig sowie bei jeder wesentlichen Änderung im Sinne von Absatz 3 aktualisieren. Dossier von Stefan Frei, AHV-Nr. 756.3070.3337.58.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Stefan Frei"
+    },
+    {
+     "type": "avs",
+     "value": "756.3070.3337.58"
+    }
+   ]
+  },
+  {
+   "id": "de-070",
+   "lang": "de",
+   "text": "Einreise-/Ausreisesystem Verordnung (EU) 2017/2226 des Europäischen Parlaments und des Rates vom 30. Zustelladresse: Heidi Huber, Bahnhofstrasse 5, 8001 Zuerich.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Heidi Huber"
+    },
+    {
+     "type": "address",
+     "value": "Bahnhofstrasse 5, 8001 Zuerich"
+    }
+   ]
+  },
+  {
+   "id": "de-071",
+   "lang": "de",
+   "text": "(3) Bei der Entscheidung über die Verhängung einer Geldbuße und deren Höhe sind in jedem Einzelfall zumindest die in Artikel 32 Absatz 7 genannten Elemente gebührend zu berücksichtigen. Kontakt: ursula.mueller@bluewin.ch, Tel. 022 861 46 80.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "ursula.mueller@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "022 861 46 80"
+    }
+   ]
+  },
+  {
+   "id": "de-072",
+   "lang": "de",
+   "text": "(3) Die zuständigen Behörden unterrichten die betreffenden Finanzunternehmen über die Risiken, die in den Empfehlungen an kritische IKT-Drittdienstleister gemäß Artikel 35 Absatz 1 Buchstabe d festgestellt wurden. Bei Fragen wenden Sie sich an Ursula Huber (ursula.huber@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Huber"
+    },
+    {
+     "type": "email",
+     "value": "ursula.huber@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "de-073",
+   "lang": "de",
+   "text": "KMU, einschließlich Start-up-Unternehmen, können die in Anhang IV aufgeführten Elemente der technischen Dokumentation in vereinfachter Weise bereitstellen. Der Berater Ursula Frei ist unter +33 6 10 90 82 60 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Ursula Frei"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 10 90 82 60"
+    }
+   ]
+  },
+  {
+   "id": "de-074",
+   "lang": "de",
+   "text": "Die von der Kommission aufgestellte Liste der Bewerber ist öffentlich und umfasst mindestens drei Bewerber. Zahlung auf das Konto CH62 3029 8985 1113 3549 94 der Kanzlei Rheintal GmbH.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH62 3029 8985 1113 3549 94"
+    },
+    {
+     "type": "org",
+     "value": "Kanzlei Rheintal GmbH"
+    }
+   ]
+  },
+  {
+   "id": "de-075",
+   "lang": "de",
+   "text": "den Ort, an dem das Zertifikat, das der fortgeschrittenen elektronischen Signatur oder dem fortgeschrittenen elektronischen Siegel gemäß Buchstabe h zugrunde liegt, kostenlos zur Verfügung steht; Dossier von Stefan Schmid, AHV-Nr. 756.3190.7464.63.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Stefan Schmid"
+    },
+    {
+     "type": "avs",
+     "value": "756.3190.7464.63"
+    }
+   ]
+  },
+  {
+   "id": "de-076",
+   "lang": "de",
+   "text": "Der Beschluss über den Widerruf beendet die Übertragung der in diesem Beschluss angegebenen Befugnis. Zustelladresse: Peter Huber, Bahnhofstrasse 5, 8001 Zuerich.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Huber"
+    },
+    {
+     "type": "address",
+     "value": "Bahnhofstrasse 5, 8001 Zuerich"
+    }
+   ]
+  },
+  {
+   "id": "de-077",
+   "lang": "de",
+   "text": "Diese Frist kann unter Berücksichtigung der Komplexität der Angelegenheit um weitere sechs Wochen verlängert werden. Kontakt: hans.huber@gmx.de, Tel. 022 544 71 47.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "hans.huber@gmx.de"
+    },
+    {
+     "type": "phone",
+     "value": "022 544 71 47"
+    }
+   ]
+  },
+  {
+   "id": "de-078",
+   "lang": "de",
+   "text": "Diese Durchführungsrechtsakte werden nach dem in Artikel 48 Absatz 2 genannten Prüfverfahren erlassen. Bei Fragen wenden Sie sich an Peter Keller (peter.keller@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Keller"
+    },
+    {
+     "type": "email",
+     "value": "peter.keller@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "de-079",
+   "lang": "de",
+   "text": "(4) Ein Anbieter, der der Auffassung ist, dass ein in Anhang III aufgeführtes KI-System nicht hochriskant ist, dokumentiert seine Bewertung, bevor dieses System in Verkehr gebracht oder in Betrieb genommen wird. Der Berater Heidi Baumann ist unter +49 30 6889214 erreichbar.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Heidi Baumann"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 6889214"
+    }
+   ]
+  },
+  {
+   "id": "en-000",
+   "lang": "en",
+   "text": "Taking into account their size and if the option under paragraph 2 is not exercised, Union institutions and bodies may designate a data protection officer who fulfils his or her tasks on the basis of a service contract. For questions contact Laura Taylor (laura.taylor@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Laura Taylor"
+    },
+    {
+     "type": "email",
+     "value": "laura.taylor@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "en-001",
+   "lang": "en",
+   "text": "For the development of high-risk AI systems not using techniques involving the training of AI models, paragraphs 2 to 5 apply only to the testing data sets. The officer James Walker can be reached at +49 30 1106601.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "James Walker"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 1106601"
+    }
+   ]
+  },
+  {
+   "id": "en-002",
+   "lang": "en",
+   "text": "The information published shall disclose the identity of the critical ICT third-party service provider as well as information on the type and nature of the non-compliance. Payment to account CH26 9848 6710 2134 6365 50 held by Lakeside Advisory Ltd.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH26 9848 6710 2134 6365 50"
+    },
+    {
+     "type": "org",
+     "value": "Lakeside Advisory Ltd"
+    }
+   ]
+  },
+  {
+   "id": "en-003",
+   "lang": "en",
+   "text": "ensure the continuity of critical or important functions, through business continuity plans and response and recovery measures, which include, at least, back-up and restoration measures; File of Peter Taylor, AVS no. 756.3042.2521.32.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Taylor"
+    },
+    {
+     "type": "avs",
+     "value": "756.3042.2521.32"
+    }
+   ]
+  },
+  {
+   "id": "en-004",
+   "lang": "en",
+   "text": "‘ancillary insurance intermediary’ means an ancillary insurance intermediary as defined in Article 2(1), point (4), of Directive (EU) 2016/97; Notification address: Susan Smith, 12 Station Road, 1204 Geneva.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Susan Smith"
+    },
+    {
+     "type": "address",
+     "value": "12 Station Road, 1204 Geneva"
+    }
+   ]
+  },
+  {
+   "id": "en-005",
+   "lang": "en",
+   "text": "‘profiling’ means profiling as defined in Article 4, point (4), of Regulation (EU) 2016/679; Reference: karen.taylor@example.ch, phone +33 6 93 92 59 70.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "karen.taylor@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 93 92 59 70"
+    }
+   ]
+  },
+  {
+   "id": "en-006",
+   "lang": "en",
+   "text": "Due to those divergences, there are multiple requirements that financial entities must comply with, especially when operating across several Member States and when part of a financial group. For questions contact Laura Smith (laura.smith@example.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Laura Smith"
+    },
+    {
+     "type": "email",
+     "value": "laura.smith@example.ch"
+    }
+   ]
+  },
+  {
+   "id": "en-007",
+   "lang": "en",
+   "text": "In certain circumstances, it is important that very large online platforms cooperate in the drawing-up and adhere to specific codes of conduct. The officer David Clark can be reached at 022 129 70 14.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "David Clark"
+    },
+    {
+     "type": "phone",
+     "value": "022 129 70 14"
+    }
+   ]
+  },
+  {
+   "id": "en-008",
+   "lang": "en",
+   "text": "In particular, risk mitigation measures concerning specific types of illegal content should be explored via self- and co-regulatory agreements. Payment to account CH71 9074 4215 3061 4593 75 held by Lakeside Advisory Ltd.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH71 9074 4215 3061 4593 75"
+    },
+    {
+     "type": "org",
+     "value": "Lakeside Advisory Ltd"
+    }
+   ]
+  },
+  {
+   "id": "en-009",
+   "lang": "en",
+   "text": "Where those purposes can be fulfilled by further processing which does not permit or no longer permits the identification of data subjects, those purposes shall be fulfilled in that manner. File of Peter Taylor, AVS no. 756.1560.7308.90.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Taylor"
+    },
+    {
+     "type": "avs",
+     "value": "756.1560.7308.90"
+    }
+   ]
+  },
+  {
+   "id": "en-010",
+   "lang": "en",
+   "text": "Any contractual term which, to the detriment of the user, excludes the application of, derogates from or varies the effect of the user’s rights under this Chapter shall not be binding on the user. Notification address: James Smith, 12 Station Road, 1204 Geneva.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "James Smith"
+    },
+    {
+     "type": "address",
+     "value": "12 Station Road, 1204 Geneva"
+    }
+   ]
+  },
+  {
+   "id": "en-011",
+   "lang": "en",
+   "text": "The European Data Protection Supervisor may impose administrative fines on Union institutions, bodies, offices and agencies falling within the scope of this Regulation. Reference: karen.taylor@bluewin.ch, phone +33 6 94 22 95 53.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "karen.taylor@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 94 22 95 53"
+    }
+   ]
+  },
+  {
+   "id": "en-012",
+   "lang": "en",
+   "text": "Consequently, there is limited potential for innovative smaller businesses to offer data-based solutions in a competitive manner and for a diverse data economy in the Union. For questions contact David Brown (david.brown@gmx.de).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "David Brown"
+    },
+    {
+     "type": "email",
+     "value": "david.brown@gmx.de"
+    }
+   ]
+  },
+  {
+   "id": "en-013",
+   "lang": "en",
+   "text": "In that context, the Commission should also evaluate the scope of the obligation concerning the interoperability of number-independent electronic communications services. The officer James Taylor can be reached at 022 750 91 89.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "James Taylor"
+    },
+    {
+     "type": "phone",
+     "value": "022 750 91 89"
+    }
+   ]
+  },
+  {
+   "id": "en-014",
+   "lang": "en",
+   "text": "the Board substantially disagrees with the preliminary position communicated by the Digital Services Coordinator of establishment; Payment to account CH71 3625 4972 7410 3612 92 held by Lakeside Advisory Ltd.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH71 3625 4972 7410 3612 92"
+    },
+    {
+     "type": "org",
+     "value": "Lakeside Advisory Ltd"
+    }
+   ]
+  },
+  {
+   "id": "en-015",
+   "lang": "en",
+   "text": "The Executive Board shall not take decisions on behalf of the Management Board that require the approval of a majority of two-thirds of the members of the Management Board. File of Karen Smith, AVS no. 756.8718.4804.94.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Karen Smith"
+    },
+    {
+     "type": "avs",
+     "value": "756.8718.4804.94"
+    }
+   ]
+  },
+  {
+   "id": "en-016",
+   "lang": "en",
+   "text": "The European bodies and networks referred to in paragraph 2 shall each have an equal number of representatives in the high-level group. Notification address: Mary Clark, 5 Market Street, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Clark"
+    },
+    {
+     "type": "address",
+     "value": "5 Market Street, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "en-017",
+   "lang": "en",
+   "text": "Where the unfair contractual term is severable from the remaining terms of the contract, those remaining terms shall be binding. Reference: laura.walker@example.org, phone +33 6 42 91 75 52.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "laura.walker@example.org"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 42 91 75 52"
+    }
+   ]
+  },
+  {
+   "id": "en-018",
+   "lang": "en",
+   "text": "The interoperability framework shall consist of: a reference to minimum technical requirements related to the assurance levels under Article 8; For questions contact Mary Walker (mary.walker@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Walker"
+    },
+    {
+     "type": "email",
+     "value": "mary.walker@example.org"
+    }
+   ]
+  },
+  {
+   "id": "en-019",
+   "lang": "en",
+   "text": "(26) Because of the pace of technological change, this Regulation should adopt an approach which is open to innovation. The officer Laura Clark can be reached at +33 6 13 37 82 33.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Laura Clark"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 13 37 82 33"
+    }
+   ]
+  },
+  {
+   "id": "en-020",
+   "lang": "en",
+   "text": "(78) In certain instances, Union law provides for a model of coordinated supervision, shared between the European Data Protection Supervisor and the national supervisory authorities. Payment to account CH32 9189 2456 6468 6763 88 held by Lakeside Advisory Ltd.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH32 9189 2456 6468 6763 88"
+    },
+    {
+     "type": "org",
+     "value": "Lakeside Advisory Ltd"
+    }
+   ]
+  },
+  {
+   "id": "en-021",
+   "lang": "en",
+   "text": "The officials and other accompanying persons authorised by the Commission to conduct an inspection are empowered to: enter any premises, land and means of transport of undertakings and associations of undertakings; File of Mary Walker, AVS no. 756.4109.6087.74.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Walker"
+    },
+    {
+     "type": "avs",
+     "value": "756.4109.6087.74"
+    }
+   ]
+  },
+  {
+   "id": "en-022",
+   "lang": "en",
+   "text": "Those implementing acts shall be adopted in accordance with the examination procedure referred to in Article 48(2). Notification address: Peter Clark, 5 Market Street, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Clark"
+    },
+    {
+     "type": "address",
+     "value": "5 Market Street, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "en-023",
+   "lang": "en",
+   "text": "‘central counterparty’ means a central counterparty as defined in Article 2, point (1), of Regulation (EU) No 648/2012; Reference: susan.clark@bluewin.ch, phone 022 606 38 98.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "susan.clark@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "022 606 38 98"
+    }
+   ]
+  },
+  {
+   "id": "en-024",
+   "lang": "en",
+   "text": "A particular obligation in this Regulation may, therefore, address both elements. For questions contact Peter Walker (peter.walker@gmx.de).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Walker"
+    },
+    {
+     "type": "email",
+     "value": "peter.walker@gmx.de"
+    }
+   ]
+  },
+  {
+   "id": "en-025",
+   "lang": "en",
+   "text": "In particular, it should not cover the provision of services used exclusively within closed systems between a defined set of participants, which have no effect on third parties. The officer Karen Walker can be reached at +41 79 940 38 69.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Karen Walker"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 940 38 69"
+    }
+   ]
+  },
+  {
+   "id": "en-026",
+   "lang": "en",
+   "text": "An APA shall comply with the requirements concerning the security of network and information systems set out in Regulation (EU) 2022/2554 of the European Parliament and of the Council ( *4 ) . Payment to account CH52 4810 9322 7670 3363 79 held by Alpine Trust Services.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH52 4810 9322 7670 3363 79"
+    },
+    {
+     "type": "org",
+     "value": "Alpine Trust Services"
+    }
+   ]
+  },
+  {
+   "id": "en-027",
+   "lang": "en",
+   "text": "Those implementing acts shall be adopted in accordance with the examination procedure referred to in Article 48(2). File of Mary Smith, AVS no. 756.7347.7677.58.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Smith"
+    },
+    {
+     "type": "avs",
+     "value": "756.7347.7677.58"
+    }
+   ]
+  },
+  {
+   "id": "en-028",
+   "lang": "en",
+   "text": "No provision of this Regulation should be applied or interpreted in such a way as to diminish or limit the right to the protection of personal data or the right to privacy and confidentiality of communications. Notification address: Karen Brown, 12 Station Road, 1204 Geneva.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Karen Brown"
+    },
+    {
+     "type": "address",
+     "value": "12 Station Road, 1204 Geneva"
+    }
+   ]
+  },
+  {
+   "id": "en-029",
+   "lang": "en",
+   "text": "Those authorities shall report to the Commission on the findings of such investigation in order to support the Commission in its role as sole enforcer of this Regulation. Reference: karen.smith@bluewin.ch, phone +41 79 101 77 11.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "karen.smith@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 101 77 11"
+    }
+   ]
+  },
+  {
+   "id": "en-030",
+   "lang": "en",
+   "text": "If such authorisation is rejected, the use shall be stopped with immediate effect and all the data, as well as the results and outputs of that use shall be immediately discarded and deleted. For questions contact James Wilson (james.wilson@bluewin.ch).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "James Wilson"
+    },
+    {
+     "type": "email",
+     "value": "james.wilson@bluewin.ch"
+    }
+   ]
+  },
+  {
+   "id": "en-031",
+   "lang": "en",
+   "text": "In order to avoid abuses of the trusted flagger status, it should be possible to suspend such status when a Digital Services Coordinator of establishment opened an investigation based on legitimate reasons. The officer Peter Wilson can be reached at +41 79 784 80 18.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Wilson"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 784 80 18"
+    }
+   ]
+  },
+  {
+   "id": "en-032",
+   "lang": "en",
+   "text": "This Regulation should also be without prejudice to Union law on working conditions and Union law in the field of judicial cooperation in civil and criminal matters. Payment to account CH23 6267 8931 7370 6011 73 held by Lakeside Advisory Ltd.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH23 6267 8931 7370 6011 73"
+    },
+    {
+     "type": "org",
+     "value": "Lakeside Advisory Ltd"
+    }
+   ]
+  },
+  {
+   "id": "en-033",
+   "lang": "en",
+   "text": "The processor shall not engage another processor without prior specific or general written authorisation of the controller. File of Mary Taylor, AVS no. 756.9584.3921.75.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Taylor"
+    },
+    {
+     "type": "avs",
+     "value": "756.9584.3921.75"
+    }
+   ]
+  },
+  {
+   "id": "en-034",
+   "lang": "en",
+   "text": "The Board shall have a secretariat, which shall be provided by the European Data Protection Supervisor. Notification address: Susan Smith, 12 Station Road, 1204 Geneva.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Susan Smith"
+    },
+    {
+     "type": "address",
+     "value": "12 Station Road, 1204 Geneva"
+    }
+   ]
+  },
+  {
+   "id": "en-035",
+   "lang": "en",
+   "text": "( 8 ) Regulation (EC) No 549/2004 of the European Parliament and of the Council of 10 March 2004 laying down the framework for the creation of the single European sky (the framework Regulation) ( OJ L 96, 31.3.2004, p. Reference: peter.smith@bluewin.ch, phone 022 736 95 43.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "peter.smith@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "022 736 95 43"
+    }
+   ]
+  },
+  {
+   "id": "en-036",
+   "lang": "en",
+   "text": "The Commission and the Board shall also encourage and facilitate regular review and adaptation of the codes of conduct. For questions contact John Walker (john.walker@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "John Walker"
+    },
+    {
+     "type": "email",
+     "value": "john.walker@example.org"
+    }
+   ]
+  },
+  {
+   "id": "en-037",
+   "lang": "en",
+   "text": "Trade secrets shall be preserved and shall be disclosed to third parties only to the extent that such disclosure is strictly necessary to fulfil the purpose agreed between the user and the third party. The officer David Smith can be reached at +41 79 504 35 21.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "David Smith"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 504 35 21"
+    }
+   ]
+  },
+  {
+   "id": "en-038",
+   "lang": "en",
+   "text": "The implementing act shall provide for a mechanism for a periodic review, at least every four years, which shall take into account all relevant developments in the third country or international organisation. Payment to account CH42 3875 6736 8569 4287 92 held by Alpine Trust Services.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH42 3875 6736 8569 4287 92"
+    },
+    {
+     "type": "org",
+     "value": "Alpine Trust Services"
+    }
+   ]
+  },
+  {
+   "id": "en-039",
+   "lang": "en",
+   "text": "To that effect, the Commission should swiftly assess the need for reviewing the scope of this Regulation while aligning such review with the outcome of the comprehensive review envisaged under Directive (EU) 2015/2366. File of Mary Brown, AVS no. 756.2824.2067.62.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Brown"
+    },
+    {
+     "type": "avs",
+     "value": "756.2824.2067.62"
+    }
+   ]
+  },
+  {
+   "id": "en-040",
+   "lang": "en",
+   "text": "information on known technical restrictions and limitations that could have an impact on the switching process; Notification address: Karen Taylor, 5 Market Street, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Karen Taylor"
+    },
+    {
+     "type": "address",
+     "value": "5 Market Street, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "en-041",
+   "lang": "en",
+   "text": "The competent authorities may, however, impose the enforcement measures provided for in Article 32(4), points (a) to (h), Article 32(5) and Article 33(4), points (a) to (g), of this Directive. Reference: susan.walker@example.org, phone 022 751 68 71.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "susan.walker@example.org"
+    },
+    {
+     "type": "phone",
+     "value": "022 751 68 71"
+    }
+   ]
+  },
+  {
+   "id": "en-042",
+   "lang": "en",
+   "text": "They should comply with core independence requirements for prohibited non-auditing services, firm rotation and non-contingent fees. For questions contact Laura Wilson (laura.wilson@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Laura Wilson"
+    },
+    {
+     "type": "email",
+     "value": "laura.wilson@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "en-043",
+   "lang": "en",
+   "text": "The processing of personal data should also be regarded to be lawful where it is necessary to protect an interest which is essential for the life of the data subject or that of another natural person. The officer Susan Walker can be reached at 022 902 89 56.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Susan Walker"
+    },
+    {
+     "type": "phone",
+     "value": "022 902 89 56"
+    }
+   ]
+  },
+  {
+   "id": "en-044",
+   "lang": "en",
+   "text": "The Commission shall adopt implementing acts establishing the amount of the annual supervisory fee in respect of each provider of very large online platform or of very large online search engine. Payment to account CH82 3823 5478 3553 7584 83 held by Alpine Trust Services.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH82 3823 5478 3553 7584 83"
+    },
+    {
+     "type": "org",
+     "value": "Alpine Trust Services"
+    }
+   ]
+  },
+  {
+   "id": "en-045",
+   "lang": "en",
+   "text": "Such significant reach should be considered to exist where such number exceeds an operational threshold set at 45 million, that is, a number equivalent to 10 % of the Union population. File of Susan Walker, AVS no. 756.6844.4326.29.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Susan Walker"
+    },
+    {
+     "type": "avs",
+     "value": "756.6844.4326.29"
+    }
+   ]
+  },
+  {
+   "id": "en-046",
+   "lang": "en",
+   "text": "The requirements referred to in paragraph 1 of this Article shall be considered to be equivalent in effect to the obligations laid down in this Directive where: 3. Notification address: Mary Taylor, 12 Station Road, 1204 Geneva.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Taylor"
+    },
+    {
+     "type": "address",
+     "value": "12 Station Road, 1204 Geneva"
+    }
+   ]
+  },
+  {
+   "id": "en-047",
+   "lang": "en",
+   "text": "The aggregate number of staff in all local offices shall be kept to a minimum and shall not exceed 40 % of the total number of ENISA’s staff located in the Member State in which the seat of ENISA is located. Reference: james.wilson@example.ch, phone +49 30 7079798.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "james.wilson@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 7079798"
+    }
+   ]
+  },
+  {
+   "id": "en-048",
+   "lang": "en",
+   "text": "( 3 ) Position of the European Parliament of 10 November 2022 (not yet published in the Official Journal) and decision of the Council of 28 November 2022. For questions contact James Brown (james.brown@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "James Brown"
+    },
+    {
+     "type": "email",
+     "value": "james.brown@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "en-049",
+   "lang": "en",
+   "text": "Any information or documentation obtained by market surveillance authorities shall be treated in accordance with the confidentiality obligations set out in Article 78. The officer Laura Taylor can be reached at +49 30 5577437.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Laura Taylor"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 5577437"
+    }
+   ]
+  },
+  {
+   "id": "en-050",
+   "lang": "en",
+   "text": "Those conditions should help Member States to build the necessary trust in each other’s electronic identification schemes and to mutually recognise electronic identification means falling under their notified schemes. Payment to account CH26 6672 5285 4160 9008 46 held by Alpine Trust Services.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH26 6672 5285 4160 9008 46"
+    },
+    {
+     "type": "org",
+     "value": "Alpine Trust Services"
+    }
+   ]
+  },
+  {
+   "id": "en-051",
+   "lang": "en",
+   "text": "Financial entities shall define, establish and implement an ICT-related incident management process to detect, manage and notify ICT-related incidents. File of Mary Smith, AVS no. 756.8549.6421.95.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Smith"
+    },
+    {
+     "type": "avs",
+     "value": "756.8549.6421.95"
+    }
+   ]
+  },
+  {
+   "id": "en-052",
+   "lang": "en",
+   "text": "Where the members of the Board are split, the decision shall by adopted by the vote of its Chair. Notification address: John Walker, 5 Market Street, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "John Walker"
+    },
+    {
+     "type": "address",
+     "value": "5 Market Street, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "en-053",
+   "lang": "en",
+   "text": "Each Member State shall designate or establish one or more competent authorities responsible for cybersecurity and for the supervisory tasks referred to in Chapter VII (competent authorities). Reference: laura.brown@mail.com, phone +41 79 106 20 32.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "laura.brown@mail.com"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 106 20 32"
+    }
+   ]
+  },
+  {
+   "id": "en-054",
+   "lang": "en",
+   "text": "Those implementing acts shall be adopted in accordance with the examination procedure referred to in Article 48(2). For questions contact Peter Taylor (peter.taylor@gmx.de).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Taylor"
+    },
+    {
+     "type": "email",
+     "value": "peter.taylor@gmx.de"
+    }
+   ]
+  },
+  {
+   "id": "en-055",
+   "lang": "en",
+   "text": "Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay. The officer Karen Walker can be reached at +49 30 6037311.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Karen Walker"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 6037311"
+    }
+   ]
+  },
+  {
+   "id": "en-056",
+   "lang": "en",
+   "text": "The Commission may adopt implementing acts laying down detailed arrangements for the application of the following: the form, content and other details of notifications and submissions pursuant to Article 3; Payment to account CH56 1228 8116 3830 3474 85 held by Alpine Trust Services.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH56 1228 8116 3830 3474 85"
+    },
+    {
+     "type": "org",
+     "value": "Alpine Trust Services"
+    }
+   ]
+  },
+  {
+   "id": "en-057",
+   "lang": "en",
+   "text": "The Commission may, by means of implementing acts, establish reference numbers of standards for processes for sending and receiving data. File of Laura Brown, AVS no. 756.1979.6789.23.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Laura Brown"
+    },
+    {
+     "type": "avs",
+     "value": "756.1979.6789.23"
+    }
+   ]
+  },
+  {
+   "id": "en-058",
+   "lang": "en",
+   "text": "As soon as it adopts a delegated act, the Commission shall notify it simultaneously to the European Parliament and to the Council. Notification address: Laura Clark, 12 Station Road, 1204 Geneva.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Laura Clark"
+    },
+    {
+     "type": "address",
+     "value": "12 Station Road, 1204 Geneva"
+    }
+   ]
+  },
+  {
+   "id": "en-059",
+   "lang": "en",
+   "text": "( 4 ) Council Directive 2009/119/EC of 14 September 2009 imposing an obligation on Member States to maintain minimum stocks of crude oil and/or petroleum products ( OJ L 265, 9.10.2009, p. Reference: laura.smith@example.ch, phone +33 6 98 39 50 91.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "laura.smith@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 98 39 50 91"
+    }
+   ]
+  },
+  {
+   "id": "en-060",
+   "lang": "en",
+   "text": "Serious ICT breaches that occur in the financial sector do not merely affect financial entities taken in isolation. For questions contact John Taylor (john.taylor@mail.com).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "John Taylor"
+    },
+    {
+     "type": "email",
+     "value": "john.taylor@mail.com"
+    }
+   ]
+  },
+  {
+   "id": "en-061",
+   "lang": "en",
+   "text": "The Commission may reopen a market investigation that it has closed where: there has been a material change in any of the facts on which a decision adopted pursuant to Article 17, 18 or 19 was based; The officer Karen Taylor can be reached at 022 902 44 50.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Karen Taylor"
+    },
+    {
+     "type": "phone",
+     "value": "022 902 44 50"
+    }
+   ]
+  },
+  {
+   "id": "en-062",
+   "lang": "en",
+   "text": "Where reference is made to this paragraph, Article 5 of Regulation (EU) No 182/2011 shall apply. Payment to account CH67 7259 3571 8276 6146 23 held by Alpine Trust Services.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH67 7259 3571 8276 6146 23"
+    },
+    {
+     "type": "org",
+     "value": "Alpine Trust Services"
+    }
+   ]
+  },
+  {
+   "id": "en-063",
+   "lang": "en",
+   "text": "In accordance with the principle of proportionality, as set out in that Article, this Regulation does not go beyond what is necessary in order to achieve those objectives. File of David Brown, AVS no. 756.6351.1565.92.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "David Brown"
+    },
+    {
+     "type": "avs",
+     "value": "756.6351.1565.92"
+    }
+   ]
+  },
+  {
+   "id": "en-064",
+   "lang": "en",
+   "text": "Those model contractual terms should be primarily a practical tool to help in particular SMEs to conclude a contract. Notification address: John Clark, 12 Station Road, 1204 Geneva.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "John Clark"
+    },
+    {
+     "type": "address",
+     "value": "12 Station Road, 1204 Geneva"
+    }
+   ]
+  },
+  {
+   "id": "en-065",
+   "lang": "en",
+   "text": "( 9 ) Directive 2012/34/EU of the European Parliament and of the Council of 21 November 2012 establishing a single European railway area ( OJ L 343, 14.12.2012, p. Reference: peter.walker@bluewin.ch, phone +41 79 661 21 36.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "peter.walker@bluewin.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+41 79 661 21 36"
+    }
+   ]
+  },
+  {
+   "id": "en-066",
+   "lang": "en",
+   "text": "a conglomerate corporate structure or vertical integration of that undertaking, for instance enabling that undertaking to cross subsidise, to combine data from different sources or to leverage its position; For questions contact Peter Walker (peter.walker@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Walker"
+    },
+    {
+     "type": "email",
+     "value": "peter.walker@example.org"
+    }
+   ]
+  },
+  {
+   "id": "en-067",
+   "lang": "en",
+   "text": "Members of the joint examination team shall have expertise in ICT matters and in operational risk. The officer Peter Brown can be reached at 022 862 89 46.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Brown"
+    },
+    {
+     "type": "phone",
+     "value": "022 862 89 46"
+    }
+   ]
+  },
+  {
+   "id": "en-068",
+   "lang": "en",
+   "text": "The gatekeeper should be prevented from implementing such measures as a default setting or as pre-installation. Payment to account CH35 5892 4511 5970 6913 69 held by Lakeside Advisory Ltd.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH35 5892 4511 5970 6913 69"
+    },
+    {
+     "type": "org",
+     "value": "Lakeside Advisory Ltd"
+    }
+   ]
+  },
+  {
+   "id": "en-069",
+   "lang": "en",
+   "text": "(62) In order to ensure legal certainty, this Regulation establishes a list of clauses that are always considered unfair and a list of clauses that are presumed to be unfair. File of John Taylor, AVS no. 756.1511.1819.11.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "John Taylor"
+    },
+    {
+     "type": "avs",
+     "value": "756.1511.1819.11"
+    }
+   ]
+  },
+  {
+   "id": "en-070",
+   "lang": "en",
+   "text": "The Commission shall establish a high-level group for the Digital Markets Act (‘the high-level group’). Notification address: David Wilson, 5 Market Street, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "David Wilson"
+    },
+    {
+     "type": "address",
+     "value": "5 Market Street, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "en-071",
+   "lang": "en",
+   "text": "electronic signature validation data that corresponds to the electronic signature creation data; Reference: mary.walker@example.ch, phone +33 6 68 84 98 81.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "mary.walker@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 68 84 98 81"
+    }
+   ]
+  },
+  {
+   "id": "en-072",
+   "lang": "en",
+   "text": "That documentation shall enable the supervisory authority to verify compliance with this Article. For questions contact Peter Wilson (peter.wilson@example.org).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Wilson"
+    },
+    {
+     "type": "email",
+     "value": "peter.wilson@example.org"
+    }
+   ]
+  },
+  {
+   "id": "en-073",
+   "lang": "en",
+   "text": "Member States shall ensure that the competent authorities referred to in paragraphs 1 and 2 allocate sufficient resources to comply with this Article effectively and in a timely manner. The officer John Taylor can be reached at +33 6 30 57 94 57.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "John Taylor"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 30 57 94 57"
+    }
+   ]
+  },
+  {
+   "id": "en-074",
+   "lang": "en",
+   "text": "Financial entities shall have appropriate contingency measures in place to maintain business continuity in the event of the circumstances referred to in the first subparagraph. Payment to account CH53 9296 3376 6597 9850 90 held by Lakeside Advisory Ltd.",
+   "entities": [
+    {
+     "type": "iban",
+     "value": "CH53 9296 3376 6597 9850 90"
+    },
+    {
+     "type": "org",
+     "value": "Lakeside Advisory Ltd"
+    }
+   ]
+  },
+  {
+   "id": "en-075",
+   "lang": "en",
+   "text": "in accordance with Article 24, achieving functional equivalence in the use of the new data processing service in the ICT environment of a different provider of data processing services covering the same service type; File of Peter Smith, AVS no. 756.9570.7435.38.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Peter Smith"
+    },
+    {
+     "type": "avs",
+     "value": "756.9570.7435.38"
+    }
+   ]
+  },
+  {
+   "id": "en-076",
+   "lang": "en",
+   "text": "The Board may recommend that the Commission initiate the drawing up, in accordance with paragraphs 2, 3 and 4, of voluntary crisis protocols for addressing crisis situations. Notification address: Mary Brown, 5 Market Street, 3011 Bern.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Brown"
+    },
+    {
+     "type": "address",
+     "value": "5 Market Street, 3011 Bern"
+    }
+   ]
+  },
+  {
+   "id": "en-077",
+   "lang": "en",
+   "text": "Each member shall have the qualifications, experience and skills, in particular in the area of the protection of personal data, required to perform its duties and exercise its powers. Reference: susan.brown@example.ch, phone +33 6 94 61 11 99.",
+   "entities": [
+    {
+     "type": "email",
+     "value": "susan.brown@example.ch"
+    },
+    {
+     "type": "phone",
+     "value": "+33 6 94 61 11 99"
+    }
+   ]
+  },
+  {
+   "id": "en-078",
+   "lang": "en",
+   "text": "A general-purpose AI model shall be classified as a general-purpose AI model with systemic risk if it meets any of the following conditions: 2. For questions contact Laura Taylor (laura.taylor@gmx.de).",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Laura Taylor"
+    },
+    {
+     "type": "email",
+     "value": "laura.taylor@gmx.de"
+    }
+   ]
+  },
+  {
+   "id": "en-079",
+   "lang": "en",
+   "text": "Where the criteria are approved by the Board, this may result in a common certification, the European Data Protection Seal. The officer Mary Wilson can be reached at +49 30 4633195.",
+   "entities": [
+    {
+     "type": "name",
+     "value": "Mary Wilson"
+    },
+    {
+     "type": "phone",
+     "value": "+49 30 4633195"
+    }
+   ]
+  }
+ ],
+ "clean": [
+  {
+   "id": "fr-clean-000",
+   "lang": "fr",
+   "text": "Le responsable du traitement fournit les informations visées à l’article 79 et procède à toute communication et prend toute mesure au titre des articles 80 à 84 et de l’article 92 à titre gratuit."
+  },
+  {
+   "id": "fr-clean-001",
+   "lang": "fr",
+   "text": "Cet acte d’exécution est adopté en conformité avec la procédure d’examen visée à l’article 98, paragraphe 2."
+  },
+  {
+   "id": "fr-clean-002",
+   "lang": "fr",
+   "text": "facilitent, lorsque cela est techniquement possible, l'équivalence fonctionnelle entre différents services de traitement de données visés à l'article 30, paragraphe 1, couvrant le même type de service;"
+  },
+  {
+   "id": "fr-clean-003",
+   "lang": "fr",
+   "text": "«Définitions spécifiques» Le tableau ci-dessous contient des définitions spécifiques des notions d’«utilisateurs finaux actifs» et d’«entreprises utilisatrices actives» pour chaque service de plateforme essentiel."
+  },
+  {
+   "id": "fr-clean-004",
+   "lang": "fr",
+   "text": "Le respect d’une hygiène informatique de base devrait également éviter à l’économie d’avoir à supporter des coûts considérables, en réduisant au minimum les incidences et les coûts des dysfonctionnements des TIC."
+  },
+  {
+   "id": "fr-clean-005",
+   "lang": "fr",
+   "text": "Le pouvoir d’adopter des actes délégués conféré à la Commission est soumis aux conditions fixées au présent article."
+  },
+  {
+   "id": "fr-clean-006",
+   "lang": "fr",
+   "text": "La Commission tient également compte des engagements pris conformément à l’article 93, paragraphe 3, ou pris dans les codes de bonne pratique pertinents conformément à l’article 56."
+  },
+  {
+   "id": "fr-clean-007",
+   "lang": "fr",
+   "text": "La certification de cybersécurité est volontaire, sauf disposition contraire du droit de l’Union ou du droit d’un État membre."
+  },
+  {
+   "id": "fr-clean-008",
+   "lang": "fr",
+   "text": "Les jeux de données d’entraînement, de validation et de test sont pertinents, suffisamment représentatifs et, dans toute la mesure possible, exempts d’erreurs et complets au regard de la destination."
+  },
+  {
+   "id": "fr-clean-009",
+   "lang": "fr",
+   "text": "les modalités opérationnelles et techniques en vue de la mise en œuvre de l’interopérabilité des services de communications interpersonnelles non fondés sur la numérotation conformément à l’article 7;"
+  },
+  {
+   "id": "fr-clean-010",
+   "lang": "fr",
+   "text": "En outre, les institutions et organes de l’Union devraient démontrer une telle nécessité lorsqu’ils sont eux-mêmes à l’origine d’une transmission, conformément aux principes de transparence et de bonne administration."
+  },
+  {
+   "id": "fr-clean-011",
+   "lang": "fr",
+   "text": "l’interopérabilité des registres de publicités visés à l’article 39, paragraphe 2;"
+  },
+  {
+   "id": "fr-clean-012",
+   "lang": "fr",
+   "text": "Les États membres désignent un organe de contrôle établi sur leur territoire ou, d’un commun accord avec un autre État membre, un organe de contrôle établi dans cet autre État membre."
+  },
+  {
+   "id": "fr-clean-013",
+   "lang": "fr",
+   "text": "Les déployeurs d’un système d’IA qui génère ou manipule des images ou des contenus audio ou vidéo constituant un hypertrucage indiquent que les contenus ont été générés ou manipulés par une IA."
+  },
+  {
+   "id": "fr-clean-014",
+   "lang": "fr",
+   "text": "Le présent règlement, à l'exception du chapitre V, est sans préjudice du droit de l'Union et du droit national prévoyant l'accès aux données et autorisant l'utilisation de données à des fins de recherche scientifique."
+  },
+  {
+   "id": "fr-clean-015",
+   "lang": "fr",
+   "text": "Une majorité de citoyens de l’Union utilise désormais ces services au quotidien."
+  },
+  {
+   "id": "fr-clean-016",
+   "lang": "fr",
+   "text": "Les rapports sont soumis, s’il y a lieu, au groupe de coopération et au réseau des CSIRT."
+  },
+  {
+   "id": "fr-clean-017",
+   "lang": "fr",
+   "text": "Ces actes d’exécution sont adoptés en conformité avec la procédure d’examen visée à l’article 98, paragraphe 2."
+  },
+  {
+   "id": "fr-clean-018",
+   "lang": "fr",
+   "text": "Lorsque le comité le juge nécessaire, ses débats sont confidentiels, comme le prévoit son règlement intérieur."
+  },
+  {
+   "id": "fr-clean-019",
+   "lang": "fr",
+   "text": "garantir que les systèmes installés puissent être rétablis en cas d’interruption (restauration);"
+  },
+  {
+   "id": "fr-clean-020",
+   "lang": "fr",
+   "text": "le traitement porte sur des données à caractère personnel qui sont manifestement rendues publiques par la personne concernée;"
+  },
+  {
+   "id": "fr-clean-021",
+   "lang": "fr",
+   "text": "L’article 57 ne s’applique que dans la mesure où les exigences applicables aux systèmes d’IA à haut risque au titre du présent règlement ont été intégrées dans ladite législation d’harmonisation de l’Union."
+  },
+  {
+   "id": "fr-clean-022",
+   "lang": "fr",
+   "text": "et le temps considéré comme nécessaire pour achever ledit processus de changement."
+  },
+  {
+   "id": "fr-clean-023",
+   "lang": "fr",
+   "text": "L’État membre faisant l’objet de l’évaluation par les pairs peut s’opposer à la désignation de certains experts en cybersécurité pour des raisons dûment motivées communiquées à l’État membre qui les a désignés."
+  },
+  {
+   "id": "fr-clean-024",
+   "lang": "fr",
+   "text": "Il tient aussi des réunions extraordinaires à l’initiative de son président, à la demande de la Commission ou à la demande d’au moins un tiers de ses membres."
+  },
+  {
+   "id": "fr-clean-025",
+   "lang": "fr",
+   "text": "Le Contrôleur européen de la protection des données exerce en toute indépendance ses missions et ses pouvoirs conformément au présent règlement."
+  },
+  {
+   "id": "fr-clean-026",
+   "lang": "fr",
+   "text": "Les informations sont fournies par écrit ou par d'autres moyens y compris, lorsque c'est approprié, par voie électronique."
+  },
+  {
+   "id": "fr-clean-027",
+   "lang": "fr",
+   "text": "L'utilisateur supporte les risques et bénéficie des avantages que présente l'utilisation du produit connecté et devrait également bénéficier de l'accès aux données que ce produit génère."
+  },
+  {
+   "id": "fr-clean-028",
+   "lang": "fr",
+   "text": "La valeur de la capitalisation boursière devrait reposer sur un niveau qui représente la capitalisation boursière moyenne des plus grandes entreprises cotées en Bourse de l’Union sur une période appropriée."
+  },
+  {
+   "id": "fr-clean-029",
+   "lang": "fr",
+   "text": "En cas de demande fondée sur un besoin exceptionnel non lié à une situation d'urgence, les données à caractère personnel ne peuvent pas être demandées."
+  },
+  {
+   "id": "fr-clean-030",
+   "lang": "fr",
+   "text": "Cependant, l’autorité judiciaire nationale ne peut ni remettre en cause la nécessité de l’inspection ni exiger la communication des informations figurant dans le dossier de la Commission."
+  },
+  {
+   "id": "fr-clean-031",
+   "lang": "fr",
+   "text": "adopter les clauses types de protection des données visées à l’article 29, paragraphe 8, et à l’article 48, paragraphe 2, point c);"
+  },
+  {
+   "id": "fr-clean-032",
+   "lang": "fr",
+   "text": "Aux fins du premier alinéa, l’organe de direction: assume la responsabilité ultime de la gestion du risque lié aux TIC de l’entité financière;"
+  },
+  {
+   "id": "fr-clean-033",
+   "lang": "fr",
+   "text": "De nombreuses attaques à grande échelle survenues au cours des dix dernières années montrent que les systèmes de paiement sont exposés aux cybermenaces."
+  },
+  {
+   "id": "fr-clean-034",
+   "lang": "fr",
+   "text": "En tant que tel, il est donc susceptible d’ériger des barrières à l’entrée et devrait être interdit."
+  },
+  {
+   "id": "fr-clean-035",
+   "lang": "fr",
+   "text": "Les États membres transmettent à la Commission une copie de toute décision écrite des juridictions nationales statuant sur l’application du présent règlement."
+  },
+  {
+   "id": "fr-clean-036",
+   "lang": "fr",
+   "text": "Les dispositifs de création de signature électronique qualifiés respectent les exigences fixées à l’annexe II."
+  },
+  {
+   "id": "fr-clean-037",
+   "lang": "fr",
+   "text": "La Commission met le rapport annuel visé au paragraphe 6 à la disposition des États membres."
+  },
+  {
+   "id": "fr-clean-038",
+   "lang": "fr",
+   "text": "Les États membres imposent que ces politiques et procédures soient mises à la disposition du public."
+  },
+  {
+   "id": "fr-clean-039",
+   "lang": "fr",
+   "text": "l'interaction du présent règlement avec d'autres actes juridiques de l'Union présentant un intérêt pour l'économie fondée sur les données;"
+  },
+  {
+   "id": "de-clean-000",
+   "lang": "de",
+   "text": "Sie können jedoch ausdrücklich vom Verantwortlichen im Sinne von Artikel 4 Nummer 7 der Verordnung (EU) 2016/679 beauftragt werden, Daten bereitzustellen."
+  },
+  {
+   "id": "de-clean-001",
+   "lang": "de",
+   "text": "( 12 ) Richtlinie (EU) 2015/2366 des Europäischen Parlaments und des Rates vom 25."
+  },
+  {
+   "id": "de-clean-002",
+   "lang": "de",
+   "text": "Kommt der weitere Auftragsverarbeiter seinen Datenschutzpflichten nicht nach, so haftet der erste Auftragsverarbeiter gegenüber dem Verantwortlichen für die Einhaltung der Pflichten jenes anderen Auftragsverarbeiters."
+  },
+  {
+   "id": "de-clean-003",
+   "lang": "de",
+   "text": "„IKT-Asset“ eine Software oder Hardware in den Netzwerk- und Informationssystemen, die das Finanzunternehmen nutzt;"
+  },
+  {
+   "id": "de-clean-004",
+   "lang": "de",
+   "text": "(93) Der Prüfbericht sollte begründet werden, um eine aussagekräftige Bilanz über die durchgeführten Tätigkeiten und die erzielten Schlussfolgerungen ziehen zu können."
+  },
+  {
+   "id": "de-clean-005",
+   "lang": "de",
+   "text": "die Höhe der von der verantwortlichen natürlichen oder juristischen Person erzielten Gewinne oder verhinderten Verluste, sofern sich diese beziffern lassen;"
+  },
+  {
+   "id": "de-clean-006",
+   "lang": "de",
+   "text": "(63) Elektronische Dokumente sind wichtig für die weitere Entwicklung grenzüberschreitender Transaktionen im Binnenmarkt."
+  },
+  {
+   "id": "de-clean-007",
+   "lang": "de",
+   "text": "(10) Durch die Richtlinie 2011/24/EU des Europäischen Parlaments und des Rates ( 6 ) wird ein Netzwerk der für elektronische Gesundheitsdienste zuständigen nationalen Behörden eingerichtet."
+  },
+  {
+   "id": "de-clean-008",
+   "lang": "de",
+   "text": "November 2010 zur Errichtung einer Europäischen Aufsichtsbehörde (Europäische Wertpapier- und Marktaufsichtsbehörde), zur Änderung des Beschlusses Nr."
+  },
+  {
+   "id": "de-clean-009",
+   "lang": "de",
+   "text": "Der Durchführungsrechtsakt im Sinne von Absatz 1 Buchstabe l dieses Artikels wird gemäß dem in Artikel 50 Absatz 3 genannten Prüfverfahren erlassen."
+  },
+  {
+   "id": "de-clean-010",
+   "lang": "de",
+   "text": "die Nutzer der unter Buchstabe a genannten vernetzten Produkte oder verbundenen Dienste in der Union;"
+  },
+  {
+   "id": "de-clean-011",
+   "lang": "de",
+   "text": "Zahl der eindeutigen gewerblichen Nutzer, die während des Jahres mindestens einen auf dem Video-Sharing-Plattform-Dienst hochgeladenen oder abgespielten audiovisuellen Inhalt bereitgestellt haben."
+  },
+  {
+   "id": "de-clean-012",
+   "lang": "de",
+   "text": "Stärkung der internen Prozesse, der Ressourcen, der Prüfung, der Dokumentation oder der Beaufsichtigung ihrer Tätigkeiten, insbesondere im Hinblick auf die Erkennung systemischer Risiken;"
+  },
+  {
+   "id": "de-clean-013",
+   "lang": "de",
+   "text": "Unterliegt ein Finanzunternehmen der Aufsicht von mehr als einer zuständigen nationalen Behörde, so sollten die Mitgliedstaaten eine einzige zuständige Behörde als Adressat einer solchen Meldung benennen."
+  },
+  {
+   "id": "de-clean-014",
+   "lang": "de",
+   "text": "Juni 2008 über den Wettbewerb auf dem Markt für Telekommunikationsendeinrichtungen ( ABl."
+  },
+  {
+   "id": "de-clean-015",
+   "lang": "de",
+   "text": "Bestimmungen über Verfügbarkeit, Authentizität, Integrität und Vertraulichkeit in Bezug auf den Datenschutz, einschließlich des Schutzes personenbezogener Daten;"
+  },
+  {
+   "id": "de-clean-016",
+   "lang": "de",
+   "text": "Diese Behörde notifiziert unverzüglich die Kommission und die anderen Mitgliedstaaten über diese Maßnahmen."
+  },
+  {
+   "id": "de-clean-017",
+   "lang": "de",
+   "text": "die Haftung und die rechtlichen Schritte, die gegen den Anbieter von Vermittlungsdiensten eingeleitet werden können, bleiben hiervon unberührt."
+  },
+  {
+   "id": "de-clean-018",
+   "lang": "de",
+   "text": "Diese Durchführungsrechtsakte werden nach dem in Artikel 48 Absatz 2 genannten Prüfverfahren erlassen."
+  },
+  {
+   "id": "de-clean-019",
+   "lang": "de",
+   "text": "eine Beschreibung, inwieweit die Anforderungen des in Artikel 12 Absatz 8 genannten Durchführungsrechtsakts erfüllt werden;"
+  },
+  {
+   "id": "de-clean-020",
+   "lang": "de",
+   "text": "(4) Der Verantwortliche stellt die Informationen gemäß Artikel 79 sowie alle gemachten Mitteilungen und getroffenen Maßnahmen gemäß den Artikeln 80 bis 84 und 92 unentgeltlich zur Verfügung."
+  },
+  {
+   "id": "de-clean-021",
+   "lang": "de",
+   "text": "Der Kunde kann sich vor oder während des Übergangszeitraums auf dieses Recht auf Verlängerung berufen, wobei zu berücksichtigen ist, dass der Vertrag während des Übergangszeitraums weiterhin gilt."
+  },
+  {
+   "id": "de-clean-022",
+   "lang": "de",
+   "text": "April 2008 über Verbraucherkreditverträge und zur Aufhebung der Richtlinie 87/102/EWG des Rates ( ABl."
+  },
+  {
+   "id": "de-clean-023",
+   "lang": "de",
+   "text": "und die Abgabe öffentlicher Bekanntmachungen, einschließlich öffentlicher Bekanntgaben, in denen die Identität der natürlichen oder juristischen Person und die Art des Verstoßes angegeben sind."
+  },
+  {
+   "id": "de-clean-024",
+   "lang": "de",
+   "text": "Dauer des IKT-bezogenen Vorfalls, einschließlich der Ausfallzeiten des Dienstes;"
+  },
+  {
+   "id": "de-clean-025",
+   "lang": "de",
+   "text": "(2) Die für die Arbeit der ENISA erforderlichen Übersetzungsdienste werden vom Übersetzungszentrum für die Einrichtungen der Europäischen Union erbracht."
+  },
+  {
+   "id": "de-clean-026",
+   "lang": "de",
+   "text": "Außerdem weist sie auf das Recht hin, den Beschluss vom Gerichtshof überprüfen zu lassen."
+  },
+  {
+   "id": "de-clean-027",
+   "lang": "de",
+   "text": "Vorschriften über die Einrichtung und Ausführung des Überwachungsrahmens für kritische IKT-Drittdienstleister bei der Erbringung von Dienstleistungen für Finanzunternehmen;"
+  },
+  {
+   "id": "de-clean-028",
+   "lang": "de",
+   "text": "Diese Sanktionen und Maßnahmen müssen wirksam, verhältnismäßig und abschreckend sein."
+  },
+  {
+   "id": "de-clean-029",
+   "lang": "de",
+   "text": "und für von rechtswidrigen Inhalten betroffene Parteien die Menschenwürde, die Rechte des Kindes, das Recht auf Schutz des Eigentums, einschließlich des geistigen Eigentums, und das Recht auf Nichtdiskriminierung."
+  },
+  {
+   "id": "de-clean-030",
+   "lang": "de",
+   "text": "Die federführende Überwachungsbehörde sollte daher ihre einschlägigen Überwachungsbefugnisse auch in Drittländern ausüben können."
+  },
+  {
+   "id": "de-clean-031",
+   "lang": "de",
+   "text": "„Vertrauender Beteiligter“ ist eine natürliche oder juristische Person, die auf eine elektronische Identifizierung oder einen Vertrauensdienst vertraut."
+  },
+  {
+   "id": "de-clean-032",
+   "lang": "de",
+   "text": "Dezember 2022 über die digitale operationale Resilienz im Finanzsektor und zur Änderung der Verordnungen (EG) Nr."
+  },
+  {
+   "id": "de-clean-033",
+   "lang": "de",
+   "text": "geografische Ausbreitung der von dem IKT-bezogenen Vorfall betroffenen Gebiete, insbesondere wenn mehr als zwei Mitgliedstaaten betroffen sind;"
+  },
+  {
+   "id": "de-clean-034",
+   "lang": "de",
+   "text": "Diese Durchführungsrechtsakte werden gemäß dem in Artikel 98 Absatz 2 genannten Prüfverfahren erlassen."
+  },
+  {
+   "id": "de-clean-035",
+   "lang": "de",
+   "text": "(2) Verweise auf die aufgehobene Richtlinie gelten als Verweise auf die vorliegende Verordnung."
+  },
+  {
+   "id": "de-clean-036",
+   "lang": "de",
+   "text": "der betreffende Torwächter ihrer Ansicht nach ergreifen sollte, um der vorläufigen Beurteilung wirksam Rechnung zu tragen."
+  },
+  {
+   "id": "de-clean-037",
+   "lang": "de",
+   "text": "Die vorstehend genannten anderen Elemente sind die Voraussetzung dafür, dass der Kunde seine Daten und Anwendungen im Umfeld des übernehmenden Anbieters von Datenverarbeitungsdiensten effektiv nutzen kann."
+  },
+  {
+   "id": "de-clean-038",
+   "lang": "de",
+   "text": "Vertragsklauseln über den Datenzugang und die Datennutzung sowie die Haftung oder Rechtsbehelfe bei Verletzung und Beendigung datenbezogener Pflichten."
+  },
+  {
+   "id": "de-clean-039",
+   "lang": "de",
+   "text": "(2) Die Befugnis zum Erlass delegierter Rechtsakte gemäß den Artikeln 24, 33, 37, 40 und 43 wird der Kommission für fünf Jahre ab dem 16."
+  },
+  {
+   "id": "en-clean-000",
+   "lang": "en",
+   "text": "It should be as easy for the user to refuse or discontinue access by the third party to the data as it is for the user to authorise access."
+  },
+  {
+   "id": "en-clean-001",
+   "lang": "en",
+   "text": "That approach prevents fragmentation while allowing for Member State’s flexibility and should lead to effective recommendations that support the consistent application of this Regulation."
+  },
+  {
+   "id": "en-clean-002",
+   "lang": "en",
+   "text": "In cases of urgency due to the risk of serious and irreparable damage to competition, the Commission should consider adopting interim measures in accordance with Article 8 of Regulation (EC) No 1/2003."
+  },
+  {
+   "id": "en-clean-003",
+   "lang": "en",
+   "text": "Where more than one competent authority is appointed to supervise the application of, and enforce, this Regulation, only one authority in that Member State should be designated as a Digital Services Coordinator."
+  },
+  {
+   "id": "en-clean-004",
+   "lang": "en",
+   "text": "The user bears the risks and enjoys the benefits of using the connected product and should also enjoy access to the data it generates."
+  },
+  {
+   "id": "en-clean-005",
+   "lang": "en",
+   "text": "Certification shall be withdrawn, as applicable, by the certification bodies referred to in Article 43 or by the competent supervisory authority where the requirements for the certification are not or are no longer met."
+  },
+  {
+   "id": "en-clean-006",
+   "lang": "en",
+   "text": "The provider shall, for a period ending 10 years after the high-risk AI system has been placed on the market or put into service, keep at the disposal of the national competent authorities: 2."
+  },
+  {
+   "id": "en-clean-007",
+   "lang": "en",
+   "text": "‘public authority’ means any government or other public administration entity, including national central banks."
+  },
+  {
+   "id": "en-clean-008",
+   "lang": "en",
+   "text": "For the same reason, those additional obligations should also not apply to providers of online platforms that previously qualified as micro or small enterprises during a period of 12 months after they lose that status."
+  },
+  {
+   "id": "en-clean-009",
+   "lang": "en",
+   "text": "Financial entities shall develop ICT security awareness programmes and digital operational resilience training as compulsory modules in their staff training schemes."
+  },
+  {
+   "id": "en-clean-010",
+   "lang": "en",
+   "text": "Accordingly, this Regulation should be interpreted and applied in accordance with those fundamental rights, including the freedom of expression and of information, as well as the freedom and pluralism of the media."
+  },
+  {
+   "id": "en-clean-011",
+   "lang": "en",
+   "text": "The term of office of the members of the advisory forum shall be two years, which may be extended by up to no more than four years."
+  },
+  {
+   "id": "en-clean-012",
+   "lang": "en",
+   "text": "However, in a duly justified situation of urgency, the use of such system may be commenced without an authorisation provided that such authorisation is requested without undue delay, at the latest within 24 hours."
+  },
+  {
+   "id": "en-clean-013",
+   "lang": "en",
+   "text": "The Board shall adopt its own rules of procedure by a two-thirds majority of its members and organise its own operational arrangements."
+  },
+  {
+   "id": "en-clean-014",
+   "lang": "en",
+   "text": "The AI Office shall encourage and facilitate the drawing up of codes of practice at Union level in order to contribute to the proper application of this Regulation, taking into account international approaches."
+  },
+  {
+   "id": "en-clean-015",
+   "lang": "en",
+   "text": "The Management Board’s rules of procedure shall establish more detailed voting arrangements, in particular the circumstances in which a member may act on behalf of another member."
+  },
+  {
+   "id": "en-clean-016",
+   "lang": "en",
+   "text": "(b) lays down rules for trust services, in particular for electronic transactions;"
+  },
+  {
+   "id": "en-clean-017",
+   "lang": "en",
+   "text": "(5) Despite Union and national targeted policy and legislative initiatives, ICT risk continues to pose a challenge to the operational resilience, performance and stability of the Union financial system."
+  },
+  {
+   "id": "en-clean-018",
+   "lang": "en",
+   "text": "any commitments undertaken pursuant to the codes of conduct referred to in Articles 45 and 46 and the crisis protocols referred to in Article 48."
+  },
+  {
+   "id": "en-clean-019",
+   "lang": "en",
+   "text": "to determine the form, content and other details of notifications, submissions of information, reasoned requests and regulatory reports transmitted by gatekeepers;"
+  },
+  {
+   "id": "en-clean-020",
+   "lang": "en",
+   "text": "Competent authorities shall, in the exercise of the tasks and powers assigned to them under paragraph 5, cooperate with each other."
+  },
+  {
+   "id": "en-clean-021",
+   "lang": "en",
+   "text": "Each supervisory authority shall have all of the following corrective powers: 3."
+  },
+  {
+   "id": "en-clean-022",
+   "lang": "en",
+   "text": "Administrative fines shall be imposed in addition to any of the measures referred to in Article 32(4), points (a) to (h), Article 32(5) and Article 33(4), points (a) to (g)."
+  },
+  {
+   "id": "en-clean-023",
+   "lang": "en",
+   "text": "Information on fines imposed under this Article shall also be communicated to the Board as appropriate."
+  },
+  {
+   "id": "en-clean-024",
+   "lang": "en",
+   "text": "An appropriate type and degree of transparency shall be ensured with a view to achieving compliance with the relevant obligations of the provider and deployer set out in Section 3."
+  },
+  {
+   "id": "en-clean-025",
+   "lang": "en",
+   "text": "Providers of hosting services should act upon notices in a timely manner, in particular by taking into account the type of illegal content being notified and the urgency of taking action."
+  },
+  {
+   "id": "en-clean-026",
+   "lang": "en",
+   "text": "Whether a specific service constitutes a ‘mere conduit’, ‘caching’ or ‘hosting’ service depends solely on its technical functionalities, which might evolve in time, and should be assessed on a case-by-case basis."
+  },
+  {
+   "id": "en-clean-027",
+   "lang": "en",
+   "text": "Those implementing acts shall be adopted in accordance with the examination procedure referred to in Article 48(2)."
+  },
+  {
+   "id": "en-clean-028",
+   "lang": "en",
+   "text": "That obligation applies to the amount of operational personal data collected, the extent of their processing, the period of their storage and their accessibility."
+  },
+  {
+   "id": "en-clean-029",
+   "lang": "en",
+   "text": "national competition rules prohibiting other forms of unilateral conduct insofar as they are applied to undertakings other than gatekeepers or amount to the imposition of further obligations on gatekeepers;"
+  },
+  {
+   "id": "en-clean-030",
+   "lang": "en",
+   "text": "( 10 ) Regulation (EU) 2021/784 of the European Parliament and of the Council of 29 April 2021 on addressing the dissemination of the terrorist content online ( OJ L 172, 17.5.2021, p."
+  },
+  {
+   "id": "en-clean-031",
+   "lang": "en",
+   "text": "Files or sets of files, as well as their cover pages, which are not structured according to specific criteria should not fall within the scope of this Regulation."
+  },
+  {
+   "id": "en-clean-032",
+   "lang": "en",
+   "text": "The decision of the data holder shall be duly substantiated and provided in writing to the user without undue delay."
+  },
+  {
+   "id": "en-clean-033",
+   "lang": "en",
+   "text": "The supervisory authority shall, without delay, communicate those measures and the reasons for adopting them to the other supervisory authorities concerned, to the Board and to the Commission."
+  },
+  {
+   "id": "en-clean-034",
+   "lang": "en",
+   "text": "This Regulation does not apply to: managers of alternative investment funds as referred to in Article 3(2) of Directive 2011/61/EU;"
+  },
+  {
+   "id": "en-clean-035",
+   "lang": "en",
+   "text": "Member States shall submit evidence in support of their requests pursuant to paragraphs 1, 2 and 3."
+  },
+  {
+   "id": "en-clean-036",
+   "lang": "en",
+   "text": "within the sphere of his or her competence, to cooperate and consult with the European Data Protection Supervisor at the latter’s request or on his or her own initiative;"
+  },
+  {
+   "id": "en-clean-037",
+   "lang": "en",
+   "text": "In the latter case, a single data recipient should not pay the full costs of making the data available."
+  },
+  {
+   "id": "en-clean-038",
+   "lang": "en",
+   "text": "When a Member State considers that a common specification does not entirely satisfy the essential requirements laid down in paragraphs 1 and 2, it shall inform the Commission thereof by submitting a detailed explanation."
+  },
+  {
+   "id": "en-clean-039",
+   "lang": "en",
+   "text": "and define the formats and procedures, including deadlines, applicable for the purpose of paragraph 2."
+  }
+ ]
+}

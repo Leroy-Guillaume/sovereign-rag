@@ -142,3 +142,17 @@ every corpus file records its EUR-Lex source URL in its header, and
 
 The golden question sets and the runner scripts are original work of this
 repository and are covered by the repository license.
+
+## Redaction bench
+
+`redaction_golden.py` builds `redaction_golden.json`: 240 corpus sentences
+with injected synthetic identifiers (names, emails, phones, IBAN, Swiss AVS,
+addresses, organisations; FR/DE/EN) plus 120 clean sentences for the
+false-positive budget. `redaction_eval.py` measures the engines (the shipped
+pattern and NER redactors, full Presidio, a local-LLM arm) on recall per
+type, clean-text rewrites and latency:
+
+    uv run bench/redaction_golden.py
+    uv run --script bench/redaction_eval.py --engine person-detect
+
+Results and the shipping verdict: `results/2026-08-redaction.md`.
