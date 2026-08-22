@@ -9,6 +9,14 @@ export interface AppCopy {
     bodyBefore: string;
     bodyAfter: string;
     save: string;
+    idpButton: string;
+    idpHint: string;
+  };
+  auth: {
+    signOut: string;
+    callbackWorking: string;
+    callbackFailed: string;
+    backToLogin: string;
   };
   sidebar: {
     newConversation: string;
@@ -119,6 +127,14 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       bodyAfter:
         ". It stays in this browser's localStorage (demo authentication, OIDC lands in phase 2).",
       save: "Save the key",
+      idpButton: "Sign in with your identity provider",
+      idpHint: "Single sign-on through the IdP your operator runs.",
+    },
+    auth: {
+      signOut: "Sign out",
+      callbackWorking: "Completing sign-in…",
+      callbackFailed: "Sign-in could not be completed",
+      backToLogin: "Back to the app",
     },
     sidebar: {
       newConversation: "New conversation",
@@ -236,6 +252,14 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       bodyAfter:
         ". Elle reste dans le localStorage de ce navigateur (authentification de démonstration, OIDC en phase 2).",
       save: "Enregistrer la clé",
+      idpButton: "Se connecter avec votre fournisseur d'identité",
+      idpHint: "Authentification unique via l'IdP hébergé par votre opérateur.",
+    },
+    auth: {
+      signOut: "Se déconnecter",
+      callbackWorking: "Finalisation de la connexion…",
+      callbackFailed: "La connexion n'a pas pu aboutir",
+      backToLogin: "Retour à l'app",
     },
     sidebar: {
       newConversation: "Nouvelle conversation",
@@ -353,6 +377,14 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       bodyAfter:
         " konfigurierten Schlüssel ein. Er bleibt im localStorage dieses Browsers (Demo-Authentifizierung, OIDC in Phase 2).",
       save: "Schlüssel speichern",
+      idpButton: "Mit Ihrem Identity Provider anmelden",
+      idpHint: "Single Sign-on über den IdP Ihres Betreibers.",
+    },
+    auth: {
+      signOut: "Abmelden",
+      callbackWorking: "Anmeldung wird abgeschlossen…",
+      callbackFailed: "Anmeldung konnte nicht abgeschlossen werden",
+      backToLogin: "Zurück zur App",
     },
     sidebar: {
       newConversation: "Neue Unterhaltung",

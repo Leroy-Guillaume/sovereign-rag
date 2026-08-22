@@ -1,3 +1,4 @@
+import { freshOidcToken } from "./lib/oidc";
 import type {
   AdminMetrics,
   ChatDeltaData,
@@ -47,6 +48,13 @@ function authHeaders(): Record<string, string> {
   return key === null ? {} : { Authorization: `Bearer ${key}` };
 }
 
+/** OIDC session first (refreshed when stale), API key as the fallback. */
+async function bearerHeaders(): Promise<Record<string, string>> {
+  const token = await freshOidcToken();
+  if (token !== null) return { Authorization: `Bearer ${token}` };
+  return authHeaders();
+}
+
 /**
  * FastAPI wraps error messages as {"detail": ...}; surface the message,
  * never the raw JSON envelope, and fall back to the HTTP status text.
@@ -74,7 +82,7 @@ async function toApiError(response: Response): Promise<ApiError> {
 export async function request<T>(path: string, init: RequestOptions = {}): Promise<T> {
   const response = await fetch(path, {
     method: init.method ?? "GET",
-    headers: { ...authHeaders(), ...init.headers },
+    headers: { ...(await bearerHeaders()), ...init.headers },
     body: init.body,
   });
   if (!response.ok) {
@@ -149,7 +157,7 @@ export function me(): Promise<Me> {
 export async function downloadConversation(id: string): Promise<void> {
   // Plain <a href> cannot carry the Authorization header, so fetch the blob
   // and hand it to the browser through a transient object URL.
-  const response = await fetch(`/api/conversations/${id}/export`, { headers: authHeaders() });
+  const response = await fetch(`/api/conversations/${id}/export`, { headers: await bearerHeaders() });
   if (!response.ok) {
     throw await toApiError(response);
   }
@@ -195,7 +203,7 @@ export async function streamChat(
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...authHeaders() },
+      headers: { "Content-Type": "application/json", ...(await bearerHeaders()) },
       body: JSON.stringify(body),
       signal,
     });

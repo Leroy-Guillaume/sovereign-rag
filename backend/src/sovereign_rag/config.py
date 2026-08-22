@@ -75,6 +75,9 @@ class Settings(BaseSettings):
     oidc_audience: str = ""  # the client id tokens must carry in aud
     oidc_roles_claim: str = "roles"  # dotted path; Keycloak: realm_access.roles
     oidc_admin_role: str = "admin"  # membership in the roles claim grants admin
+    # Public client id the SPA uses for the Authorization Code + PKCE flow.
+    # Tokens must still carry OIDC_AUDIENCE in aud (Keycloak: audience mapper).
+    oidc_client_id: str = ""  # empty = the SPA offers no IdP login
 
     # --- Misc ---
     max_upload_mb: int = 25
