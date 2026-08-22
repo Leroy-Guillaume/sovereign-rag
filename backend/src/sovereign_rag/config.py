@@ -69,6 +69,12 @@ class Settings(BaseSettings):
     # --- Auth (Phase 1: multi API keys -> user_id) ---
     auth_api_keys: dict[str, str] = {}  # JSON: {"sk-demo-alice":"alice","sk-demo-bob":"bob"}
     auth_admin_users: set[str] = set()  # JSON: ["alice"]
+    # OIDC: set the issuer to enable JWT bearer auth next to the API keys.
+    # The only outbound calls are discovery + JWKS of the issuer YOU run.
+    oidc_issuer: str = ""  # e.g. https://keycloak.internal/realms/acme; empty = disabled
+    oidc_audience: str = ""  # the client id tokens must carry in aud
+    oidc_roles_claim: str = "roles"  # dotted path; Keycloak: realm_access.roles
+    oidc_admin_role: str = "admin"  # membership in the roles claim grants admin
 
     # --- Misc ---
     max_upload_mb: int = 25
