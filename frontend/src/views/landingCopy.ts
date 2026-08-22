@@ -1,11 +1,7 @@
 // All landing copy in both languages. The landing defaults to English and
 // the choice persists locally; the app screens stay French for now.
 
-export type Lang = "en" | "fr" | "de";
-
-export const LANGS: Lang[] = ["en", "fr", "de"];
-
-export const LANG_STORAGE = "sovereign-rag.lang";
+import type { Lang } from "../lib/lang";
 
 export interface HeroDemoCopy {
   windowTitle: string;

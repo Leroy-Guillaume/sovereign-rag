@@ -1,4 +1,6 @@
 import { Link } from "react-router";
+import { APP_COPY } from "../lib/appCopy";
+import { useLang } from "../lib/lang";
 
 /**
  * The "s sovereign-rag" brand block used by the chat sidebar and the admin
@@ -7,8 +9,13 @@ import { Link } from "react-router";
  * display would shrink the hover target under the pointer and flicker.
  */
 export default function BrandHomeLink() {
+  const { lang } = useLang();
   return (
-    <Link to="/" className="group relative flex h-5 items-center" aria-label="Retour au site">
+    <Link
+      to="/"
+      className="group relative flex h-5 items-center"
+      aria-label={APP_COPY[lang].brand.backToSite}
+    >
       <span className="flex items-center gap-2.5 transition-opacity duration-150 group-hover:opacity-0">
         <span className="grid size-5 place-items-center rounded-md bg-ink text-[11px] font-semibold text-white">
           s

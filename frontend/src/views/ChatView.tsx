@@ -7,9 +7,12 @@ import MessageInput from "../components/MessageInput";
 import MessageList, { type SourcePanelState } from "../components/MessageList";
 import SourcesPanel from "../components/SourcesPanel";
 import { useChatStream } from "../hooks/useChatStream";
+import { APP_COPY } from "../lib/appCopy";
+import { useLang } from "../lib/lang";
 
 export default function ChatView() {
   const { onUnauthorized } = useOutletContext<AppOutletContext>();
+  const { lang } = useLang();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const requestedId = searchParams.get("c");
@@ -95,7 +98,7 @@ export default function ChatView() {
       <main className="flex min-w-0 flex-1 flex-col">
         <div className="flex h-[52px] shrink-0 items-center border-b border-black/[0.07] px-7">
           <span className="truncate text-[13.5px] font-medium">
-            {title !== undefined ? title.content : "Nouvelle conversation"}
+            {title !== undefined ? title.content : APP_COPY[lang].chat.newConversation}
           </span>
         </div>
 

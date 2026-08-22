@@ -14,15 +14,17 @@ import {
 } from "../api";
 import type { AppOutletContext } from "../App";
 import BrandHomeLink from "../components/BrandHomeLink";
+import { APP_COPY } from "../lib/appCopy";
 import {
+  fmtDecimal,
   formatCount,
   formatDate,
   formatInt,
   formatLatency,
   formatRelative,
   formatSize,
-  frDecimal,
 } from "../lib/format";
+import { LangSwitcher, useLang } from "../lib/lang";
 import type { AdminMetrics, DocumentOut, PermissionOut } from "../types";
 
 const DAY_OPTIONS = [7, 30, 90] as const;
@@ -45,6 +47,8 @@ function MetricTile(props: { label: string; value: ReactNode; caption: ReactNode
 
 export default function AdminView() {
   const { onUnauthorized } = useOutletContext<AppOutletContext>();
+  const { lang } = useLang();
+  const t = APP_COPY[lang].admin;
   const [access, setAccess] = useState<"loading" | "granted" | "forbidden">("loading");
   const [documents, setDocuments] = useState<DocumentOut[]>([]);
   const [permissionsByDoc, setPermissionsByDoc] = useState<Record<string, PermissionOut[]>>({});
@@ -77,7 +81,7 @@ export default function AdminView() {
       setMetrics(await getAdminMetrics(days));
       setActionError(null);
     } catch (err) {
-      handleApiError(err, "Échec du chargement des métriques");
+      handleApiError(err, t.errLoadMetrics);
     }
   }, [days, handleApiError]);
 
@@ -94,7 +98,7 @@ export default function AdminView() {
         }
         setActionError(null);
       } catch (err) {
-        handleApiError(err, "Échec du chargement des documents");
+        handleApiError(err, t.errLoadDocuments);
       }
     },
     [handleApiError],
@@ -118,7 +122,7 @@ export default function AdminView() {
           setAccess("forbidden");
         } else {
           setAccess("granted");
-          setActionError(err instanceof Error ? err.message : "Impossible de vérifier les droits");
+          setActionError(err instanceof Error ? err.message : t.errVerify);
         }
       });
     return () => {
@@ -157,7 +161,7 @@ export default function AdminView() {
       try {
         await uploadDocument(file);
       } catch (err) {
-        handleApiError(err, `échec du téléversement de ${file.name}`);
+        handleApiError(err, t.errUpload(file.name));
         break;
       }
     }
@@ -165,16 +169,14 @@ export default function AdminView() {
   }
 
   async function handleDelete(doc: DocumentOut) {
-    const confirmed = window.confirm(
-      `Supprimer ${doc.filename} ? Les instantanés d'audit des réponses passées sont conservés.`,
-    );
+    const confirmed = window.confirm(t.confirmDelete(doc.filename));
     if (!confirmed) return;
     setActionError(null);
     try {
       await deleteDocument(doc.id);
       await refreshDocuments(true);
     } catch (err) {
-      handleApiError(err, "échec de la suppression");
+      handleApiError(err, t.errDelete);
     }
   }
 
@@ -189,7 +191,7 @@ export default function AdminView() {
     // Same rule as the backend schema; checking here gives a message instead
     // of a raw 422.
     if (!/^[^\s/]+$/.test(value)) {
-      setActionError("Identifiant invalide : ni espace ni « / » (ou * pour tous).");
+      setActionError(t.invalidPrincipal);
       return;
     }
     setActionError(null);
@@ -198,7 +200,7 @@ export default function AdminView() {
       await refreshDocPermissions(id);
       setPrincipalDraft("");
     } catch (err) {
-      handleApiError(err, "échec du partage");
+      handleApiError(err, t.errShare);
     }
   }
 
@@ -208,7 +210,7 @@ export default function AdminView() {
       await revokePermission(id, principal);
       await refreshDocPermissions(id);
     } catch (err) {
-      handleApiError(err, "échec de la révocation");
+      handleApiError(err, t.errRevoke);
     }
   }
 
@@ -220,7 +222,7 @@ export default function AdminView() {
   if (access === "loading") {
     return (
       <div className="flex h-screen items-center justify-center bg-surface text-sm text-muted">
-        Vérification des permissions…
+        {t.checking}
       </div>
     );
   }
@@ -229,14 +231,11 @@ export default function AdminView() {
     return (
       <div className="flex h-screen items-center justify-center bg-surface p-6">
         <div className="max-w-md rounded-2xl bg-white p-7 text-center shadow-[0_1px_3px_rgba(0,0,0,0.07)]">
-          <h2 className="text-lg font-semibold tracking-tight text-ink">
-            Accès administrateur requis
-          </h2>
+          <h2 className="text-lg font-semibold tracking-tight text-ink">{t.forbiddenTitle}</h2>
           <p className="mt-2 text-sm leading-relaxed text-ink-tertiary">
-            Votre clé API est valide mais ne porte pas le rôle admin. Demandez à un opérateur
-            d'ajouter votre identifiant à{" "}
-            <code className="font-mono text-[13px] text-ink-secondary">AUTH_ADMIN_USERS</code>, ou
-            passez sur une clé admin.
+            {t.forbiddenBefore}
+            <code className="font-mono text-[13px] text-ink-secondary">AUTH_ADMIN_USERS</code>
+            {t.forbiddenAfter}
           </p>
         </div>
       </div>
@@ -256,7 +255,7 @@ export default function AdminView() {
       : null;
   const errorPct =
     metrics !== null && metrics.answers > 0
-      ? frDecimal((metrics.errors / metrics.answers) * 100, 1)
+      ? fmtDecimal((metrics.errors / metrics.answers) * 100, 1)
       : null;
   const topCited = metrics?.top_cited ?? [];
   const maxCitations = topCited.reduce((max, entry) => Math.max(max, entry.citations), 0);
@@ -271,14 +270,17 @@ export default function AdminView() {
               to="/chat"
               className="rounded-[7px] px-3.5 py-[5px] text-[12.5px] font-medium text-ink-secondary hover:text-ink"
             >
-              Chat
+              {t.chatTab}
             </Link>
             <span className="rounded-[7px] bg-white px-3.5 py-[5px] text-[12.5px] font-medium shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
-              Administration
+              {t.adminTab}
             </span>
           </nav>
         </div>
-        {masked !== null && <span className="font-mono text-[11.5px] text-muted">{masked}</span>}
+        <div className="flex items-center gap-4">
+          <LangSwitcher />
+          {masked !== null && <span className="font-mono text-[11.5px] text-muted">{masked}</span>}
+        </div>
       </header>
 
       <div className="flex-1 overflow-y-auto">
@@ -286,12 +288,11 @@ export default function AdminView() {
           <div className="flex items-end justify-between">
             <div>
               <h1 className="text-[34px] font-semibold leading-[1.15] tracking-[-0.024em]">
-                Documents et pilotage
+                {t.title}
               </h1>
               <p className="mt-2 text-[14.5px] text-ink-tertiary">
-                {documents.length} document{documents.length > 1 ? "s" : ""} ·{" "}
-                {formatInt(totalChunks)} passages indexés
-                {latestCreatedAt !== null && ` · dernier ajout ${formatRelative(latestCreatedAt)}`}
+                {t.subtitle(documents.length, formatInt(totalChunks))}
+                {latestCreatedAt !== null && ` · ${t.lastAdded} ${formatRelative(latestCreatedAt)}`}
               </p>
             </div>
             <div className="flex items-center gap-3.5">
@@ -307,7 +308,7 @@ export default function AdminView() {
                         : "text-ink-tertiary hover:text-ink"
                     }`}
                   >
-                    {option} j
+                    {option} {t.day}
                   </button>
                 ))}
               </div>
@@ -327,19 +328,21 @@ export default function AdminView() {
                 onClick={() => fileInputRef.current?.click()}
                 className="rounded-full bg-accent px-[18px] py-[9px] text-[13px] font-medium text-white hover:bg-accent-hover"
               >
-                Téléverser
+                {t.upload}
               </button>
             </div>
           </div>
 
           <div className="mt-[26px] grid grid-cols-4 gap-4">
             <MetricTile
-              label="Réponses"
+              label={t.tiles.answers}
               value={metrics === null ? "…" : formatInt(metrics.answers)}
-              caption={metrics === null ? "…" : `${formatInt(metrics.conversations)} conversations`}
+              caption={
+                metrics === null ? "…" : t.tiles.conversations(formatInt(metrics.conversations))
+              }
             />
             <MetricTile
-              label="Tokens prompt / complétion"
+              label={t.tiles.tokens}
               value={
                 metrics === null ? (
                   "…"
@@ -356,12 +359,12 @@ export default function AdminView() {
                 metrics === null
                   ? "…"
                   : avgTokens !== null
-                    ? `≈ ${formatInt(avgTokens)} tokens par réponse`
+                    ? t.tiles.perAnswer(formatInt(avgTokens))
                     : ""
               }
             />
             <MetricTile
-              label="Latence p50 / p95"
+              label={t.tiles.latency}
               value={
                 metrics === null ? (
                   "…"
@@ -377,14 +380,17 @@ export default function AdminView() {
               caption={
                 metrics === null
                   ? "…"
-                  : `récupération ${formatLatency(metrics.retrieval.p50_ms)} / ${formatLatency(metrics.retrieval.p95_ms)}`
+                  : t.tiles.retrieval(
+                      formatLatency(metrics.retrieval.p50_ms),
+                      formatLatency(metrics.retrieval.p95_ms),
+                    )
               }
             />
             <MetricTile
-              label="Erreurs"
+              label={t.tiles.errors}
               value={metrics === null ? "…" : formatInt(metrics.errors)}
               caption={
-                metrics === null ? "…" : errorPct !== null ? `${errorPct} % des réponses` : ""
+                metrics === null ? "…" : errorPct !== null ? t.tiles.errorPct(errorPct) : ""
               }
             />
           </div>
@@ -398,10 +404,8 @@ export default function AdminView() {
           <div className="mt-4 grid grid-cols-[1fr_340px] items-start gap-4">
             <div className={`${CARD} overflow-hidden`}>
               <div className="flex items-center justify-between px-6 pt-5 pb-4">
-                <span className="text-[15px] font-medium">Documents</span>
-                <span className="text-[11.5px] text-muted">
-                  statuts rafraîchis toutes les 2 s pendant le traitement
-                </span>
+                <span className="text-[15px] font-medium">{t.documents}</span>
+                <span className="text-[11.5px] text-muted">{t.refreshNote}</span>
               </div>
 
               <div
@@ -424,29 +428,26 @@ export default function AdminView() {
                 }`}
               >
                 <div className="text-[13.5px] font-medium">
-                  Déposez vos documents ici, ou{" "}
+                  {t.dropHere}
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     className="text-link hover:underline"
                   >
-                    parcourir
+                    {t.browse}
                   </button>
                 </div>
-                <div className="mt-1 text-[11.5px] text-muted">
-                  pdf · docx · md · txt · extraits, découpés et vectorisés sur place, rien n'est
-                  envoyé à un tiers
-                </div>
+                <div className="mt-1 text-[11.5px] text-muted">{t.dropNote}</div>
               </div>
 
               <div
                 className={`grid ${TABLE_COLUMNS} gap-3.5 px-6 pt-5 pb-2 text-[10.5px] font-medium tracking-wide text-muted uppercase`}
               >
-                <span>Fichier</span>
-                <span>Taille</span>
-                <span>Statut</span>
-                <span>Partage</span>
-                <span className="text-right">Ajouté</span>
+                <span>{t.headers.file}</span>
+                <span>{t.headers.size}</span>
+                <span>{t.headers.status}</span>
+                <span>{t.headers.sharing}</span>
+                <span className="text-right">{t.headers.added}</span>
                 <span />
               </div>
 
@@ -456,7 +457,7 @@ export default function AdminView() {
                 const chunkSuffix =
                   doc.chunk_count === null || doc.chunk_count === undefined
                     ? ""
-                    : ` · ${formatInt(doc.chunk_count)} passages`;
+                    : ` · ${t.passages(formatInt(doc.chunk_count))}`;
                 return (
                   <Fragment key={doc.id}>
                     <div
@@ -472,32 +473,35 @@ export default function AdminView() {
                         {formatSize(doc.size_bytes)}
                       </span>
                       {doc.status === "ready" ? (
-                        <span className="text-xs text-ok">prêt{chunkSuffix}</span>
+                        <span className="text-xs text-ok">
+                          {t.ready}
+                          {chunkSuffix}
+                        </span>
                       ) : doc.status === "processing" ? (
-                        <span className="animate-pulse text-xs text-link">traitement</span>
+                        <span className="animate-pulse text-xs text-link">{t.processing}</span>
                       ) : (
-                        <span className="text-xs text-danger">échec</span>
+                        <span className="text-xs text-danger">{t.failed}</span>
                       )}
                       {hasStar ? (
                         <span className="min-w-0 truncate text-xs text-ink-secondary">
-                          tous (*) ·{" "}
+                          {t.everyone} ·{" "}
                           <button
                             type="button"
                             onClick={() => void handleRevoke(doc.id, "*")}
                             className="text-link hover:underline"
                           >
-                            révoquer
+                            {t.revoke}
                           </button>
                         </span>
                       ) : perms.length === 0 ? (
                         <span className="min-w-0 truncate text-xs text-ink-secondary">
-                          privé ·{" "}
+                          {t.private} ·{" "}
                           <button
                             type="button"
                             onClick={() => toggleEditing(doc.id)}
                             className="text-link hover:underline"
                           >
-                            partager
+                            {t.share}
                           </button>
                         </span>
                       ) : (
@@ -511,7 +515,7 @@ export default function AdminView() {
                             onClick={() => toggleEditing(doc.id)}
                             className="shrink-0 text-link hover:underline"
                           >
-                            gérer
+                            {t.manage}
                           </button>
                         </span>
                       )}
@@ -524,7 +528,7 @@ export default function AdminView() {
                           onClick={() => void handleDelete(doc)}
                           className="text-xs text-muted hover:text-danger"
                         >
-                          supprimer
+                          {t.remove}
                         </button>
                       </span>
                     </div>
@@ -533,20 +537,18 @@ export default function AdminView() {
                       <div className="border-t border-black/[0.07] bg-surface-raised px-6 py-4">
                         <div className="flex flex-wrap items-center gap-2">
                           {perms.length === 0 && (
-                            <span className="text-xs text-muted">
-                              Aucun partage pour l'instant, ce document est privé.
-                            </span>
+                            <span className="text-xs text-muted">{t.noShares}</span>
                           )}
                           {perms.map((perm) => (
                             <span
                               key={perm.principal}
                               className="flex items-center gap-2 rounded-full bg-surface px-3 py-1 text-xs text-ink-secondary"
                             >
-                              {perm.principal === "*" ? "tous (*)" : perm.principal}
+                              {perm.principal === "*" ? t.everyone : perm.principal}
                               <button
                                 type="button"
                                 onClick={() => void handleRevoke(doc.id, perm.principal)}
-                                aria-label={`Révoquer ${perm.principal}`}
+                                aria-label={`${t.revoke} ${perm.principal}`}
                                 className="text-muted hover:text-danger"
                               >
                                 ✕
@@ -562,7 +564,7 @@ export default function AdminView() {
                             onKeyDown={(event) => {
                               if (event.key === "Enter") void handleGrant(doc.id, principalDraft);
                             }}
-                            placeholder="identifiant utilisateur, ou * pour tous"
+                            placeholder={t.principalPlaceholder}
                             className="w-72 rounded-full bg-white px-3.5 py-1.5 text-xs text-ink shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-accent"
                           />
                           <button
@@ -570,7 +572,7 @@ export default function AdminView() {
                             onClick={() => void handleGrant(doc.id, principalDraft)}
                             className="rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white hover:bg-accent-hover"
                           >
-                            Ajouter
+                            {t.add}
                           </button>
                           {!hasStar && (
                             <button
@@ -578,7 +580,7 @@ export default function AdminView() {
                               onClick={() => void handleGrant(doc.id, "*")}
                               className="text-xs text-link hover:underline"
                             >
-                              Partager à tous (*)
+                              {t.shareAll}
                             </button>
                           )}
                         </div>
@@ -590,19 +592,19 @@ export default function AdminView() {
 
               {documents.length === 0 && (
                 <div className="border-t border-black/[0.07] py-8 text-center text-sm text-muted">
-                  Aucun document. Téléversez-en un pour le rendre interrogeable.
+                  {t.empty}
                 </div>
               )}
             </div>
 
             <div className="flex flex-col gap-4">
               <div className={`${CARD} p-6`}>
-                <div className="text-[15px] font-medium">Documents les plus cités</div>
+                <div className="text-[15px] font-medium">{t.topCited}</div>
                 {metrics === null ? (
                   <div className="mt-2 text-[12.5px] text-ink-tertiary">…</div>
                 ) : topCited.length === 0 ? (
                   <div className="mt-2 text-[12.5px] text-ink-tertiary">
-                    Aucune citation sur la période.
+                    {t.noCitations}
                   </div>
                 ) : (
                   <div className="mt-[18px] grid grid-cols-[1fr_auto] items-center gap-x-3.5 gap-y-[11px]">
@@ -631,21 +633,21 @@ export default function AdminView() {
               </div>
 
               <div className={`${CARD} p-6`}>
-                <div className="text-[15px] font-medium">Questions sans réponse</div>
+                <div className="text-[15px] font-medium">{t.unanswered}</div>
                 {metrics === null ? (
                   <div className="mt-2 text-[12.5px] text-ink-tertiary">…</div>
                 ) : metrics.unanswered.length === 0 ? (
                   <div className="mt-2 text-[12.5px] leading-relaxed text-ink-tertiary">
-                    Aucune question restée sans réponse sur la période.
+                    {t.noUnanswered}
                   </div>
                 ) : (
                   <>
                     <div className="mt-1.5 text-[12.5px] leading-relaxed text-ink-tertiary">
-                      Le corpus n'a pas permis de répondre{" "}
-                      {formatInt(
-                        metrics.unanswered.reduce((sum, entry) => sum + entry.occurrences, 0),
-                      )}{" "}
-                      fois sur la période. Chaque cas est une piste de document à indexer.
+                      {t.unansweredIntro(
+                        formatInt(
+                          metrics.unanswered.reduce((sum, entry) => sum + entry.occurrences, 0),
+                        ),
+                      )}
                     </div>
                     <div className="mt-4 flex flex-col gap-2.5">
                       {metrics.unanswered.map((entry) => (

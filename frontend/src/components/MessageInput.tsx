@@ -1,4 +1,6 @@
 import { useState, type KeyboardEvent } from "react";
+import { APP_COPY } from "../lib/appCopy";
+import { useLang } from "../lib/lang";
 
 interface MessageInputProps {
   busy: boolean;
@@ -8,6 +10,8 @@ interface MessageInputProps {
 
 export default function MessageInput({ busy, onSend, onStop }: MessageInputProps) {
   const [text, setText] = useState("");
+  const { lang } = useLang();
+  const t = APP_COPY[lang].composer;
 
   function submit() {
     const trimmed = text.trim();
@@ -32,14 +36,14 @@ export default function MessageInput({ busy, onSend, onStop }: MessageInputProps
           onKeyDown={handleKeyDown}
           disabled={busy}
           rows={1}
-          placeholder="Posez une question sur les documents indexés…"
+          placeholder={t.placeholder}
           className="max-h-40 flex-1 resize-none rounded-[22px] bg-surface px-[18px] py-[11px] text-sm text-ink field-sizing-content placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-60"
         />
         <button
           type="button"
           onClick={submit}
           disabled={busy || text.trim() === ""}
-          aria-label="Envoyer"
+          aria-label={t.send}
           className="grid size-9 shrink-0 place-items-center rounded-full bg-accent text-white hover:bg-accent-hover disabled:opacity-40"
         >
           <svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true">
@@ -55,10 +59,10 @@ export default function MessageInput({ busy, onSend, onStop }: MessageInputProps
         </button>
       </div>
       <div className="mt-2 flex justify-between px-1.5 text-[11px] text-muted">
-        <span>⏎ envoyer · ⇧⏎ nouvelle ligne · questions en FR, DE, EN</span>
+        <span>{t.hints}</span>
         {busy && (
           <button type="button" onClick={onStop} className="text-link hover:underline">
-            ■ arrêter
+            {t.stop}
           </button>
         )}
       </div>

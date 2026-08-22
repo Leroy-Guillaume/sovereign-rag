@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChatStatus, UiMessage } from "../hooks/useChatStream";
+import { APP_COPY } from "../lib/appCopy";
 import { auditLabel, formatAnswerSeconds } from "../lib/format";
+import { useLang } from "../lib/lang";
 
 export interface SourcePanelState {
   /** Index in the messages array of the assistant message whose sources are open. */
@@ -28,6 +30,8 @@ export default function MessageList({
   onOpenSource,
 }: MessageListProps) {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const { lang } = useLang();
+  const t = APP_COPY[lang].chat;
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const pinnedToBottom = useRef(true);
@@ -88,7 +92,7 @@ export default function MessageList({
               key={i}
               type="button"
               onClick={() => onOpenSource(messageIndex, n)}
-              aria-label={`Ouvrir la source ${n}`}
+              aria-label={t.openSource(n)}
               className={`mx-[3px] inline-block -translate-y-[2px] rounded-md px-1.5 font-mono text-[11.5px]/[18px] font-medium ${
                 active ? "bg-accent text-white" : "bg-chip text-chip-ink hover:bg-[#d9e7fc]"
               }`}
@@ -111,22 +115,19 @@ export default function MessageList({
           <span className="grid size-[18px] shrink-0 place-items-center rounded-full bg-warn-badge text-xs font-semibold text-white">
             !
           </span>
-          <span className="text-[14.5px] font-medium">Le corpus ne permet pas de répondre.</span>
+          <span className="text-[14.5px] font-medium">{t.noAnswerTitle}</span>
         </div>
         <p className="mt-2.5 ml-7 text-[13.5px] leading-relaxed text-ink-tertiary">
           {message.content}
         </p>
-        <p className="mt-3 ml-7 text-xs text-muted">
-          Aucun passage pertinent trouvé. Plutôt que d'extrapoler, le système s'arrête
-          {audit !== null ? <> · la question reste consignée (audit №{audit})</> : null}.
-        </p>
+        <p className="mt-3 ml-7 text-xs text-muted">{t.noAnswerNote(audit)}</p>
         <div className="mt-3 ml-7">
           <button
             type="button"
             onClick={() => copyAnswer(message.content, messageIndex)}
             className="text-[12.5px] font-medium text-link hover:underline"
           >
-            {copiedIndex === messageIndex ? "Copié" : "Copier"}
+            {copiedIndex === messageIndex ? t.copied : t.copy}
           </button>
         </div>
       </div>
@@ -138,10 +139,8 @@ export default function MessageList({
       {messages.length === 0 && (
         <div className="flex h-full items-center justify-center px-8 text-center">
           <div>
-            <p className="text-[17px] font-medium text-ink">Posez une question.</p>
-            <p className="mt-1 text-sm text-muted">
-              Les réponses citent leurs passages, en FR, DE ou EN.
-            </p>
+            <p className="text-[17px] font-medium text-ink">{t.emptyTitle}</p>
+            <p className="mt-1 text-sm text-muted">{t.emptySub}</p>
           </div>
         </div>
       )}
@@ -171,7 +170,7 @@ export default function MessageList({
             return (
               <li key={messageIndex} className="mt-7">
                 {message.content === "" && isLast && status === "retrieving" ? (
-                  <p className="text-[15px] text-muted">Recherche dans la base documentaire…</p>
+                  <p className="text-[15px] text-muted">{t.searching}</p>
                 ) : noAnswer && settled ? (
                   renderNoAnswer(message, messageIndex)
                 ) : (
@@ -186,22 +185,22 @@ export default function MessageList({
                           onClick={() => onToggleSources(messageIndex)}
                           className="inline-flex items-center gap-2 rounded-full bg-surface px-[15px] py-2 text-[12.5px] font-medium text-link select-none hover:bg-surface-hover"
                         >
-                          <span>{panelOpenHere ? "Masquer les sources" : "Sources"}</span>
+                          <span>{panelOpenHere ? t.hideSources : t.sources}</span>
                           <span className="font-mono text-[11px] font-normal text-muted">
                             {sources.length}
                           </span>
                         </button>
                         <span className="text-[11.5px] text-muted">
-                          {documentCount} document{documentCount > 1 ? "s" : ""} · fusion RRF
+                          {t.meta(documentCount)}
                           {seconds !== null ? <> · {seconds}</> : null}
-                          {audit !== null ? <> · audit №{audit}</> : null}
+                          {audit !== null ? <> · {t.audit} №{audit}</> : null}
                         </span>
                         <button
                           type="button"
                           onClick={() => copyAnswer(message.content, messageIndex)}
                           className="ml-auto text-xs font-medium text-link hover:underline"
                         >
-                          {copiedIndex === messageIndex ? "Copié" : "Copier"}
+                          {copiedIndex === messageIndex ? t.copied : t.copy}
                         </button>
                       </div>
                     )}
