@@ -190,9 +190,8 @@ def main() -> None:
         print(
             f"    {kind:<8}: {hits[kind]}/{totals[kind]} ({100 * hits[kind] / totals[kind]:.0f} %)"
         )
-    print(
-        f"  clean rewritten (false positives): {rewritten}/{len(clean)} ({100 * rewritten / len(clean):.0f} %)"
-    )
+    fp = 100 * rewritten / len(clean)
+    print(f"  clean rewritten (false positives): {rewritten}/{len(clean)} ({fp:.0f} %)")
 
 
 if __name__ == "__main__":
