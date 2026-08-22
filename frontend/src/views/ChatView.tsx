@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useOutletContext, useSearchParams } from "react-router";
-import { ApiError, getConversation } from "../api";
+import { ApiError, downloadConversation, getConversation } from "../api";
 import type { AppOutletContext } from "../App";
 import ConversationSidebar from "../components/ConversationSidebar";
 import MessageInput from "../components/MessageInput";
@@ -21,6 +21,9 @@ export default function ChatView() {
   // The sources panel is closed by default; a marker click or the "Sources"
   // pill opens it for one specific answer (design 2b).
   const [panel, setPanel] = useState<SourcePanelState | null>(null);
+  // Export failures land in the same banner as stream errors (401 excepted:
+  // that reopens the API-key modal like everywhere else).
+  const [exportError, setExportError] = useState<string | null>(null);
   const busy = status === "retrieving" || status === "streaming";
   // Mirror for async callbacks: a hydration fetch resolving mid-stream must
   // read the CURRENT streaming state, not the one captured at navigation.
@@ -34,6 +37,7 @@ export default function ChatView() {
   // navigation itself produced, so they are always fresh here.
   useEffect(() => {
     setPanel(null); // sources belong to the conversation being left
+    setExportError(null);
     if (requestedId === null) {
       hydrate(null, []);
       return;
@@ -78,6 +82,17 @@ export default function ChatView() {
     };
   }, [location.key]);
 
+  function exportConversation(id: string) {
+    setExportError(null);
+    downloadConversation(id).catch((err: unknown) => {
+      if (err instanceof ApiError && err.status === 401) {
+        onUnauthorized();
+        return;
+      }
+      setExportError(err instanceof Error ? err.message : String(err));
+    });
+  }
+
   const title = messages.find((message) => message.role === "user");
   const panelMessage = panel !== null ? messages[panel.messageIndex] : undefined;
   const panelSources = panelMessage?.sources ?? [];
@@ -100,6 +115,15 @@ export default function ChatView() {
           <span className="truncate text-[13.5px] font-medium">
             {title !== undefined ? title.content : APP_COPY[lang].chat.newConversation}
           </span>
+          {conversationId !== null && (
+            <button
+              type="button"
+              onClick={() => exportConversation(conversationId)}
+              className="ml-auto shrink-0 pl-4 text-xs font-medium text-link hover:underline"
+            >
+              {APP_COPY[lang].chat.exportConversation}
+            </button>
+          )}
         </div>
 
         <MessageList
@@ -120,9 +144,9 @@ export default function ChatView() {
 
         <div className="shrink-0 border-t border-black/[0.07] px-8 pt-4 pb-[22px]">
           <div className="mx-auto max-w-[720px]">
-            {error !== null && (
+            {(error ?? exportError) !== null && (
               <div className="mb-3 rounded-xl bg-warn-surface px-4 py-2.5 text-sm text-warn">
-                {error}
+                {error ?? exportError}
               </div>
             )}
             <MessageInput busy={busy} onSend={(text) => void send(text)} onStop={stop} />

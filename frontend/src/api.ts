@@ -48,6 +48,25 @@ function authHeaders(): Record<string, string> {
 }
 
 /**
+ * FastAPI wraps error messages as {"detail": ...}; surface the message,
+ * never the raw JSON envelope, and fall back to the HTTP status text.
+ */
+async function toApiError(response: Response): Promise<ApiError> {
+  const raw = await response.text();
+  let message = response.statusText;
+  if (raw !== "") {
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      const detail = (parsed as { detail?: unknown }).detail;
+      message = typeof detail === "string" ? detail : raw;
+    } catch {
+      message = raw;
+    }
+  }
+  return new ApiError(response.status, message);
+}
+
+/**
  * Thin fetch wrapper: attaches the Authorization header and normalizes
  * failures into ApiError. A 401 is surfaced to the caller so the app shell
  * can open the API-key modal.
@@ -59,20 +78,7 @@ export async function request<T>(path: string, init: RequestOptions = {}): Promi
     body: init.body,
   });
   if (!response.ok) {
-    // FastAPI wraps error messages as {"detail": ...}; surface the message,
-    // never the raw JSON envelope, and fall back to the HTTP status text.
-    const raw = await response.text();
-    let message = response.statusText;
-    if (raw !== "") {
-      try {
-        const parsed: unknown = JSON.parse(raw);
-        const detail = (parsed as { detail?: unknown }).detail;
-        message = typeof detail === "string" ? detail : raw;
-      } catch {
-        message = raw;
-      }
-    }
-    throw new ApiError(response.status, message);
+    throw await toApiError(response);
   }
   if (response.status === 204) {
     return undefined as unknown as T; // DELETE /api/documents/{id}
@@ -137,6 +143,25 @@ export function getConversation(id: string): Promise<ConversationDetail> {
 
 export function me(): Promise<Me> {
   return request<Me>("/api/me");
+}
+
+/** Download the conversation export; resolves the server-suggested filename. */
+export async function downloadConversation(id: string): Promise<void> {
+  // Plain <a href> cannot carry the Authorization header, so fetch the blob
+  // and hand it to the browser through a transient object URL.
+  const response = await fetch(`/api/conversations/${id}/export`, { headers: authHeaders() });
+  if (!response.ok) {
+    throw await toApiError(response);
+  }
+  const blob = await response.blob();
+  const disposition = response.headers.get("Content-Disposition") ?? "";
+  const filename = /filename="([^"]+)"/.exec(disposition)?.[1] ?? "conversation.json";
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 // --- SSE: POST /api/chat -------------------------------------------------------

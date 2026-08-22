@@ -18,6 +18,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
+from ..audit import audit
 from ..auth import CurrentUser
 from ..chat.service import ChatEvent, ChatService
 from ..schemas import (
@@ -207,6 +208,14 @@ async def export_conversation(
             raise HTTPException(status_code=404, detail="Conversation not found")
         cur = await conn.execute(_SELECT_MESSAGES_FULL, {"conversation_id": conversation_id})
         rows = await cur.fetchall()
+        await audit(
+            conn,
+            actor=user.id,
+            action="conversation.export",
+            object_type="conversation",
+            object_id=str(conversation_id),
+            detail={"messages": len(rows)},
+        )
     export = ConversationExport(
         exported_at=datetime.now(tz=UTC),
         conversation=ConversationOut(

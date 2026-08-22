@@ -455,6 +455,17 @@ async def test_export_returns_the_full_record_as_attachment(
         assert answer["prompt_tokens"] == 10
         assert answer["sources"]
 
+        # The export itself is an audited action (A.5.28 follow-up).
+        trail = await client.get("/api/admin/audit", headers=AUTH_ADMIN)
+        assert trail.status_code == 200
+        entries = trail.json()
+        assert len(entries) == 1
+        entry = entries[0]
+        assert entry["action"] == "conversation.export"
+        assert entry["actor"] == "alice"
+        assert entry["object_id"] == conversation_id
+        assert entry["detail"] == {"messages": 2}
+
         # Foreign conversation: 404, no existence oracle.
         foreign = await client.get(f"/api/conversations/{conversation_id}/export", headers=AUTH_BOB)
         assert foreign.status_code == 404

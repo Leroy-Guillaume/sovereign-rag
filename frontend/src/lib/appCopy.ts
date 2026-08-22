@@ -34,6 +34,7 @@ export interface AppCopy {
     openSource: (n: number) => string;
     meta: (documents: number) => string;
     audit: string;
+    exportConversation: string;
   };
   composer: {
     placeholder: string;
@@ -146,6 +147,7 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       openSource: (n) => `Open source ${n}`,
       meta: (d) => `${d} document${d > 1 ? "s" : ""} · RRF fusion`,
       audit: "audit",
+      exportConversation: "Export (json)",
     },
     composer: {
       placeholder: "Ask about the indexed documents…",
@@ -262,6 +264,7 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       openSource: (n) => `Ouvrir la source ${n}`,
       meta: (d) => `${d} document${d > 1 ? "s" : ""} · fusion RRF`,
       audit: "audit",
+      exportConversation: "Exporter (json)",
     },
     composer: {
       placeholder: "Posez une question sur les documents indexés…",
@@ -378,6 +381,7 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       openSource: (n) => `Quelle ${n} öffnen`,
       meta: (d) => `${d} Dokument${d > 1 ? "e" : ""} · RRF-Fusion`,
       audit: "Audit",
+      exportConversation: "Exportieren (json)",
     },
     composer: {
       placeholder: "Stellen Sie eine Frage zu den indexierten Dokumenten…",
