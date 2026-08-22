@@ -34,6 +34,13 @@ class CitedDocument(BaseModel):
     citations: int
 
 
+class UnansweredQuestion(BaseModel):
+    """A user question the corpus could not answer (zero-source clean answer)."""
+
+    question: str
+    occurrences: int
+
+
 class AdminMetricsOut(BaseModel):
     """Aggregates over the typed per-message columns (ADR 3.12)."""
 
@@ -46,6 +53,7 @@ class AdminMetricsOut(BaseModel):
     retrieval: LatencyOut
     generation: LatencyOut
     top_cited: list[CitedDocument]
+    unanswered: list[UnansweredQuestion]
 
 
 class DocumentOut(BaseModel):
