@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException, Request, Response, UploadFile
 from fastapi.responses import JSONResponse
 from psycopg.rows import dict_row
 
+from sovereign_rag.audit import audit
 from sovereign_rag.auth import CurrentUser, User
 from sovereign_rag.ingestion.service import DuplicateContentError
 from sovereign_rag.schemas import DocumentOut, PermissionIn, PermissionOut
@@ -41,7 +42,7 @@ WHERE d.owner_id = %(user_id)s
 ORDER BY d.created_at DESC
 """
 
-_GET_DOCUMENT_OWNER = "SELECT owner_id FROM documents WHERE id = %(id)s"
+_GET_DOCUMENT_OWNER = "SELECT owner_id, filename FROM documents WHERE id = %(id)s"
 _DELETE_DOCUMENT = "DELETE FROM documents WHERE id = %(id)s"
 
 _LIST_PERMISSIONS = """\
@@ -97,6 +98,15 @@ async def upload_document(request: Request, file: UploadFile, user: CurrentUser)
         )
     except DuplicateContentError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    async with request.app.state.pool.connection() as conn:
+        await audit(
+            conn,
+            actor=user.id,
+            action="document.upload",
+            object_type="document",
+            object_id=str(row["id"]),
+            detail={"filename": filename, "deduplicated": deduplicated},
+        )
     out = DocumentOut(**row, deduplicated=deduplicated)
     return JSONResponse(
         status_code=200 if deduplicated else 202, content=out.model_dump(mode="json")
@@ -151,6 +161,14 @@ async def grant_permission(
             _GRANT_PERMISSION,
             {"id": document_id, "principal": body.principal, "granted_by": user.id},
         )
+        await audit(
+            conn,
+            actor=user.id,
+            action="permission.grant",
+            object_type="document",
+            object_id=str(document_id),
+            detail={"principal": body.principal},
+        )
     return Response(status_code=204)
 
 
@@ -162,6 +180,14 @@ async def revoke_permission(
     pool = request.app.state.pool
     async with pool.connection() as conn:
         await conn.execute(_REVOKE_PERMISSION, {"id": document_id, "principal": principal})
+        await audit(
+            conn,
+            actor=user.id,
+            action="permission.revoke",
+            object_type="document",
+            object_id=str(document_id),
+            detail={"principal": principal},
+        )
     return Response(status_code=204)
 
 
@@ -182,6 +208,14 @@ async def delete_document(request: Request, document_id: UUID, user: CurrentUser
     await request.app.state.store.delete_document(document_id)
     async with pool.connection() as conn:
         await conn.execute(_DELETE_DOCUMENT, {"id": document_id})
+        await audit(
+            conn,
+            actor=user.id,
+            action="document.delete",
+            object_type="document",
+            object_id=str(document_id),
+            detail={"filename": row["filename"]},
+        )
     # Deletions shift the frequency band like ingestions do; same debounced,
     # best-effort refresh so stale statistics cannot linger after a purge.
     await request.app.state.ingestion.refresh_lexeme_stats()
