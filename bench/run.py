@@ -10,6 +10,10 @@ Environment:
   SOVEREIGN_RAG_API_KEY  bearer key (default sk-demo-admin)
 
 Usage: uv run bench/run.py [label] [--golden PATH] [--limit N]
+           [--min-hit8 F] [--min-mrr F]
+
+With --min-hit8 / --min-mrr the process exits nonzero when the measured
+hit@8 ratio or MRR falls below the floor: that is the CI smoke gate.
 """
 
 import argparse
@@ -68,6 +72,8 @@ def main():
     ap.add_argument("label", nargs="?", default="run")
     ap.add_argument("--golden", type=pathlib.Path, default=HERE / "golden_v3.json")
     ap.add_argument("--limit", type=int, default=0, help="score only the first N questions")
+    ap.add_argument("--min-hit8", type=float, default=0.0, help="fail below this hit@8 ratio")
+    ap.add_argument("--min-mrr", type=float, default=0.0, help="fail below this MRR")
     args = ap.parse_args()
 
     cases = [c for c in json.loads(args.golden.read_text()) if c.get("expect")]
@@ -107,6 +113,13 @@ def main():
         print(f"  MISSES ({len(miss)}):")
         for m in miss:
             print(f"    - {m}")
+    mrr = rr / n
+    if h8 / n < args.min_hit8 or mrr < args.min_mrr:
+        print(
+            f"GATE FAILED: hit@8 {h8}/{n} (floor {args.min_hit8:.2f}), "
+            f"MRR {mrr:.3f} (floor {args.min_mrr:.2f})"
+        )
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

@@ -158,7 +158,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
       ],
       zeroCaption:
         "outbound network calls on the local profile: models baked into the image, offline by construction.",
-      composeCaption: "Images published to GHCR on every merge to main.",
+      composeCaption: "Images signed (Sigstore) and published to GHCR on every merge.",
     },
     verifiability: {
       eyebrow: "Verifiability",
@@ -294,7 +294,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
       ],
       zeroCaption:
         "appel réseau sortant sur le profil local : modèles embarqués dans l'image, hors ligne par construction.",
-      composeCaption: "Images publiées sur GHCR à chaque merge sur main.",
+      composeCaption: "Images signées (Sigstore) et publiées sur GHCR à chaque merge.",
     },
     verifiability: {
       eyebrow: "Vérifiabilité",
@@ -430,7 +430,7 @@ export const LANDING_COPY: Record<Lang, LandingCopy> = {
       ],
       zeroCaption:
         "ausgehende Netzwerkaufrufe im lokalen Profil: Modelle im Image eingebettet, offline konstruktionsbedingt.",
-      composeCaption: "Images bei jedem Merge auf main auf GHCR veröffentlicht.",
+      composeCaption: "Images bei jedem Merge signiert (Sigstore) und auf GHCR veröffentlicht.",
     },
     verifiability: {
       eyebrow: "Nachprüfbarkeit",
