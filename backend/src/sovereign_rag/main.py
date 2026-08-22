@@ -30,6 +30,7 @@ from psycopg_pool import AsyncConnectionPool
 from structlog.typing import Processor
 
 from .auth import ApiKeyAuth
+from .auth_oidc import ChainAuth, OidcAuth
 from .chat.service import ChatService
 from .config import Settings
 from .db import apply_migrations, create_pool
@@ -227,7 +228,14 @@ def create_app(
             started_app.state.llm = active_llm
             started_app.state.embedder = active_embedder
             started_app.state.store = active_store
-            started_app.state.auth = ApiKeyAuth(app_settings)
+            api_key_auth = ApiKeyAuth(app_settings)
+            # With an issuer configured, JWTs are settled by OIDC and opaque
+            # keys still fall through to the constant-time API-key check.
+            started_app.state.auth = (
+                ChainAuth([OidcAuth(app_settings), api_key_auth])
+                if app_settings.oidc_issuer
+                else api_key_auth
+            )
             started_app.state.ingestion = ingestion
             started_app.state.chat = chat_service
 
