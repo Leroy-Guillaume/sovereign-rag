@@ -10,16 +10,24 @@ import asyncio
 import contextlib
 import json
 from collections.abc import AsyncIterator
+from datetime import UTC, datetime
 from types import AsyncGeneratorType
 from typing import Any
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from ..auth import CurrentUser
 from ..chat.service import ChatEvent, ChatService
-from ..schemas import ChatRequest, ConversationDetail, ConversationOut, MessageOut
+from ..schemas import (
+    ChatRequest,
+    ConversationDetail,
+    ConversationExport,
+    ConversationOut,
+    MessageExport,
+    MessageOut,
+)
 
 router = APIRouter()
 
@@ -42,6 +50,16 @@ WHERE id = %(id)s AND user_id = %(user_id)s
 
 _SELECT_MESSAGES = """
 SELECT id, role, content, sources, model, created_at
+FROM messages
+WHERE conversation_id = %(conversation_id)s
+ORDER BY created_at
+"""
+
+# The export carries the FULL persisted record, audit columns included:
+# the point of a right-of-access export is that nothing is held back.
+_SELECT_MESSAGES_FULL = """
+SELECT id, request_id, role, content, sources, model, prompt_tokens,
+       completion_tokens, retrieval_ms, generation_ms, error_code, created_at
 FROM messages
 WHERE conversation_id = %(conversation_id)s
 ORDER BY created_at
@@ -170,3 +188,50 @@ async def get_conversation(
 @router.get("/api/me")
 async def get_me(user: CurrentUser) -> dict[str, Any]:
     return {"id": user.id, "roles": sorted(user.roles)}
+
+
+@router.get("/api/conversations/{conversation_id}/export")
+async def export_conversation(
+    conversation_id: UUID, request: Request, user: CurrentUser
+) -> JSONResponse:
+    """The conversation as one downloadable JSON document (nLPD art. 25).
+
+    Same visibility rule as the detail route: foreign and unknown ids both
+    answer 404. The payload is the full persisted record of every message,
+    source snapshots and audit columns included.
+    """
+    async with request.app.state.pool.connection() as conn:
+        cur = await conn.execute(_SELECT_CONVERSATION, {"id": conversation_id, "user_id": user.id})
+        conversation = await cur.fetchone()
+        if conversation is None:
+            raise HTTPException(status_code=404, detail="Conversation not found")
+        cur = await conn.execute(_SELECT_MESSAGES_FULL, {"conversation_id": conversation_id})
+        rows = await cur.fetchall()
+    export = ConversationExport(
+        exported_at=datetime.now(tz=UTC),
+        conversation=ConversationOut(
+            id=conversation[0], title=conversation[1], created_at=conversation[2]
+        ),
+        messages=[
+            MessageExport(
+                id=row[0],
+                request_id=row[1],
+                role=row[2],
+                content=row[3],
+                sources=row[4],
+                model=row[5],
+                prompt_tokens=row[6],
+                completion_tokens=row[7],
+                retrieval_ms=row[8],
+                generation_ms=row[9],
+                error_code=row[10],
+                created_at=row[11],
+            )
+            for row in rows
+        ],
+    )
+    filename = f"conversation-{str(conversation_id)[:8]}.json"
+    return JSONResponse(
+        content=export.model_dump(mode="json"),
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )

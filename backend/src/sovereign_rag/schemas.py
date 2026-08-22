@@ -96,6 +96,31 @@ class ConversationOut(BaseModel):
     created_at: datetime
 
 
+class MessageExport(BaseModel):
+    """Full persisted record of one message, for the self-service export."""
+
+    id: UUID
+    request_id: UUID
+    role: str
+    content: str
+    sources: list[SourceOut]
+    model: str | None
+    prompt_tokens: int | None
+    completion_tokens: int | None
+    retrieval_ms: int | None
+    generation_ms: int | None
+    error_code: str | None
+    created_at: datetime
+
+
+class ConversationExport(BaseModel):
+    """One conversation as a single downloadable document (nLPD art. 25)."""
+
+    exported_at: datetime
+    conversation: ConversationOut
+    messages: list[MessageExport]
+
+
 class ConversationDetail(BaseModel):
     id: UUID
     title: str

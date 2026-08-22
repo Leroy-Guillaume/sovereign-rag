@@ -89,7 +89,7 @@ and DE texts ship in the demo corpus (see section 7).
 | Art. 7 | Privacy by design and by default | The defaults are local-first (`LLM_PROVIDER=ollama`, `EMBEDDING_PROVIDER=local`): with zero configuration, no data leaves your infrastructure. Any cloud egress is opt-in, requires explicit configuration, and is flagged in `.env.example`. |
 | Art. 8 | Data security | Authenticated API with constant-time key comparison, non-root containers, pinned dependencies (`uv.lock`, `package-lock.json`, frozen builds), image vulnerability gate in CI (Trivy), TLS termination guidance for operators (section 3, A.8.24). |
 | Art. 19-21 | Duty to inform | Operator guidance: inform your users that their prompts and conversation history are stored in your database, and, in the OpenAI-compatible and Azure profiles, name the processor that receives prompts (the endpoint operator or Microsoft) in your privacy notice. |
-| Art. 25 | Right of access | Each user can retrieve their own conversation history through the API (`GET /api/conversations` and `GET /api/conversations/{id}` return only the requester's conversations). A self-service export endpoint is Roadmap (Phase 2). |
+| Art. 25 | Right of access | Each user can retrieve their own conversation history through the API (`GET /api/conversations` and `GET /api/conversations/{id}` return only the requester's conversations), and export any conversation as a single downloadable JSON document (`GET /api/conversations/{id}/export`: full messages, source snapshots, token counts, stage latencies and error codes, nothing held back). |
 
 ## 5. Geneva LIPAD note
 
