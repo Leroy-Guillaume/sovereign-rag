@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { Outlet } from "react-router";
 import { getApiKey, setApiKey } from "./api";
+import { APP_COPY } from "./lib/appCopy";
+import { useLang } from "./lib/lang";
 
 export interface AppOutletContext {
   /** Views call this on ApiError.status === 401 to open the API-key modal. */
@@ -14,6 +16,8 @@ export interface AppOutletContext {
 export default function App() {
   const [showKeyModal, setShowKeyModal] = useState(getApiKey() === null);
   const [keyDraft, setKeyDraft] = useState("");
+  const { lang } = useLang();
+  const t = APP_COPY[lang].modal;
 
   // Stable identity: views hold effects that depend on this callback.
   const outletContext = useMemo<AppOutletContext>(
@@ -37,12 +41,11 @@ export default function App() {
       {showKeyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-7 shadow-2xl">
-            <h2 className="text-lg font-semibold tracking-tight">Clé API requise</h2>
+            <h2 className="text-lg font-semibold tracking-tight">{t.title}</h2>
             <p className="mt-2 text-sm leading-relaxed text-ink-tertiary">
-              Collez une des clés configurées dans{" "}
-              <code className="font-mono text-[13px] text-ink-secondary">AUTH_API_KEYS</code>. Elle
-              reste dans le localStorage de ce navigateur (authentification de démonstration, OIDC
-              en phase 2).
+              {t.bodyBefore}
+              <code className="font-mono text-[13px] text-ink-secondary">AUTH_API_KEYS</code>
+              {t.bodyAfter}
             </p>
             <input
               type="password"
@@ -60,7 +63,7 @@ export default function App() {
               onClick={saveKey}
               className="mt-4 w-full rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-hover"
             >
-              Enregistrer la clé
+              {t.save}
             </button>
           </div>
         </div>

@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import type { AnswerMeta } from "../hooks/useChatStream";
+import { APP_COPY } from "../lib/appCopy";
 import { auditLabel, formatScore } from "../lib/format";
+import { useLang } from "../lib/lang";
 import type { SourceOut } from "../types";
 
 interface SourcesPanelProps {
@@ -32,6 +34,8 @@ export default function SourcesPanel({
   onSelect,
 }: SourcesPanelProps) {
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const { lang } = useLang();
+  const t = APP_COPY[lang].panel;
   const documentCount = new Set(sources.map((source) => source.document_id)).size;
   const maxScore = Math.max(...sources.map((source) => source.score), 0);
   const audit = auditLabel(meta);
@@ -66,16 +70,15 @@ export default function SourcesPanel({
     <aside className="flex w-[360px] shrink-0 flex-col border-l border-black/[0.07] bg-surface-raised">
       <div className="flex h-[52px] shrink-0 items-center justify-between border-b border-black/[0.06] pr-4 pl-5">
         <div>
-          <div className="text-[13px] font-medium">Sources · réponse {answerNumber}</div>
+          <div className="text-[13px] font-medium">{t.title(answerNumber)}</div>
           <div className="mt-0.5 text-[10.5px] text-muted">
-            {sources.length} passage{sources.length > 1 ? "s" : ""} · {documentCount} document
-            {documentCount > 1 ? "s" : ""} · fusion RRF
+            {t.subtitle(sources.length, documentCount)}
           </div>
         </div>
         <button
           type="button"
           onClick={onClose}
-          aria-label="Fermer le panneau des sources"
+          aria-label={t.close}
           className="grid size-6 shrink-0 place-items-center rounded-full bg-black/[0.06] text-xs text-ink-tertiary hover:bg-black/[0.12]"
         >
           ✕
@@ -88,7 +91,7 @@ export default function SourcesPanel({
           const active = activeSource === n;
           const where = [
             source.section,
-            source.page !== null ? `p. ${source.page}` : null,
+            source.page !== null ? `${t.page} ${source.page}` : null,
           ].filter((part): part is string => part !== null);
           return (
             <button
@@ -166,14 +169,15 @@ export default function SourcesPanel({
           <path d="m4 7 1.8 1.8L9.3 5.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
         </svg>
         <div className="text-[10.5px] leading-relaxed text-muted">
-          Instantané d'audit{audit !== null ? <> №{audit}</> : null} : extraits, scores et rangs
-          conservés même si le document est supprimé.{" "}
+          {t.auditBefore}
+          {audit !== null ? <> №{audit}</> : null}
+          {t.auditAfter}{" "}
           <button
             type="button"
             onClick={exportJson}
             className="font-medium text-link hover:underline"
           >
-            Exporter (json)
+            {t.exportJson}
           </button>
         </div>
       </div>

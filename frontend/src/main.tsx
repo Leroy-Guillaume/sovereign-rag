@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import "@fontsource-variable/geist";
 import "@fontsource-variable/geist-mono";
 import App from "./App";
+import { LangProvider } from "./lib/lang";
 import AdminView from "./views/AdminView";
 import ChatView from "./views/ChatView";
 import LandingView from "./views/LandingView";
@@ -36,6 +37,8 @@ if (rootElement === null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <LangProvider>
+      <RouterProvider router={router} />
+    </LangProvider>
   </StrictMode>,
 );

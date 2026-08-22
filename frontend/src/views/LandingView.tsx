@@ -1,27 +1,17 @@
-import { useEffect, useState } from "react";
 import { Link, Navigate, useSearchParams } from "react-router";
 import HeroDemo from "../components/HeroDemo";
 import { staticLanding } from "../lib/env";
-import { LANDING_COPY, LANGS, LANG_STORAGE, type Lang } from "./landingCopy";
+import { LANGS, useLang } from "../lib/lang";
+import { LANDING_COPY } from "./landingCopy";
 
 const REPO_URL = "https://github.com/Leroy-Guillaume/sovereign-rag";
 const COMPLIANCE_URL = REPO_URL + "/blob/main/COMPLIANCE.md";
 const README_URL = REPO_URL + "/blob/main/README.md";
 
-function storedLang(): Lang {
-  const stored = localStorage.getItem(LANG_STORAGE);
-  return LANGS.includes(stored as Lang) ? (stored as Lang) : "en";
-}
-
 export default function LandingView() {
   const [searchParams] = useSearchParams();
-  const [lang, setLang] = useState<Lang>(storedLang);
+  const { lang, setLang } = useLang();
   const t = LANDING_COPY[lang];
-
-  useEffect(() => {
-    localStorage.setItem(LANG_STORAGE, lang);
-    document.documentElement.lang = lang;
-  }, [lang]);
 
   // The chat used to live at "/" with conversations addressed as /?c=<id>.
   // Redirect so old bookmarks keep working.
