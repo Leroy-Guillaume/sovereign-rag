@@ -107,6 +107,11 @@ export interface CitedDocument {
   citations: number;
 }
 
+export interface UnansweredQuestion {
+  question: string;
+  occurrences: number;
+}
+
 export interface AdminMetrics {
   window_days: number;
   answers: number;
@@ -117,4 +122,5 @@ export interface AdminMetrics {
   retrieval: LatencyOut;
   generation: LatencyOut;
   top_cited: CitedDocument[];
+  unanswered: UnansweredQuestion[];
 }

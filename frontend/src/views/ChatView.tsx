@@ -38,12 +38,15 @@ export default function ChatView() {
     if (requestedId === conversationId) {
       return; // already live in memory (we just streamed it)
     }
+    // Navigating to another conversation is explicit intent: it wins over an
+    // in-flight stream. Abort now (the backend persists the partial answer
+    // with error_code=client_disconnect) so the fetch below can hydrate.
+    stop();
     let cancelled = false;
     getConversation(requestedId)
       .then((detail) => {
-        // A slow resolution can land after the user already sent a message
-        // in this conversation: the live stream is fresher than the fetched
-        // history, so hydrating now would abort it and discard their turn.
+        // busyRef only re-arms if the user sent a NEW message after this
+        // navigation: that fresher turn must not be clobbered by history.
         if (cancelled || busyRef.current) return;
         hydrate(
           detail.id,

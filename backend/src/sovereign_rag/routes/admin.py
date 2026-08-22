@@ -12,7 +12,12 @@ from fastapi import APIRouter, Query, Request
 from psycopg.rows import dict_row
 
 from sovereign_rag.auth import AdminUser
-from sovereign_rag.schemas import AdminMetricsOut, CitedDocument, LatencyOut
+from sovereign_rag.schemas import (
+    AdminMetricsOut,
+    CitedDocument,
+    LatencyOut,
+    UnansweredQuestion,
+)
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
@@ -55,6 +60,34 @@ LIMIT 5
 """
 
 
+# A clean zero-source answer means the corpus had nothing relevant: each one
+# is a hint of a document worth indexing. The lateral join walks back to the
+# user question that produced it; grouping is case/whitespace-insensitive and
+# the most recent phrasing represents the group. Provider failures also have
+# empty sources, so error_code IS NULL keeps them out.
+_UNANSWERED = """\
+SELECT (array_agg(q.content ORDER BY m.created_at DESC))[1] AS question,
+       count(*)                                             AS occurrences
+FROM messages m
+CROSS JOIN LATERAL (
+    SELECT content
+    FROM messages q
+    WHERE q.conversation_id = m.conversation_id
+      AND q.role = 'user'
+      AND q.created_at <= m.created_at
+    ORDER BY q.created_at DESC
+    LIMIT 1
+) q
+WHERE m.role = 'assistant'
+  AND m.error_code IS NULL
+  AND jsonb_array_length(m.sources) = 0
+  AND m.created_at >= now() - make_interval(days => %(days)s)
+GROUP BY lower(btrim(q.content))
+ORDER BY occurrences DESC, max(m.created_at) DESC
+LIMIT 10
+"""
+
+
 @router.get("/metrics")
 async def metrics(
     request: Request,
@@ -70,6 +103,8 @@ async def metrics(
         latency = await cur.fetchone()
         await cur.execute(_TOP_CITED, params)
         cited = await cur.fetchall()
+        await cur.execute(_UNANSWERED, params)
+        unanswered = await cur.fetchall()
     assert usage is not None and latency is not None  # aggregates always yield one row
 
     def _ms(value: float | None) -> int | None:
@@ -89,4 +124,5 @@ async def metrics(
             p50_ms=_ms(latency["generation_p50"]), p95_ms=_ms(latency["generation_p95"])
         ),
         top_cited=[CitedDocument(**row) for row in cited],
+        unanswered=[UnansweredQuestion(**row) for row in unanswered],
     )

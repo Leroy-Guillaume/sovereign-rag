@@ -73,6 +73,7 @@ async def test_metrics_empty_database_returns_zeros(api_client: ClientFactory, p
     assert body["errors"] == 0
     assert body["retrieval"] == {"p50_ms": None, "p95_ms": None}
     assert body["top_cited"] == []
+    assert body["unanswered"] == []
 
 
 async def test_metrics_aggregates_the_typed_columns(
@@ -152,3 +153,47 @@ async def test_metrics_days_parameter_widens_the_window(
         for bad in ("0", "366"):
             bad_response = await client.get(f"/api/admin/metrics?days={bad}", headers=AUTH_ADMIN)
             assert bad_response.status_code == 422
+
+
+async def test_metrics_lists_unanswered_questions(
+    api_client: ClientFactory, pg: AsyncConnectionPool
+) -> None:
+    """Clean zero-source answers aggregate back to their user question,
+    case/whitespace-insensitively; provider failures and sourced answers
+    stay out."""
+    async with pg.connection() as conn:
+        conv = uuid4()
+        await conn.execute(
+            "INSERT INTO conversations (id, user_id, title) VALUES (%s, 'alice', 't')",
+            (conv,),
+        )
+        turns: list[tuple[str, str, list[dict[str, str]], str | None]] = [
+            # (role, content, sources, error_code)
+            ("user", "Sanctions eIDAS registre foncier ?", [], None),
+            ("assistant", "Le corpus ne couvre pas ce point.", [], None),
+            ("user", "  sanctions EIDAS registre foncier ?", [], None),
+            ("assistant", "Toujours rien dans le corpus.", [], None),
+            ("user", "Question avec reponse", [], None),
+            ("assistant", "Reponse sourcee [1]", [{"filename": "a.md"}], None),
+            ("user", "Question tombee en erreur", [], None),
+            ("assistant", "", [], "provider_error"),
+        ]
+        # Distinct timestamps per turn, as in production (one transaction per
+        # message); a single test transaction would freeze now() and make the
+        # question/answer pairing ambiguous.
+        for index, (role, content, sources, err) in enumerate(turns):
+            await conn.execute(
+                """INSERT INTO messages
+                   (conversation_id, request_id, role, content, sources, error_code,
+                    created_at)
+                   VALUES (%s, %s, %s, %s, %s, %s,
+                           now() - interval '1 hour' + make_interval(secs => %s))""",
+                (conv, uuid4(), role, content, Jsonb(sources), err, index),
+            )
+    async with _client(api_client) as client:
+        body = (await client.get("/api/admin/metrics", headers=AUTH_ADMIN)).json()
+    assert len(body["unanswered"]) == 1
+    entry = body["unanswered"][0]
+    assert entry["occurrences"] == 2
+    # The most recent phrasing represents the case-insensitive group.
+    assert entry["question"].strip().lower() == "sanctions eidas registre foncier ?"
