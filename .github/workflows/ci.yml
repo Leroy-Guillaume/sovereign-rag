@@ -120,6 +120,70 @@ jobs:
           print("core profile OK: create_app() ran without loading any azure module")
           PY
 
+  bench-smoke:
+    # Retrieval pipeline gate: seed the demo corpus, replay a 10-question
+    # slice of the public bench (cross-lingual included) through /api/chat,
+    # and fail below the floors. No LLM: the sources SSE event is emitted
+    # after retrieval, before generation. Floors are wreck detectors around
+    # the measured e5-small baseline (hit@8 10/10, MRR 0.58), not quality
+    # targets: the full bench with its published numbers stays in bench/.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: rag
+          POSTGRES_PASSWORD: rag
+          POSTGRES_DB: rag_smoke
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - name: Install backend with the local embeddings extra
+        working-directory: backend
+        run: uv sync --frozen --all-extras
+      - name: Cache the embedding model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-e5-small-${{ hashFiles('backend/uv.lock') }}
+      - name: Boot the API and seed the demo corpus
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://rag:rag@localhost:5432/rag_smoke
+          EMBEDDING_PROVIDER: local
+          EMBEDDING_MODEL: intfloat/multilingual-e5-small
+          EMBEDDING_DIMENSIONS: "384"
+          RERANKER_PROVIDER: none
+          LLM_PROVIDER: ollama
+          OLLAMA_BASE_URL: http://localhost:59999
+          AUTH_API_KEYS: '{"sk-demo-admin":"admin"}'
+          AUTH_ADMIN_USERS: '["admin"]'
+          SEED_DEMO_DATA: "true"
+        run: |
+          nohup uv run uvicorn sovereign_rag.main:app --port 8000 > /tmp/api.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:8000/healthz > /dev/null && break
+            sleep 2
+          done
+          for i in $(seq 1 90); do
+            ready=$(curl -s -H "Authorization: Bearer sk-demo-admin"               http://localhost:8000/api/documents               | python3 -c "import json,sys; print(sum(1 for d in json.load(sys.stdin) if d['status']=='ready'))"               || echo 0)
+            [ "$ready" = "3" ] && exit 0
+            sleep 2
+          done
+          echo "demo corpus never became ready"; tail -50 /tmp/api.log; exit 1
+      - name: Replay the smoke golden through the API
+        working-directory: backend
+        run: |
+          uv run ../bench/run.py ci-smoke --golden ../bench/golden_smoke.json             --min-hit8 0.9 --min-mrr 0.45 || { tail -50 /tmp/api.log; exit 1; }
+
   build:
     needs: [test, core-no-azure]
     runs-on: ubuntu-latest
@@ -169,13 +233,17 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # Multi-arch: the arm64 half builds under QEMU; slow on a cold layer
+    # cache (torch install and model bake emulated), then amortized by the
+    # per-scope gha cache.
+    timeout-minutes: 120
     permissions:
       contents: read
       packages: write
       id-token: write # keyless cosign signing via the GitHub OIDC token
     steps:
       - uses: actions/checkout@v5
+      - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
       - uses: sigstore/cosign-installer@v3
       - uses: docker/login-action@v3
@@ -191,6 +259,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: backend
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ghcr.io/${{ steps.ns.outputs.repo }}-api:latest
@@ -202,6 +271,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: frontend
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ghcr.io/${{ steps.ns.outputs.repo }}-frontend:latest

@@ -1,0 +1,62 @@
+[
+  {
+    "q": "Quelles sont les obligations de sécurité selon la nLPD ?",
+    "expect": "nlpd-excerpt",
+    "hint": "Art. 8",
+    "stratum": "S0"
+  },
+  {
+    "q": "Qui surveille l'application de la loi suisse sur la protection des données ?",
+    "expect": "nlpd-excerpt",
+    "hint": "Art. 4",
+    "stratum": "S0"
+  },
+  {
+    "q": "Quel est le droit d'accès de la personne concernée en Suisse ?",
+    "expect": "nlpd-excerpt",
+    "hint": "Art. 25",
+    "stratum": "S0"
+  },
+  {
+    "q": "Was ist das Ziel des schweizerischen Datenschutzgesetzes?",
+    "expect": "dsg-auszug",
+    "hint": "Art. 1",
+    "stratum": "S0"
+  },
+  {
+    "q": "Quelles obligations une société établie en Suisse doit-elle respecter lorsqu'elle exploite des renseignements sur des personnes privées ?",
+    "expect": "nlpd-excerpt",
+    "hint": "",
+    "stratum": "S2"
+  },
+  {
+    "q": "Quels sont les pouvoirs du PFPDT en matière de surveillance de la protection des données en Suisse ?",
+    "expect": "nlpd-excerpt",
+    "hint": "",
+    "stratum": "S3"
+  },
+  {
+    "q": "Je consulte la version allemande de la nouvelle loi suisse sur la protection des données (DSG) : quel est le but déclaré de cette loi à son article premier ?",
+    "expect": "dsg-auszug",
+    "hint": "",
+    "stratum": "S4"
+  },
+  {
+    "q": "Quel rôle le texte allemand de la loi suisse sur la protection des données (DSG) confie-t-il au préposé fédéral (EDÖB) ?",
+    "expect": "dsg-auszug",
+    "hint": "",
+    "stratum": "S4"
+  },
+  {
+    "q": "Comment le DSG suisse définit-il les notions clés, par exemple les données personnelles particulièrement sensibles ?",
+    "expect": "dsg-auszug",
+    "hint": "",
+    "stratum": "S4"
+  },
+  {
+    "q": "Quels principes généraux de traitement (bonne foi, proportionnalité, finalité) le DSG suisse impose-t-il ?",
+    "expect": "dsg-auszug",
+    "hint": "",
+    "stratum": "S4"
+  }
+]
