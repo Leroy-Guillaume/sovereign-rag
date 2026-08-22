@@ -14,6 +14,7 @@ from psycopg.rows import dict_row
 from sovereign_rag.auth import AdminUser
 from sovereign_rag.schemas import (
     AdminMetricsOut,
+    AuditEntry,
     CitedDocument,
     LatencyOut,
     UnansweredQuestion,
@@ -57,6 +58,15 @@ WHERE m.role = 'assistant'
 GROUP BY source ->> 'filename'
 ORDER BY citations DESC, filename
 LIMIT 5
+"""
+
+
+_AUDIT_TRAIL = """\
+SELECT id, at, actor, action, object_type, object_id, detail
+FROM audit_log
+WHERE at >= now() - make_interval(days => %(days)s)
+ORDER BY at DESC, id DESC
+LIMIT %(limit)s
 """
 
 
@@ -126,3 +136,18 @@ async def metrics(
         top_cited=[CitedDocument(**row) for row in cited],
         unanswered=[UnansweredQuestion(**row) for row in unanswered],
     )
+
+
+@router.get("/audit")
+async def audit_trail(
+    request: Request,
+    user: AdminUser,
+    days: int = Query(default=_DEFAULT_WINDOW_DAYS, ge=1, le=365),
+    limit: int = Query(default=100, ge=1, le=1000),
+) -> list[AuditEntry]:
+    """The append-only trail of user actions, newest first (COMPLIANCE A.5.28)."""
+    pool = request.app.state.pool
+    async with pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+        await cur.execute(_AUDIT_TRAIL, {"days": days, "limit": limit})
+        rows = await cur.fetchall()
+    return [AuditEntry(**row) for row in rows]

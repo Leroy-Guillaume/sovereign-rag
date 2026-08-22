@@ -31,7 +31,7 @@ TEST_DATABASE_URL = os.environ.get(
 
 _TRUNCATE_SQL = (
     "TRUNCATE embedding_config, documents, chunks, document_permissions, "
-    "conversations, messages CASCADE"
+    "conversations, messages CASCADE; TRUNCATE audit_log"
 )
 
 _migrations_applied = False

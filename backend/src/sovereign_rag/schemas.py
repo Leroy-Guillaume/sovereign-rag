@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -32,6 +33,18 @@ class LatencyOut(BaseModel):
 class CitedDocument(BaseModel):
     filename: str
     citations: int
+
+
+class AuditEntry(BaseModel):
+    """One append-only audit trail row (COMPLIANCE A.5.28)."""
+
+    id: int
+    at: datetime
+    actor: str
+    action: str
+    object_type: str
+    object_id: str
+    detail: dict[str, Any]
 
 
 class UnansweredQuestion(BaseModel):
