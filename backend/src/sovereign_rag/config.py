@@ -62,7 +62,7 @@ class Settings(BaseSettings):
     # Masks direct identifiers (emails, phones, IBAN, Swiss AVS) in the
     # context passages BEFORE they reach the LLM. Matters on the delegated
     # profiles, where prompts leave the infrastructure.
-    redaction_provider: Literal["none", "patterns"] = "none"
+    redaction_provider: Literal["none", "patterns", "ner"] = "none"
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     reranker_candidates: int = 40  # fused pool size handed to the reranker
 
