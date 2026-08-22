@@ -59,6 +59,10 @@ class Settings(BaseSettings):
 
     # --- Reranking (recall-then-precision; "none" is the measured control arm) ---
     reranker_provider: Literal["none", "local"] = "none"
+    # Masks direct identifiers (emails, phones, IBAN, Swiss AVS) in the
+    # context passages BEFORE they reach the LLM. Matters on the delegated
+    # profiles, where prompts leave the infrastructure.
+    redaction_provider: Literal["none", "patterns"] = "none"
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     reranker_candidates: int = 40  # fused pool size handed to the reranker
 

@@ -41,7 +41,7 @@ def build_messages(
     history: Sequence[ChatMessage],
     question: str,
     hits: Sequence[SearchHit],
-    redact: Callable[[str], str] = lambda text: text,  # no-op: the Phase 2 PII (Presidio) seam
+    redact: Callable[[str], str] = lambda text: text,  # tests only; enforcement: llm/redacting.py
 ) -> list[ChatMessage]:
     """Assemble [system (+ numbered context)] + history + [question].
 
