@@ -29,6 +29,7 @@ from fastapi.responses import JSONResponse
 from psycopg_pool import AsyncConnectionPool
 from structlog.typing import Processor
 
+from .audits import AuditService
 from .auth import ApiKeyAuth
 from .auth_oidc import ChainAuth, OidcAuth
 from .chat.service import ChatService
@@ -44,6 +45,7 @@ from .llm.redacting import RedactingLLMClient
 from .redaction import create_redactor
 from .reranking import get_reranker
 from .routes import admin as admin_routes
+from .routes import audits as audits_routes
 from .routes import chat as chat_routes
 from .routes import documents as documents_routes
 from .routes import health as health_routes
@@ -238,6 +240,18 @@ def create_app(
             )
             started_app.state.ingestion = ingestion
             started_app.state.chat = chat_service
+            audit_service = AuditService(
+                pool=active_pool,
+                llm=active_llm,
+                embedder=active_embedder,
+                store=active_store,
+                settings=app_settings,
+            )
+            started_app.state.audits = audit_service
+            if _is_real_pool(active_pool):
+                # Interrupted audits resume from their per-requirement
+                # checkpoints: the restart costs the remainder, not the run.
+                await audit_service.resume_interrupted()
 
             if (
                 app_settings.seed_demo_data
@@ -265,6 +279,7 @@ def create_app(
         try:
             yield
         finally:
+            await audit_service.shutdown()
             # Drain in-flight ingestion tasks first so their audit rows land
             # before the pool goes away (hard kills rely on the boot sweep).
             await ingestion.wait_idle()
@@ -303,6 +318,7 @@ def create_app(
     application.include_router(documents_routes.router)
     application.include_router(chat_routes.router)
     application.include_router(admin_routes.router)
+    application.include_router(audits_routes.router)
 
     return application
 

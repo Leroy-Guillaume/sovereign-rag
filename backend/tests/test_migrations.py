@@ -74,6 +74,7 @@ async def test_apply_migrations_twice_is_idempotent(
         "0002_lexeme_df.sql",
         "0003_document_permissions.sql",
         "0004_audit_log.sql",
+        "0005_audits.sql",
     ]
 
 

@@ -35,6 +35,30 @@ class CitedDocument(BaseModel):
     citations: int
 
 
+class AuditLaunchIn(BaseModel):
+    regulation_id: UUID
+
+
+class AuditOut(BaseModel):
+    """One compliance audit job, list shape."""
+
+    id: UUID
+    regulation_filename: str
+    status: str
+    error: str | None
+    requirements_total: int
+    findings_done: int
+    gaps: int
+    created_at: datetime
+    completed_at: datetime | None
+
+
+class AuditDetail(AuditOut):
+    requirements: list[dict[str, Any]]
+    findings: list[dict[str, Any]]
+    summary: str
+
+
 class AuditEntry(BaseModel):
     """One append-only audit trail row (COMPLIANCE A.5.28)."""
 
