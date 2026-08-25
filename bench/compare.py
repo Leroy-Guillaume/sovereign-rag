@@ -19,11 +19,15 @@ import argparse
 import json
 import os
 import pathlib
+import sys
 
 import psycopg
 from qembed import as_pgvector, load_qembs
 
 from sovereign_rag.store.pgvector import HYBRID_SEARCH_TEMPLATE, MAX_DF_RATIO, QUERY_STOPLIST
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from _tracking import track
 
 HERE = pathlib.Path(__file__).parent
 DSN = os.environ.get("DATABASE_URL", "postgresql://rag:rag@localhost:5432/rag")
@@ -148,6 +152,12 @@ def main():
         h8 = sum(s["h8"] for s in per.values())
         rr = sum(s["rr"] for s in per.values())
         print(f"{w:<7} {h1:>4}/{n} {h3:>4}/{n} {h8:>4}/{n} {rr / n:>7.3f}")
+        track(
+            "fusion-calibration",
+            f"w_fts={w}",
+            {"w_fts": w, "rrf_k": 60},
+            {"hit_at_1": h1 / n, "hit_at_3": h3 / n, "hit_at_8": h8 / n, "mrr": rr / n},
+        )
 
     print("\n--- and with rrf_k=20 ---")
     for w in [1.0, 0.5, 0.3]:
@@ -164,6 +174,12 @@ def main():
         h8 = sum(s["h8"] for s in per.values())
         rr = sum(s["rr"] for s in per.values())
         print(f"k=20 w={w:<5} {h1:>4}/{n} {h3:>4}/{n} {h8:>4}/{n} {rr / n:>7.3f}")
+        track(
+            "fusion-calibration",
+            f"k=20 w_fts={w}",
+            {"w_fts": w, "rrf_k": 20},
+            {"hit_at_1": h1 / n, "hit_at_3": h3 / n, "hit_at_8": h8 / n, "mrr": rr / n},
+        )
     conn.close()
 
 

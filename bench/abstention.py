@@ -18,6 +18,10 @@ import os
 import pathlib
 import re
 import subprocess
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from _tracking import track
 
 HERE = pathlib.Path(__file__).parent
 BASE_URL = os.environ.get("SOVEREIGN_RAG_URL", "http://localhost:8000")
@@ -76,6 +80,12 @@ def main():
         if not abstained:
             print(f"            -> {text[:130]}")
     print(f"\n  abstention rate : {ok}/{len(cases)} (regex floor; review ANSWERED lines by hand)")
+    track(
+        "abstention",
+        "regex-floor",
+        {"questions": len(cases)},
+        {"abstention_rate": ok / len(cases) if cases else 0.0},
+    )
 
 
 if __name__ == "__main__":
