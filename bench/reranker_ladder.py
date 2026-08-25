@@ -21,6 +21,7 @@ import argparse
 import json
 import os
 import pathlib
+import sys
 import time
 import warnings
 
@@ -28,6 +29,9 @@ import psycopg
 from qembed import as_pgvector, load_qembs
 
 from sovereign_rag.store.pgvector import HYBRID_SEARCH_TEMPLATE, MAX_DF_RATIO, QUERY_STOPLIST
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from _tracking import track
 
 warnings.filterwarnings("ignore")
 
@@ -137,6 +141,12 @@ def main():
                 f"{label:<30} {h1:>4}/{n} {h3:>4}/{n} {h8:>4}/{n} {rr / n:>6.3f}   "
                 f"S2={s2['rr'] / s2['n']:.2f} S5={s5['rr'] / s5['n']:.2f}  ({dur:.0f}s)",
                 flush=True,
+            )
+            track(
+                "reranker",
+                label,
+                {"model": model_id},
+                {"hit_at_1": h1 / n, "hit_at_3": h3 / n, "hit_at_8": h8 / n, "mrr": rr / n},
             )
             del ce
         except Exception as e:

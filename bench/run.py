@@ -31,6 +31,9 @@ BASE_URL = os.environ.get("SOVEREIGN_RAG_URL", "http://localhost:8000")
 API_KEY = os.environ.get("SOVEREIGN_RAG_API_KEY", "sk-demo-admin")
 
 
+MODE = "standard"
+
+
 def search(q):
     out = subprocess.run(
         [
@@ -45,7 +48,7 @@ def search(q):
             "-H",
             "Content-Type: application/json",
             "-d",
-            json.dumps({"message": q}),
+            json.dumps({"message": q, "mode": MODE}),
             "--max-time",
             "180",
         ],
@@ -76,9 +79,16 @@ def main():
     ap.add_argument("--limit", type=int, default=0, help="score only the first N questions")
     ap.add_argument("--min-hit8", type=float, default=0.0, help="fail below this hit@8 ratio")
     ap.add_argument("--min-mrr", type=float, default=0.0, help="fail below this MRR")
+    ap.add_argument("--mode", choices=["standard", "deep"], default="standard")
+    ap.add_argument("--stratum", default="", help="comma list, e.g. S5,S2 (default: all)")
     args = ap.parse_args()
+    global MODE
+    MODE = args.mode
 
     cases = [c for c in json.loads(args.golden.read_text()) if c.get("expect")]
+    if args.stratum:
+        wanted = set(args.stratum.split(","))
+        cases = [c for c in cases if c.get("stratum") in wanted]
     if args.limit > 0:
         cases = cases[: args.limit]
 

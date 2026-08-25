@@ -197,3 +197,11 @@ regulation plus internal policies covering exactly three of them), runs a
 real audit through the API and scores the verdicts: accuracy, gap recall
 and compliant precision. Results: `results/2026-08-compliance.md`; runs
 land in the local MLflow store (experiment `compliance`).
+
+## Deep search A/B
+
+`run.py` takes `--mode deep` and `--stratum S5,S2` to compare the
+multi-agent mode against the single-shot pipeline on the hard strata.
+Verdict and honest hypotheses: `results/2026-08-deep-ab.md` (short
+version: the deep mode does not improve retrieval; its value is
+verification and transparency, at 6.3x the latency).

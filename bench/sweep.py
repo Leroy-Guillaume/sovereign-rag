@@ -19,9 +19,13 @@ import argparse
 import json
 import os
 import pathlib
+import sys
 
 import psycopg
 from qembed import as_pgvector, load_qembs
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from _tracking import track
 
 HERE = pathlib.Path(__file__).parent
 DSN = os.environ.get("DATABASE_URL", "postgresql://rag:rag@localhost:5432/rag")
@@ -155,6 +159,12 @@ def main():
             f"{label:<24} {h1:>4}/{n:<3} {h3:>4}/{n:<3} {h8:>4}/{n:<3} {rr / n:>7.3f}   "
             f"{'; '.join(miss[:2])}{more}"
         )
+        track(
+            "sweep",
+            label,
+            {"variant": label},
+            {"hit_at_1": h1 / n, "hit_at_3": h3 / n, "hit_at_8": h8 / n, "mrr": rr / n},
+        )
 
     print()
     print(
@@ -190,6 +200,12 @@ def main():
         print(
             f"wa={wa} wo={wo:<14} {h1:>4}/{n:<3} {h3:>4}/{n:<3} {h8:>4}/{n:<3} {rr / n:>7.3f}   "
             f"{'; '.join(miss[:2])}{more}"
+        )
+        track(
+            "sweep",
+            f"3legs wa={wa} wo={wo}",
+            {"wa": wa, "wo": str(wo)},
+            {"hit_at_1": h1 / n, "hit_at_3": h3 / n, "hit_at_8": h8 / n, "mrr": rr / n},
         )
     conn.close()
 

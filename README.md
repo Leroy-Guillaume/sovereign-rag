@@ -23,6 +23,12 @@ variables only.
 - **Cloud-optional, not cloud-dependent.** The same code talks to Azure OpenAI or any
   OpenAI-compatible API (vLLM, Infomaniak AI Tools, Mistral) by flipping environment variables.
   Every provider block in `.env.example` is annotated `# data leaves your infra: yes/no`.
+- **Agents when they earn it.** A verified-answer chat mode (every claim
+  checked against its citations before delivery) and a compliance auditor
+  (map a regulation, hunt evidence in your documents under your ACLs, get a
+  cited gap report from resumable background jobs). Both ship with the bench
+  that measured them, including the A/B the deep mode lost on retrieval:
+  what the label promises is exactly what was measured.
 - **Built for regulated Swiss and EU organizations.** Every assistant answer stores an audit
   snapshot of the exact sources shown to the user (excerpt, fused score, per-leg ranks) that
   survives document deletion. See [COMPLIANCE.md](COMPLIANCE.md) for the ISO 27001 / nLPD / LIPAD
@@ -54,7 +60,7 @@ Design decisions and trade-offs are documented in [ARCHITECTURE.md](ARCHITECTURE
 
 The public landing (trilingual EN / FR / DE) plays the demo above; the app itself is two screens.
 
-| Chat: citations open the sources panel | Admin: metrics, documents, sharing |
+| Chat: citations open the sources panel | Admin: metrics, documents, sharing, audits |
 |---|---|
 | ![Chat with the sources panel open: the active citation is highlighted, each passage shows its fused score and per-leg ranks](./assets/chat-sources.png) | ![Admin dashboard: usage, token and latency tiles over a selectable window, document table with per-document sharing](./assets/admin-dashboard.png) |
 
@@ -204,12 +210,20 @@ reproduce every number against a running stack are documented in [`bench/README.
 
 ## Roadmap
 
-- **Phase 2**: audit log, document ACLs, PII-redaction seam (Presidio), admin dashboard
-  (p50/p95 latency, token spend, top cited documents).
-- **Phase 3**: retrieval and answer evaluation: golden dataset FR/DE/EN, recall@k, MRR,
-  LLM-as-judge.
-- **Phase 4**: Azure deployment profile (Terraform: network, private endpoints, managed
-  identity).
+Phases 2 and 3 are delivered and measured: per-document ACLs enforced inside
+the retrieval query, an append-only audit trail, OIDC against your own IdP
+(backend and SPA), PII redaction at the LLM boundary shaped by its own
+bench, the admin dashboard, the public golden dataset with recall@k / MRR
+replayed in CI, and two multi-agent systems (a verified-answer chat mode
+and a resumable compliance auditor) each shipped with the bench that judged
+it. The record lives in [CHANGELOG.md](CHANGELOG.md) and [bench/results/](bench/results/).
+
+Still open, honestly:
+
+- **Phase 4**: Azure deployment profile (Terraform: network, private endpoints,
+  managed identity) and Entra ID guidance.
+- Group-based ACLs mapped from the IdP; a faithfulness bench for the
+  verified-answer mode; ambiguity strata for the compliance-audit bench.
 
 Both images are plain OCI containers: the stack ports to AKS (or any Kubernetes) by externalizing
 Postgres and secrets, with no code change required.

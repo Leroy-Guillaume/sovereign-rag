@@ -17,6 +17,7 @@ import argparse
 import json
 import os
 import pathlib
+import sys
 import time
 import warnings
 
@@ -24,6 +25,9 @@ import psycopg
 from qembed import as_pgvector, load_qembs
 
 from sovereign_rag.store.pgvector import HYBRID_SEARCH_TEMPLATE, MAX_DF_RATIO, QUERY_STOPLIST
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from _tracking import track
 
 warnings.filterwarnings("ignore")
 
@@ -95,6 +99,12 @@ def report(label, per, lat):
     extra = ""
     if lat:
         extra = f"  rerank latency p50={sorted(lat)[len(lat) // 2]:.0f}ms max={max(lat):.0f}ms"
+    track(
+        "reranker",
+        label,
+        {"arm": label},
+        {"hit_at_1": h1 / n, "hit_at_3": h3 / n, "hit_at_8": h8 / n, "mrr": rr / n},
+    )
     print(f"===== {label} =====")
     print(
         f"  hit@1={h1}/{n} ({100 * h1 / n:.0f}%)  hit@3={h3}/{n} ({100 * h3 / n:.0f}%)  "

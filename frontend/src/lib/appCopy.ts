@@ -195,7 +195,7 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       hints: "⏎ send · ⇧⏎ new line · questions in FR, DE, EN",
       stop: "■ stop",
       send: "Send",
-      deepToggle: "Deep research",
+      deepToggle: "Verified answer",
     },
     steps: {
       planner: "Planning",
@@ -345,7 +345,7 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       hints: "⏎ envoyer · ⇧⏎ nouvelle ligne · questions en FR, DE, EN",
       stop: "■ arrêter",
       send: "Envoyer",
-      deepToggle: "Recherche approfondie",
+      deepToggle: "Réponse vérifiée",
     },
     steps: {
       planner: "Planification",
@@ -495,7 +495,7 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       hints: "⏎ senden · ⇧⏎ neue Zeile · Fragen auf FR, DE, EN",
       stop: "■ stoppen",
       send: "Senden",
-      deepToggle: "Tiefenrecherche",
+      deepToggle: "Geprüfte Antwort",
     },
     steps: {
       planner: "Planung",
