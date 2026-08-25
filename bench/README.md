@@ -189,3 +189,11 @@ Note on `redaction_eval.py`: the `uv run --script` invocation documented
 above builds its own lean PEP 723 environment, which deliberately does not
 include mlflow, so it never records. To record a redaction run, invoke it
 from `backend/` with the tracking group synced, as shown here.
+
+## Compliance auditor bench
+
+`compliance_eval.py` builds a fully synthetic ground truth (a six-article
+regulation plus internal policies covering exactly three of them), runs a
+real audit through the API and scores the verdicts: accuracy, gap recall
+and compliant precision. Results: `results/2026-08-compliance.md`; runs
+land in the local MLflow store (experiment `compliance`).
