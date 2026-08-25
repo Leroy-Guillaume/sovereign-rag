@@ -66,6 +66,42 @@ export interface Me {
   roles: string[];
 }
 
+export interface AuditOut {
+  id: string;
+  regulation_filename: string;
+  status: "queued" | "running" | "completed" | "failed";
+  error: string | null;
+  requirements_total: number;
+  findings_done: number;
+  gaps: number;
+  created_at: string;
+  completed_at: string | null;
+}
+
+export interface AuditRequirement {
+  /** Article or section reference inside the regulation, e.g. "Art. 7 al. 2". */
+  ref: string;
+  text: string;
+}
+
+export interface AuditEvidence {
+  filename: string;
+  excerpt: string;
+}
+
+export interface AuditFinding {
+  ref: string;
+  verdict: "compliant" | "gap" | "indeterminate";
+  rationale: string;
+  evidence: AuditEvidence[];
+}
+
+export interface AuditDetail extends AuditOut {
+  requirements: AuditRequirement[];
+  findings: AuditFinding[];
+  summary: string;
+}
+
 // --- SSE payloads for POST /api/chat, in stream order -----------------------
 
 export interface ChatStartData {

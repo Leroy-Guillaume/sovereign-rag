@@ -1,6 +1,8 @@
 import { freshOidcToken } from "./lib/oidc";
 import type {
   AdminMetrics,
+  AuditDetail,
+  AuditOut,
   ChatStepData,
   ChatDeltaData,
   ChatDoneData,
@@ -133,6 +135,23 @@ export function revokePermission(documentId: string, principal: string): Promise
     `/api/documents/${documentId}/permissions/${encodeURIComponent(principal)}`,
     { method: "DELETE" },
   );
+}
+
+/** 202 on launch: the audit runs async, poll listAudits for progress. */
+export function launchAudit(regulationId: string): Promise<AuditOut> {
+  return request<AuditOut>("/api/audits", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ regulation_id: regulationId }),
+  });
+}
+
+export function listAudits(): Promise<AuditOut[]> {
+  return request<AuditOut[]>("/api/audits");
+}
+
+export function getAudit(id: string): Promise<AuditDetail> {
+  return request<AuditDetail>(`/api/audits/${id}`);
 }
 
 /** "sk-····d4a2" style display form of the stored key (sidebar and admin bar). */

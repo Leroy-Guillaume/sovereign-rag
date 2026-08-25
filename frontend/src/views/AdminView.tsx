@@ -4,7 +4,10 @@ import {
   ApiError,
   deleteDocument,
   getAdminMetrics,
+  getAudit,
   grantPermission,
+  launchAudit,
+  listAudits,
   listDocuments,
   listPermissions,
   maskedApiKey,
@@ -25,13 +28,20 @@ import {
   formatSize,
 } from "../lib/format";
 import { LangSwitcher, useLang } from "../lib/lang";
-import type { AdminMetrics, DocumentOut, PermissionOut } from "../types";
+import type { AdminMetrics, AuditDetail, AuditOut, DocumentOut, PermissionOut } from "../types";
 
 const DAY_OPTIONS = [7, 30, 90] as const;
 type WindowDays = (typeof DAY_OPTIONS)[number];
 
 const TABLE_COLUMNS = "grid-cols-[2.1fr_0.6fr_1.1fr_1.5fr_0.8fr_0.5fr]";
+const AUDIT_COLUMNS = "grid-cols-[2.1fr_2fr_0.8fr]";
 const CARD = "rounded-[18px] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.07)]";
+
+const VERDICT_TONE = {
+  compliant: "text-ok",
+  gap: "text-danger",
+  indeterminate: "text-muted",
+} as const;
 
 function MetricTile(props: { label: string; value: ReactNode; caption: ReactNode }) {
   return (
@@ -49,9 +59,13 @@ export default function AdminView() {
   const { onUnauthorized } = useOutletContext<AppOutletContext>();
   const { lang } = useLang();
   const t = APP_COPY[lang].admin;
+  const ta = APP_COPY[lang].audits;
   const [access, setAccess] = useState<"loading" | "granted" | "forbidden">("loading");
   const [documents, setDocuments] = useState<DocumentOut[]>([]);
   const [permissionsByDoc, setPermissionsByDoc] = useState<Record<string, PermissionOut[]>>({});
+  const [audits, setAudits] = useState<AuditOut[]>([]);
+  const [auditDraft, setAuditDraft] = useState("");
+  const [expandedAudit, setExpandedAudit] = useState<AuditDetail | null>(null);
   const [metrics, setMetrics] = useState<AdminMetrics | null>(null);
   const [days, setDays] = useState<WindowDays>(30);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -130,9 +144,24 @@ export default function AdminView() {
     };
   }, [onUnauthorized]);
 
+  // No setActionError(null) on success here: while an audit runs the list is
+  // polled every 2 s, and that poll must not wipe a just-surfaced launch error
+  // (the 409 "already running" case) before the user can read it.
+  const refreshAudits = useCallback(async () => {
+    try {
+      setAudits(await listAudits());
+    } catch (err) {
+      handleApiError(err, ta.errLoad);
+    }
+  }, [handleApiError]);
+
   useEffect(() => {
     if (access === "granted") void refreshDocuments(true);
   }, [access, refreshDocuments]);
+
+  useEffect(() => {
+    if (access === "granted") void refreshAudits();
+  }, [access, refreshAudits]);
 
   useEffect(() => {
     if (access === "granted") void refreshMetrics();
@@ -151,6 +180,19 @@ export default function AdminView() {
       window.clearInterval(timer);
     };
   }, [access, documents, refreshDocuments]);
+
+  // Same cadence for audit jobs: poll while one is queued or running, tear the
+  // interval down as soon as every audit has settled.
+  useEffect(() => {
+    if (access !== "granted") return;
+    if (!audits.some((audit) => audit.status === "queued" || audit.status === "running")) return;
+    const timer = window.setInterval(() => {
+      void refreshAudits();
+    }, 2000);
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [access, audits, refreshAudits]);
 
   async function handleFiles(files: FileList | null) {
     if (files === null || files.length === 0) return;
@@ -219,6 +261,44 @@ export default function AdminView() {
     setEditingId((prev) => (prev === id ? null : id));
   }
 
+  async function handleLaunchAudit(regulationId: string) {
+    if (regulationId === "") return;
+    setActionError(null);
+    try {
+      await launchAudit(regulationId);
+      await refreshAudits();
+    } catch (err) {
+      handleApiError(err, ta.errLaunch);
+    }
+  }
+
+  // One report open at a time, like the ACL editor above. Only completed
+  // audits have a report worth fetching.
+  async function toggleAudit(audit: AuditOut) {
+    if (audit.status !== "completed") return;
+    if (expandedAudit !== null && expandedAudit.id === audit.id) {
+      setExpandedAudit(null);
+      return;
+    }
+    try {
+      setExpandedAudit(await getAudit(audit.id));
+    } catch (err) {
+      handleApiError(err, ta.errDetail);
+    }
+  }
+
+  function exportAudit(detail: AuditDetail) {
+    // Same hand-to-an-auditor copy as the sources panel export: the full
+    // report (requirements, findings, evidence) as the reviewer saw it.
+    const blob = new Blob([JSON.stringify(detail, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `audit-conformite-${detail.id.slice(0, 8)}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   if (access === "loading") {
     return (
       <div className="flex h-screen items-center justify-center bg-surface text-sm text-muted">
@@ -259,6 +339,12 @@ export default function AdminView() {
       : null;
   const topCited = metrics?.top_cited ?? [];
   const maxCitations = topCited.reduce((max, entry) => Math.max(max, entry.citations), 0);
+  const readyDocuments = documents.filter((doc) => doc.status === "ready");
+  // The draft survives re-renders but falls back to the first ready document,
+  // so the select never points at a document that got deleted meanwhile.
+  const auditTarget = readyDocuments.some((doc) => doc.id === auditDraft)
+    ? auditDraft
+    : (readyDocuments[0]?.id ?? "");
 
   return (
     <div className="flex h-screen flex-col bg-surface text-ink">
@@ -671,6 +757,126 @@ export default function AdminView() {
                 )}
               </div>
             </div>
+          </div>
+
+          <div className={`mt-4 ${CARD} overflow-hidden`}>
+            <div className="flex items-center justify-between gap-4 px-6 pt-5 pb-4">
+              <span className="text-[15px] font-medium">{ta.title}</span>
+              <div className="flex items-center gap-2">
+                <select
+                  value={auditTarget}
+                  onChange={(event) => setAuditDraft(event.target.value)}
+                  aria-label={ta.selectLabel}
+                  disabled={readyDocuments.length === 0}
+                  className="max-w-72 rounded-full bg-white px-3.5 py-1.5 text-xs text-ink shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] focus:outline-none focus:ring-2 focus:ring-accent disabled:text-faint"
+                >
+                  {readyDocuments.length === 0 && <option value="">{ta.selectLabel}</option>}
+                  {readyDocuments.map((doc) => (
+                    <option key={doc.id} value={doc.id}>
+                      {doc.filename}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => void handleLaunchAudit(auditTarget)}
+                  disabled={auditTarget === ""}
+                  className="shrink-0 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white hover:bg-accent-hover disabled:opacity-50"
+                >
+                  {ta.launch}
+                </button>
+              </div>
+            </div>
+
+            {audits.map((audit) => (
+              <Fragment key={audit.id}>
+                <div
+                  onClick={() => void toggleAudit(audit)}
+                  className={`grid ${AUDIT_COLUMNS} items-center gap-3.5 border-t border-black/[0.07] px-6 py-3 text-[13px] ${
+                    audit.status === "completed" ? "cursor-pointer hover:bg-surface-raised" : ""
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{audit.regulation_filename}</div>
+                    {audit.status === "failed" && audit.error !== null && (
+                      <div className="mt-0.5 text-[11px] text-danger">{audit.error}</div>
+                    )}
+                  </div>
+                  {audit.status === "completed" ? (
+                    <span className="text-xs">
+                      <span className="text-ok">{ta.completed}</span>
+                      <span className="text-ink-tertiary">
+                        {" "}
+                        · {ta.requirements(formatInt(audit.requirements_total))}
+                      </span>
+                      {audit.gaps > 0 && (
+                        <span className="text-danger"> · {ta.gaps(formatInt(audit.gaps))}</span>
+                      )}
+                    </span>
+                  ) : audit.status === "failed" ? (
+                    <span className="text-xs text-danger">{ta.failed}</span>
+                  ) : (
+                    <span className="animate-pulse text-xs text-link">
+                      {audit.status === "queued" ? ta.queued : ta.running} · {audit.findings_done}/
+                      {audit.requirements_total}
+                    </span>
+                  )}
+                  <span className="text-right text-xs text-muted">
+                    {formatDate(audit.created_at)}
+                  </span>
+                </div>
+
+                {expandedAudit !== null && expandedAudit.id === audit.id && (
+                  <div className="border-t border-black/[0.07] bg-surface-raised px-6 py-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10.5px] font-medium tracking-wide text-muted uppercase">
+                        {ta.summary}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => exportAudit(expandedAudit)}
+                        className="text-xs text-link hover:underline"
+                      >
+                        {ta.exportJson}
+                      </button>
+                    </div>
+                    <p className="mt-2 max-w-[880px] text-[13px] leading-relaxed text-ink-secondary">
+                      {expandedAudit.summary}
+                    </p>
+                    <div className="mt-4 flex flex-col gap-3">
+                      {expandedAudit.findings.map((finding) => (
+                        <div key={finding.ref} className="min-w-0 text-[12.5px]">
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-mono text-xs text-ink-secondary">
+                              {finding.ref}
+                            </span>
+                            <span
+                              className={`text-[11px] font-medium ${VERDICT_TONE[finding.verdict]}`}
+                            >
+                              {ta.verdicts[finding.verdict]}
+                            </span>
+                          </div>
+                          <div className="mt-0.5 max-w-[880px] leading-relaxed text-ink-secondary">
+                            {finding.rationale}
+                          </div>
+                          {finding.evidence.map((item, index) => (
+                            <div key={index} className="mt-0.5 truncate text-xs text-muted">
+                              {item.filename}: {item.excerpt}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </Fragment>
+            ))}
+
+            {audits.length === 0 && (
+              <div className="border-t border-black/[0.07] py-8 text-center text-sm text-muted">
+                {ta.empty}
+              </div>
+            )}
           </div>
         </div>
       </div>

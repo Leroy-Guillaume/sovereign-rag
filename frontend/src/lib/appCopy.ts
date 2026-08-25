@@ -124,6 +124,24 @@ export interface AppCopy {
     errRevoke: string;
     errVerify: string;
   };
+  audits: {
+    title: string;
+    selectLabel: string;
+    launch: string;
+    queued: string;
+    running: string;
+    completed: string;
+    failed: string;
+    verdicts: { compliant: string; gap: string; indeterminate: string };
+    requirements: (n: string) => string;
+    gaps: (n: string) => string;
+    summary: string;
+    exportJson: string;
+    empty: string;
+    errLaunch: string;
+    errLoad: string;
+    errDetail: string;
+  };
 }
 
 export const APP_COPY: Record<Lang, AppCopy> = {
@@ -258,6 +276,24 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       errRevoke: "revoke failed",
       errVerify: "Could not verify access rights",
     },
+    audits: {
+      title: "Compliance audits",
+      selectLabel: "Regulation to audit",
+      launch: "Launch the audit",
+      queued: "queued",
+      running: "running",
+      completed: "completed",
+      failed: "failed",
+      verdicts: { compliant: "compliant", gap: "gap", indeterminate: "indeterminate" },
+      requirements: (n) => `${n} requirements`,
+      gaps: (n) => `${n} gaps`,
+      summary: "Summary",
+      exportJson: "Export (json)",
+      empty: "No audits yet. Pick a regulation and launch the first one.",
+      errLaunch: "audit launch failed",
+      errLoad: "Failed to load the audits",
+      errDetail: "failed to load the audit report",
+    },
   },
   fr: {
     modal: {
@@ -389,6 +425,24 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       errShare: "échec du partage",
       errRevoke: "échec de la révocation",
       errVerify: "Impossible de vérifier les droits",
+    },
+    audits: {
+      title: "Audits de conformité",
+      selectLabel: "Règlement à auditer",
+      launch: "Lancer l'audit",
+      queued: "en file",
+      running: "en cours",
+      completed: "terminé",
+      failed: "échec",
+      verdicts: { compliant: "conforme", gap: "écart", indeterminate: "indéterminé" },
+      requirements: (n) => `${n} exigences`,
+      gaps: (n) => `${n} écarts`,
+      summary: "Synthèse",
+      exportJson: "Exporter (json)",
+      empty: "Aucun audit pour l'instant. Choisissez un règlement et lancez le premier.",
+      errLaunch: "échec du lancement de l'audit",
+      errLoad: "Échec du chargement des audits",
+      errDetail: "échec du chargement du rapport d'audit",
     },
   },
   de: {
@@ -522,6 +576,24 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       errShare: "Freigabe fehlgeschlagen",
       errRevoke: "Widerruf fehlgeschlagen",
       errVerify: "Zugriffsrechte konnten nicht geprüft werden",
+    },
+    audits: {
+      title: "Compliance-Audits",
+      selectLabel: "Zu auditierendes Reglement",
+      launch: "Audit starten",
+      queued: "in Warteschlange",
+      running: "läuft",
+      completed: "abgeschlossen",
+      failed: "fehlgeschlagen",
+      verdicts: { compliant: "konform", gap: "Lücke", indeterminate: "unbestimmt" },
+      requirements: (n) => `${n} Anforderungen`,
+      gaps: (n) => `${n} Lücken`,
+      summary: "Zusammenfassung",
+      exportJson: "Exportieren (json)",
+      empty: "Noch keine Audits. Wählen Sie ein Reglement und starten Sie das erste.",
+      errLaunch: "Audit-Start fehlgeschlagen",
+      errLoad: "Audits konnten nicht geladen werden",
+      errDetail: "Audit-Bericht konnte nicht geladen werden",
     },
   },
 };
