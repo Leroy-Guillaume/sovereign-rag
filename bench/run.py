@@ -24,6 +24,8 @@ import re
 import subprocess
 import time
 
+from _tracking import track
+
 HERE = pathlib.Path(__file__).parent
 BASE_URL = os.environ.get("SOVEREIGN_RAG_URL", "http://localhost:8000")
 API_KEY = os.environ.get("SOVEREIGN_RAG_API_KEY", "sk-demo-admin")
@@ -100,6 +102,7 @@ def main():
         else:
             miss.append(c["q"][:62])
     n = len(cases)
+    elapsed = time.time() - t0
     print(f"===== {args.label} =====")
     print(f"  questions : {n}")
     print(f"  hit@1  : {h1}/{n}  ({100 * h1 / n:.0f} %)")
@@ -108,12 +111,33 @@ def main():
     print(f"  hit@8  : {h8}/{n}  ({100 * h8 / n:.0f} %)")
     print(f"  MRR    : {rr / n:.3f}")
     print(f"  lexical contribution : {fts}/{tot} sources ({100 * fts / tot if tot else 0:.0f} %)")
-    print(f"  elapsed : {time.time() - t0:.0f} s")
+    print(f"  elapsed : {elapsed:.0f} s")
     if miss:
         print(f"  MISSES ({len(miss)}):")
         for m in miss:
             print(f"    - {m}")
     mrr = rr / n
+    track(
+        "retrieval",
+        args.label,
+        params={
+            "golden": args.golden.name,
+            "limit": args.limit,
+            "min_hit8": args.min_hit8,
+            "min_mrr": args.min_mrr,
+            "base_url": BASE_URL,
+        },
+        metrics={
+            "hit_at_1": h1 / n,
+            "hit_at_3": h3 / n,
+            "hit_at_5": h5 / n,
+            "hit_at_8": h8 / n,
+            "mrr": mrr,
+            "lexical_contribution": fts / tot if tot else 0.0,
+            "questions": n,
+            "elapsed_s": elapsed,
+        },
+    )
     if h8 / n < args.min_hit8 or mrr < args.min_mrr:
         print(
             f"GATE FAILED: hit@8 {h8}/{n} (floor {args.min_hit8:.2f}), "

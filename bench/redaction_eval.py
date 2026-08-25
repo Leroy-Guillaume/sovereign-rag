@@ -38,6 +38,8 @@ from collections.abc import Callable
 HERE = pathlib.Path(__file__).parent
 sys.path.insert(0, str(HERE.parent / "backend" / "src"))
 
+from _tracking import track  # noqa: E402
+
 from sovereign_rag.redaction import guess_language, redact_patterns  # noqa: E402
 
 _WS = re.compile(r"\s+")
@@ -192,6 +194,24 @@ def main() -> None:
         )
     fp = 100 * rewritten / len(clean)
     print(f"  clean rewritten (false positives): {rewritten}/{len(clean)} ({fp:.0f} %)")
+    metrics = {
+        "recall_overall": overall_hit / overall_tot,
+        "clean_fp_ratio": rewritten / len(clean),
+        "ms_per_case": per_case * 1000,
+    }
+    for kind in sorted(totals):
+        metrics[f"recall_{kind}"] = hits[kind] / totals[kind]
+    track(
+        "redaction",
+        args.engine,
+        params={
+            "engine": args.engine,
+            "limit": args.limit,
+            "cases": len(cases),
+            "clean": len(clean),
+        },
+        metrics=metrics,
+    )
 
 
 if __name__ == "__main__":

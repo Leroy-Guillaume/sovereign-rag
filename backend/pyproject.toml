@@ -16,6 +16,7 @@ dependencies = [
   "python-docx>=1.1",
   "python-multipart>=0.0.17",
   "pyjwt[crypto]>=2.10",
+  "cryptography>=50",  # floor: CVE-2026-69247 fixed in 50.0.0; a relock once regressed below it
   "langgraph>=1.0",
 ]
 
@@ -48,6 +49,9 @@ pii = [
 [dependency-groups]
 dev = ["pytest>=8", "pytest-asyncio>=0.24", "pytest-cov", "respx>=0.21",
        "ruff>=0.8", "pyright>=1.1.390"]
+# Opt-in experiment tracking for the bench harness (bench/_tracking.py).
+# Never part of the default sync: CI and the product runtime stay mlflow-free.
+tracking = ["mlflow>=3"]
 
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
