@@ -156,3 +156,36 @@ type, clean-text rewrites and latency:
     uv run --script bench/redaction_eval.py --engine person-detect
 
 Results and the shipping verdict: `results/2026-08-redaction.md`.
+
+## Experiment tracking (optional)
+
+The runners can record their scores to a local MLflow file store, so runs
+stay comparable across weeks without grepping terminal scrollback. It is
+strictly opt-in: `bench/_tracking.py` is a silent no-op unless mlflow is
+installed, the store is a plain directory under `~/AI/runs/`, and nothing
+ever leaves the machine. The product runtime (`backend/src`) never imports
+mlflow, and CI never installs it (the `tracking` dependency group is not
+part of the default sync).
+
+Enable it, then run the benches from `backend/` so they see the group:
+
+    cd backend
+    uv sync --group tracking
+    uv run python ../bench/run.py "my label"
+    uv run python ../bench/redaction_eval.py --engine patterns
+    uv run python ../bench/agents/toolcall_probe.py --model qwen3:14b
+
+Runs land in `~/AI/runs/sovereign-rag-mlflow` (override with
+`MLFLOW_TRACKING_URI`). Browse them from `backend/` with:
+
+    MLFLOW_ALLOW_FILE_STORE=true uv run --group tracking mlflow ui \
+        --backend-store-uri file:$HOME/AI/runs/sovereign-rag-mlflow
+
+(`$HOME`, not `~`: mlflow does not expand the tilde inside a `file:` URI.
+The env var opts in to the plain-file backend, which MLflow 3.15 put in
+maintenance mode; for a local single-user store it is exactly right.)
+
+Note on `redaction_eval.py`: the `uv run --script` invocation documented
+above builds its own lean PEP 723 environment, which deliberately does not
+include mlflow, so it never records. To record a redaction run, invoke it
+from `backend/` with the tracking group synced, as shown here.

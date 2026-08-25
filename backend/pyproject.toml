@@ -47,6 +47,9 @@ pii = [
 [dependency-groups]
 dev = ["pytest>=8", "pytest-asyncio>=0.24", "pytest-cov", "respx>=0.21",
        "ruff>=0.8", "pyright>=1.1.390"]
+# Opt-in experiment tracking for the bench harness (bench/_tracking.py).
+# Never part of the default sync: CI and the product runtime stay mlflow-free.
+tracking = ["mlflow>=3"]
 
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
