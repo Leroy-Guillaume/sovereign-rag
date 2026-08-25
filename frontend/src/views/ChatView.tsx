@@ -149,7 +149,7 @@ export default function ChatView() {
                 {error ?? exportError}
               </div>
             )}
-            <MessageInput busy={busy} onSend={(text) => void send(text)} onStop={stop} />
+            <MessageInput busy={busy} onSend={(text, mode) => void send(text, mode)} onStop={stop} />
           </div>
         </div>
       </main>

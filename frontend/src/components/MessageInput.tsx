@@ -2,21 +2,24 @@ import { useState, type KeyboardEvent } from "react";
 import { APP_COPY } from "../lib/appCopy";
 import { useLang } from "../lib/lang";
 
+export type ChatMode = "standard" | "deep";
+
 interface MessageInputProps {
   busy: boolean;
-  onSend: (text: string) => void;
+  onSend: (text: string, mode: ChatMode) => void;
   onStop: () => void;
 }
 
 export default function MessageInput({ busy, onSend, onStop }: MessageInputProps) {
   const [text, setText] = useState("");
+  const [mode, setMode] = useState<ChatMode>("standard");
   const { lang } = useLang();
   const t = APP_COPY[lang].composer;
 
   function submit() {
     const trimmed = text.trim();
     if (trimmed === "" || busy) return;
-    onSend(trimmed);
+    onSend(trimmed, mode);
     setText("");
   }
 
@@ -58,8 +61,22 @@ export default function MessageInput({ busy, onSend, onStop }: MessageInputProps
           </svg>
         </button>
       </div>
-      <div className="mt-2 flex justify-between px-1.5 text-[11px] text-muted">
-        <span>{t.hints}</span>
+      <div className="mt-2 flex items-center justify-between px-1.5 text-[11px] text-muted">
+        <span className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setMode(mode === "deep" ? "standard" : "deep")}
+            aria-pressed={mode === "deep"}
+            className={`rounded-full px-2.5 py-0.5 transition-colors ${
+              mode === "deep"
+                ? "bg-accent font-medium text-white"
+                : "bg-surface text-muted hover:text-ink-secondary"
+            }`}
+          >
+            {t.deepToggle}
+          </button>
+          <span>{t.hints}</span>
+        </span>
         {busy && (
           <button type="button" onClick={onStop} className="text-link hover:underline">
             {t.stop}

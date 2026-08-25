@@ -9,20 +9,21 @@ import contextlib
 import time
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Literal, cast
 from uuid import UUID, uuid4
 
 import structlog
 from psycopg.types.json import Jsonb
 from psycopg_pool import AsyncConnectionPool
 
+from ..agents.graph import DeepDeps, build_deep_graph, initial_state
 from ..auth import User
 from ..config import Settings
 from ..embeddings.base import EmbeddingClient
 from ..errors import ProviderError
 from ..llm.base import ChatMessage, LLMClient
 from ..reranking.base import Reranker
-from ..store.base import VectorStore
+from ..store.base import SearchHit, VectorStore
 from .prompts import build_messages, hits_to_sources
 
 logger = structlog.get_logger()
@@ -75,7 +76,7 @@ class ChatEvent:
     wire contract requires a JSON array (list of SourceOut-shaped dicts).
     """
 
-    type: Literal["start", "sources", "delta", "done", "error"]
+    type: Literal["start", "step", "sources", "delta", "done", "error"]
     data: dict[str, Any] | list[dict[str, Any]]
 
 
@@ -109,8 +110,53 @@ class ChatService:
         self._settings = settings
         self._reranker = reranker
 
+    async def _run_deep(
+        self, user: User, message: str
+    ) -> AsyncIterator[tuple[str, dict[str, Any]]]:
+        """Run the deep graph, yielding ("step", ...) live and one final
+        ("result", {hits, draft}) where draft is None on abstention."""
+        queue: asyncio.Queue[tuple[str, dict[str, Any]] | None] = asyncio.Queue()
+
+        async def emit(agent: str, detail: str) -> None:
+            await queue.put(("step", {"agent": agent, "detail": detail}))
+
+        deps = DeepDeps(
+            llm=self._llm,
+            embedder=self._embedder,
+            store=self._store,
+            reranker=self._reranker,
+            settings=self._settings,
+            user=user,
+            emit=emit,
+        )
+        graph = build_deep_graph(deps)
+
+        async def run() -> dict[str, Any]:
+            return await graph.ainvoke(initial_state(message))
+
+        task = asyncio.create_task(run())
+        task.add_done_callback(lambda _t: queue.put_nowait(None))
+        while True:
+            item = await queue.get()
+            if item is None:
+                break
+            yield item
+        final = task.result()  # re-raises graph failures into the SSE error path
+        delivered = final["outcome"] == "delivered"
+        yield (
+            "result",
+            {
+                "hits": final["evidence"] if delivered else [],
+                "draft": final["draft"] if delivered else None,
+            },
+        )
+
     async def stream_reply(
-        self, user: User, conversation_id: UUID | None, message: str
+        self,
+        user: User,
+        conversation_id: UUID | None,
+        message: str,
+        mode: Literal["standard", "deep"] = "standard",
     ) -> AsyncIterator[ChatEvent]:
         """Yield start / sources / delta* / (done | error) for one user turn.
 
@@ -138,6 +184,57 @@ class ChatService:
         generation_started: float | None = None
         finished = False
         try:
+            prewritten: str | None = None
+            if mode == "deep":
+                # The graph streams its node steps live; start goes out first
+                # so the client can render them under the right conversation.
+                yield ChatEvent(type="start", data={"conversation_id": str(conv_id)})
+                t0 = time.perf_counter()
+                hits = []
+                async for kind, payload in self._run_deep(user, message):
+                    if kind == "step":
+                        yield ChatEvent(type="step", data=payload)
+                    else:
+                        hits = cast("list[SearchHit]", payload["hits"])
+                        prewritten = cast("str | None", payload["draft"])
+                retrieval_ms = int((time.perf_counter() - t0) * 1000)
+                sources = hits_to_sources(hits)
+                yield ChatEvent(type="sources", data=sources)
+                generation_started = time.perf_counter()
+                if prewritten is not None:
+                    # The verified draft is already written; pace it out in
+                    # delta-sized slices so the UI renders like a stream.
+                    for i in range(0, len(prewritten), 80):
+                        piece = prewritten[i : i + 80]
+                        accumulated.append(piece)
+                        yield ChatEvent(type="delta", data={"text": piece})
+                else:
+                    # Abstention: zero evidence survived; the standard
+                    # no-context generation phrases the refusal in the
+                    # question's language, exactly like the single-shot path.
+                    messages = build_messages(history, message, [])
+                    async for chunk in self._llm.stream_chat(messages):
+                        if chunk.delta:
+                            accumulated.append(chunk.delta)
+                            yield ChatEvent(type="delta", data={"text": chunk.delta})
+                        if chunk.prompt_tokens is not None:
+                            prompt_tokens = chunk.prompt_tokens
+                        if chunk.completion_tokens is not None:
+                            completion_tokens = chunk.completion_tokens
+                generation_ms = int((time.perf_counter() - generation_started) * 1000)
+                finished = True
+                yield ChatEvent(
+                    type="done",
+                    data={
+                        "message_id": str(message_id),
+                        "prompt_tokens": prompt_tokens,
+                        "completion_tokens": completion_tokens,
+                        "retrieval_ms": retrieval_ms,
+                        "generation_ms": generation_ms,
+                    },
+                )
+                return
+
             t0 = time.perf_counter()
             query_embedding = await self._embedder.embed_query(message)
             # Recall-then-precision: with a reranker the fused query over-fetches

@@ -49,6 +49,13 @@ export interface AppCopy {
     hints: string;
     stop: string;
     send: string;
+    deepToggle: string;
+  };
+  steps: {
+    planner: string;
+    searcher: string;
+    writer: string;
+    verifier: string;
   };
   panel: {
     title: (answer: number) => string;
@@ -170,6 +177,13 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       hints: "⏎ send · ⇧⏎ new line · questions in FR, DE, EN",
       stop: "■ stop",
       send: "Send",
+      deepToggle: "Deep research",
+    },
+    steps: {
+      planner: "Planning",
+      searcher: "Searching",
+      writer: "Writing",
+      verifier: "Verifying",
     },
     panel: {
       title: (n) => `Sources · answer ${n}`,
@@ -295,6 +309,13 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       hints: "⏎ envoyer · ⇧⏎ nouvelle ligne · questions en FR, DE, EN",
       stop: "■ arrêter",
       send: "Envoyer",
+      deepToggle: "Recherche approfondie",
+    },
+    steps: {
+      planner: "Planification",
+      searcher: "Recherche",
+      writer: "Rédaction",
+      verifier: "Vérification",
     },
     panel: {
       title: (n) => `Sources · réponse ${n}`,
@@ -420,6 +441,13 @@ export const APP_COPY: Record<Lang, AppCopy> = {
       hints: "⏎ senden · ⇧⏎ neue Zeile · Fragen auf FR, DE, EN",
       stop: "■ stoppen",
       send: "Senden",
+      deepToggle: "Tiefenrecherche",
+    },
+    steps: {
+      planner: "Planung",
+      searcher: "Suche",
+      writer: "Verfassen",
+      verifier: "Prüfung",
     },
     panel: {
       title: (n) => `Quellen · Antwort ${n}`,

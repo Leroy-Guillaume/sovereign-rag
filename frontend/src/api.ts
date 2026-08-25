@@ -1,6 +1,7 @@
 import { freshOidcToken } from "./lib/oidc";
 import type {
   AdminMetrics,
+  ChatStepData,
   ChatDeltaData,
   ChatDoneData,
   ChatErrorData,
@@ -176,6 +177,7 @@ export async function downloadConversation(id: string): Promise<void> {
 
 export interface ChatStreamHandlers {
   onStart: (data: ChatStartData) => void;
+  onStep: (data: ChatStepData) => void;
   onSources: (data: SourceOut[]) => void;
   onDelta: (data: ChatDeltaData) => void;
   onDone: (data: ChatDoneData) => void;
@@ -196,7 +198,7 @@ export interface ChatStreamHandlers {
  * with error_code='client_disconnect'.
  */
 export async function streamChat(
-  body: { conversation_id: string | null; message: string },
+  body: { conversation_id: string | null; message: string; mode: "standard" | "deep" },
   handlers: ChatStreamHandlers,
   signal: AbortSignal,
 ): Promise<void> {
@@ -247,6 +249,9 @@ function dispatchBlock(block: string, handlers: ChatStreamHandlers): void {
   switch (event) {
     case "start":
       handlers.onStart(JSON.parse(data) as ChatStartData);
+      break;
+    case "step":
+      handlers.onStep(JSON.parse(data) as ChatStepData);
       break;
     case "sources":
       handlers.onSources(JSON.parse(data) as SourceOut[]);

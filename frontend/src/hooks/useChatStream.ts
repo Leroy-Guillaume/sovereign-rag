@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError, streamChat } from "../api";
-import type { SourceOut } from "../types";
+import type { ChatStepData, SourceOut } from "../types";
 
 export type ChatStatus = "idle" | "retrieving" | "streaming" | "error";
 
@@ -18,6 +18,8 @@ export interface UiMessage {
   content: string;
   sources?: SourceOut[];
   meta?: AnswerMeta;
+  /** Deep-search agent steps, in arrival order. */
+  steps?: ChatStepData[];
 }
 
 /** Apply an update to the trailing (pending) assistant message, immutably. */
@@ -56,7 +58,7 @@ export function useChatStream(onUnauthorized: () => void) {
   }, []);
 
   const send = useCallback(
-    async (text: string) => {
+    async (text: string, mode: "standard" | "deep" = "standard") => {
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
@@ -71,10 +73,18 @@ export function useChatStream(onUnauthorized: () => void) {
       ]);
       try {
         await streamChat(
-          { conversation_id: conversationId, message: text },
+          { conversation_id: conversationId, message: text, mode },
           {
             onStart: (data) => {
               setConversationId(data.conversation_id);
+            },
+            onStep: (data) => {
+              setMessages((prev) =>
+                withPendingAssistant(prev, (m) => ({
+                  ...m,
+                  steps: [...(m.steps ?? []), data],
+                })),
+              );
             },
             onSources: (data) => {
               setMessages((prev) => withPendingAssistant(prev, (m) => ({ ...m, sources: data })));

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -149,3 +149,6 @@ class ChatRequest(BaseModel):
     # blows up the lexical tokenizer and the tsquery builder downstream, and
     # nothing useful fits a question beyond this anyway.
     message: str = Field(min_length=1, max_length=8000)
+    # "deep" runs the multi-agent graph (plan, search, write, verify) and
+    # streams its steps; "standard" is the single-shot pipeline.
+    mode: Literal["standard", "deep"] = "standard"
