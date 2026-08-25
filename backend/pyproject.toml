@@ -17,6 +17,7 @@ dependencies = [
   "python-multipart>=0.0.17",
   "pyjwt[crypto]>=2.10",
   "cryptography>=50",  # floor: CVE-2026-69247 fixed in 50.0.0; a relock once regressed below it
+  "langgraph>=1.0",
 ]
 
 [tool.hatch.metadata]

@@ -169,6 +169,18 @@ export default function MessageList({
 
             return (
               <li key={messageIndex} className="mt-7">
+                {message.steps !== undefined && message.steps.length > 0 && (
+                  <div className="mb-3 flex flex-col gap-1">
+                    {message.steps.map((step, i) => (
+                      <div key={i} className="flex items-baseline gap-2 text-[11.5px] text-muted">
+                        <span className="font-medium text-ink-tertiary">
+                          {APP_COPY[lang].steps[step.agent]}
+                        </span>
+                        <span className="font-mono text-[10.5px]">{step.detail}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {message.content === "" && isLast && status === "retrieving" ? (
                   <p className="text-[15px] text-muted">{t.searching}</p>
                 ) : noAnswer && settled ? (

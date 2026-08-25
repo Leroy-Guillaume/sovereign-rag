@@ -72,6 +72,12 @@ export interface ChatStartData {
   conversation_id: string;
 }
 
+/** One deep-search agent step, streamed while the graph runs. */
+export interface ChatStepData {
+  agent: "planner" | "searcher" | "writer" | "verifier";
+  detail: string;
+}
+
 export interface ChatDeltaData {
   text: string;
 }
@@ -92,6 +98,7 @@ export interface ChatErrorData {
 /** Discriminated union of every event the /api/chat stream can emit. */
 export type ChatEvent =
   | { event: "start"; data: ChatStartData }
+  | { event: "step"; data: ChatStepData }
   | { event: "sources"; data: SourceOut[] }
   | { event: "delta"; data: ChatDeltaData }
   | { event: "done"; data: ChatDoneData }

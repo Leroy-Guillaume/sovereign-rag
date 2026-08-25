@@ -474,3 +474,38 @@ async def test_export_returns_the_full_record_as_attachment(
             headers=AUTH_ALICE,
         )
         assert unknown.status_code == 404
+
+
+async def test_deep_mode_streams_steps_then_verified_answer(
+    api_client: ClientFactory, pg: object
+) -> None:
+    from test_deep_graph import ScriptedLLM
+
+    embedder = FakeEmbedding()
+    store = await seeded_store(embedder)
+    llm = ScriptedLLM(
+        [
+            '["nLPD"]',  # plan
+            "Reponse verifiee [1].",  # write
+            '[{"text": "ok", "verdict": "supported", "fix_query": ""}]',  # verify
+        ]
+    )
+    settings = make_settings(database_url=TEST_DATABASE_URL)
+    async with api_client(settings=settings, llm=llm, embedder=embedder, store=store) as client:
+        resp = await client.post(
+            "/api/chat",
+            json={"conversation_id": None, "message": "Que dit la nLPD ?", "mode": "deep"},
+            headers=AUTH_ALICE,
+        )
+        assert resp.status_code == 200
+        events = parse_sse(resp.text)
+    names = [name for name, _ in events]
+    assert names[0] == "start"
+    steps = [data for name, data in events if name == "step"]
+    assert [s["agent"] for s in steps] == ["planner", "searcher", "writer", "verifier"]
+    assert names.index("sources") > names.index("start")
+    deltas = "".join(data["text"] for name, data in events if name == "delta")
+    assert deltas == "Reponse verifiee [1]."
+    assert names[-1] == "done"
+    sources = next(data for name, data in events if name == "sources")
+    assert len(sources) >= 1  # the verified evidence snapshot is persisted

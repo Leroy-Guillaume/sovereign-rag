@@ -134,7 +134,7 @@ async def _sse_body(first: ChatEvent, events: AsyncIterator[ChatEvent]) -> Async
 @router.post("/api/chat")
 async def post_chat(request: Request, body: ChatRequest, user: CurrentUser) -> StreamingResponse:
     service = _chat_service(request)
-    events = service.stream_reply(user, body.conversation_id, body.message)
+    events = service.stream_reply(user, body.conversation_id, body.message, mode=body.mode)
     try:
         first = await anext(events)
     except LookupError:
