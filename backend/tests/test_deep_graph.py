@@ -148,3 +148,51 @@ async def test_repair_budget_is_bounded(pg: Any) -> None:
     assert final["search_repairs"] == 2
     assert final["replans"] == 1
     assert final["draft"] == "V4 [1]."
+
+
+async def test_deep_search_respects_the_caller_acl(pg: Any) -> None:
+    """The graph's searcher goes through the store with the caller's id:
+    another user's private document must never surface in deep evidence."""
+    llm = ScriptedLLM(
+        [
+            '["question"]',
+            "Reponse [1].",
+            '[{"text": "ok", "verdict": "supported", "fix_query": ""}]',
+        ]
+    )
+    embedder = FakeEmbedding()
+    store = InMemoryVectorStore()
+    shared_doc, private_doc = uuid4(), uuid4()
+    contents = ["Document partage sur la nLPD.", "Document PRIVE de bob sur la nLPD."]
+    embeddings = await embedder.embed_documents(contents)
+    await store.add_chunks(
+        shared_doc, [ChunkIn(chunk_index=0, content=contents[0], embedding=embeddings[0])]
+    )
+    await store.add_chunks(
+        private_doc, [ChunkIn(chunk_index=0, content=contents[1], embedding=embeddings[1])]
+    )
+    store.owners[shared_doc] = "alice"
+    store.owners[private_doc] = "bob"  # no grant to alice, no wildcard
+
+    steps: list[tuple[str, str]] = []
+
+    async def emit(agent: str, detail: str) -> None:
+        steps.append((agent, detail))
+
+    deps = DeepDeps(
+        llm=llm,
+        embedder=embedder,
+        store=store,
+        reranker=None,
+        settings=make_settings(),
+        user=User(id="alice", roles=frozenset()),
+        emit=emit,
+    )
+    graph = build_deep_graph(deps)
+    final = await graph.ainvoke(initial_state("Que dit la nLPD ?"))
+    assert final["outcome"] == "delivered"
+    contents_seen = [hit.content for hit in final["evidence"]]
+    assert any("partage" in c for c in contents_seen)
+    assert not any("PRIVE" in c for c in contents_seen), (
+        "bob's private doc leaked into deep evidence"
+    )
